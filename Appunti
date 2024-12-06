@@ -1,3 +1,61 @@
-test
-ffesww
-tester
+Appunti progetto PMO:
+Classi:
+-Personaggi (attributi: salute, velocità, attacco, difesa, esperienza (+alto è più aumentano le stats)
+  - Arciere
+      - BossArciere (+forte)
+  - Fantiere
+      - BossFantiere (+forte)
+  - Mago
+      - BossMago (+forte)
+    - MagoCuratore (può curare i personaggi, anche con molta distanza tra essi (2-3blocchi))
+      - MagoAttacco (che può avere diverse magie ??)
+  - Cavaliere
+      - BossCavaliere (+forte)
+  - Tank (personaggio con tantissima difesa)
+  
+-Equipaggiamento
+  
+  -Arma
+        -ArmaPesante (ci bada poco per uccidere, attributo: distanza di attacco, ognuna ne ha diversa)
+            - SpadaLunga  
+            - LanciaLunga
+            - SpadaCorta
+        -Pozioni
+            -PozioneAummentaCura
+            -PozioneAumentaAttacco
+            -PozioneVelocità
+        -Bacchetta
+            -BacchettaAZona
+            -BacchettaSingola 
+
+  -Armatura(??)
+  
+
+
+Regole gioco:
+  Quando aumenta livello del personaggio da la possibilità di cambiare arma
+  A cambiamento di mappa aumenta la grandezza della griglia 
+  In tutto 5 livelli
+  1° Livello base senza boss
+  Il combattimento avviene colpendo una volta, (es, arciere lancia una freccia sola...)
+  (ATTENTIONE: durata del tempo del turno)
+  All'inizio (1° Livello) potremmo fare che i nemici sono scarsi e gli alleati (che all'inizio sono tipo 3) gli uccidono molto piu facilmente
+  Le statistiche dei personaggi saranno creati in maniera randomica (Random)
+  Se muore un personaggio lo togli dalla griglia
+  Esempio: Se muore il cavaliere, il cavaliere non lo puoi usare nella partita intera.
+  Il personaggio con velocità piu alta attacca per primo
+
+Idee Mattia:
+
+
+
+Idee Gaspar:
+
+
+Idee Marchio:
+
+
+
+
+
+
