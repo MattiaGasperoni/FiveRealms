@@ -54,88 +54,12 @@ Idee Gaspar:
 
 Idee Marchio:
 
+- Quando si avvia il programma si apre una sorta di JWindows (come quella di eclipse) per qualche secondo
 
-+-----------------------------------------------------+
-|                     Personaggio                     |
-+-----------------------------------------------------+
-| - salute: int                                       |
-| - velocita: int                                     |
-| - attacco: int                                      |
-| - difesa: int                                       |
-| - esperienza: int                                   |
-+-----------------------------------------------------+
-| + attacca(): void                                   |
-| + difendi(): void                                   |
-| + cambiaArma(arma: Arma): void                      |
-+-----------------------------------------------------+
-          ^                 ^                 ^               ^
-          |                 |                 |               |
-+-----------------+  +-----------------+  +-----------------+  +-----------------+
-|     Arciere     |  |    Fantiere     |  |       Mago      |  |     Cavaliere   |
-+-----------------+  +-----------------+  +-----------------+  +-----------------+
-| + lanciaFreccia():void | + attaccoForte():void | + lanciaIncantesimo(): void | + attaccoCavaliere(): void|
-+-----------------+  +-----------------+  +-----------------+  +-----------------+
-          |                 |                 |                 |
-+---------------------+ +------------------+ +----------------+ +-------------------+
-|   BossArciere       | |  BossFantiere    | |   BossMago     | |   BossCavaliere   |
-+---------------------+ +------------------+ +----------------+ +-------------------+
-| + lanciaFrecciaSpeciale():void | + attaccoDevastante():void | + incantesimoPotente(): void | + attaccoCavalierePotente(): void |
-+---------------------+ +------------------+ +----------------+ +-------------------+
-          |
-          v
-+-----------------------+
-|    MagoCuratore       |
-+-----------------------+
-| + curaAlleato(): void |
-+-----------------------+
-          |
-          v
-+-----------------------+
-|    MagoAttacco        |
-+-----------------------+
-| + lanciaIncantesimoOffensivo(): void |
-+-----------------------+
+- Iniziare il primo livello con una griglia non tanto grande tipo 5X5 oppure 6X6, per poi aumentare con i livelli successivi
 
-
-+---------------------------------------------------+
-|                 Equipaggiamento                   |
-+---------------------------------------------------+
-| - nome: String                                    |
-| - tipo: String                                    |
-+---------------------------------------------------+
-| + usa(target: Personaggio): void                  |
-+---------------------------------------------------+
-          ^
-          |
-+-------------------+          +-------------------+           +-------------------+
-|        Arma       |<>--------|      Bacchetta     |<--------|     Pozione       |
-+-------------------+          +-------------------+           +-------------------+
-| - distanzaAttacco: int |       | - tipoBacchetta: String |     | - effetto: String |
-+-------------------+          +-------------------+           +-------------------+
-| + colpisci(target: Personaggio): void | | + usa(target: Personaggio): void | | + usa(target: Personaggio): void |
-+-------------------+          +-------------------+           +-------------------+
-           ^                         ^
-           |                         |
-+--------------------+      +---------------------+       +--------------------+
-|   SpadaLunga       |      |   BacchettaAZona    |       |   PozioneAumentaCura |
-+--------------------+      +---------------------+       +--------------------+
-| + colpisci(): void |      | + usa(): void       |       | + usa(): void       |
-+--------------------+      +---------------------+       +--------------------+
-          ^                        ^                         |
-          |                        |                         v
-+-------------------+      +---------------------+     +---------------------+
-|   LanciaLunga     |      |   BacchettaSingola  |     |   PozioneAumentaAttacco |
-+-------------------+      +---------------------+     +---------------------+
-| + colpisci(): void |      | + usa(): void       |     | + usa(): void       |
-+-------------------+      +---------------------+     +---------------------+
-          ^                        ^                         |
-          |                        |                         v
-+-------------------+      +---------------------+       +----------------------+
-|   SpadaCorta      |      |                     |       |   PozioneVelocità     |
-+-------------------+      +---------------------+       +----------------------+
-| + colpisci(): void |      |                     |       | + usa(): void         |
-+-------------------+      +---------------------+       +----------------------+
-
+- Personaggio: classe astratta con dentro ad esempio i metodi: attacca(), difendi(), spostati(qui vediamo se farne uno oppure i 4: su,sinistra,destra,sotto) -> questi metodi dovranno essere definiti dagli Arcieri, Cavalieri.....
+    -Possibili attributi: salute,velocità,attacco,difesa,esperienza,,stato (vivo/morto??),equipaggiamento (useremo classe oggetto di tipo Equipaggiamento), posizione griglia (sicuro un array/matrice)
 
 
 
