@@ -7,14 +7,13 @@ Classi:
       - BossFantiere (+forte)
   - Mago
       - BossMago (+forte)
-    - MagoCuratore (può curare i personaggi, anche con molta distanza tra essi (2-3blocchi))
+      - MagoCuratore (può curare i personaggi, anche con molta distanza tra essi (2-3blocchi))
       - MagoAttacco (che può avere diverse magie ??)
   - Cavaliere
       - BossCavaliere (+forte)
   - Tank (personaggio con tantissima difesa)
-  
+
 -Equipaggiamento
-  
   -Arma
         -ArmaPesante (ci bada poco per uccidere, attributo: distanza di attacco, ognuna ne ha diversa)
             - SpadaLunga  
@@ -38,15 +37,30 @@ Regole gioco:
   In tutto 5 livelli
   1° Livello base senza boss
   Il combattimento avviene colpendo una volta, (es, arciere lancia una freccia sola...)
-  (ATTENTIONE: durata del tempo del turno)
   All'inizio (1° Livello) potremmo fare che i nemici sono scarsi e gli alleati (che all'inizio sono tipo 3) gli uccidono molto piu facilmente
-  Le statistiche dei personaggi saranno creati in maniera randomica (Random)
-  Se muore un personaggio lo togli dalla griglia
+  Le statistiche dei personaggi saranno creati in maniera randomica (Random) 
+    Randomicamente in un range che dipende dal Personaggio, (esempio salute Cavaliere > Arciere, BossCavaliere > Cavaliere)
+  Se muore un personaggio lo togli dalla griglia (tutto dipende dal flag IsAlive())
   Esempio: Se muore il cavaliere, il cavaliere non lo puoi usare nella partita intera.
-  Il personaggio con velocità piu alta attacca per primo
+  Il personaggio con velocità piu alta attacca per primo.
+  
+  Modifiche del 10/12/2024
+  Ciascun personaggio ha la propria pozione 
+  Calcolo del livello: esperienza / 1000.     (3000/1000 = 3 livello)
+  Quando un personaggio vince il combattimento prende l'esperienza del nemico (morto) / 2.
+  Dopo uno scontro puoi decidere di scappare invece che di riscontrarti di nuovo contro il nemico.
+  Finici il turno dopo aver attaccato (senza timer)
+  Quando finisce un combattimento il nemico sconfitto rilascia del loot randomico in base all'esperienza di esso, 1) Se hai spazio la può prendere il tuo
+  personaggio con cui hai attaccato, oppure decidi se darla agli altri personaggi tuoi, oppure la lasci li; e tutto questo in una finestra che ti dice il messaggio!
+  Per capire di chi è il turno ci sarà una sorta di lista con tutte le velocità + valore Randomico dei personaggi che gestisce chi attacca prima,
+  I personaggi saranno una lista: ListaAlleati e ListaNemici in modo tale da gestire il tutto
+  I vari personaggi avranno dei colori differenti tipo: Blue-> Alleati, Rossi->Nemici.
+  La generazione dei personaggi dipende da un area che gestiremo.
+  Ad ogni livello possono arrivare dei possibili personaggi gestiti all'inizio del livello, in base a quanti personaggi muoiono.
+  Ad ogni di ogni nuovo livello la dimensione della mappa (matrice) aumenta
+
 
 Idee Mattia:
-
 
 
 Idee Gaspar:
@@ -56,8 +70,6 @@ Idee Marchio:
 
 - Quando si avvia il programma si apre una sorta di JWindows (come quella di eclipse) per qualche secondo
 
-- Iniziare il primo livello con una griglia non tanto grande tipo 5X5 oppure 6X6, per poi aumentare con i livelli successivi
-
-- Personaggio: classe astratta con dentro ad esempio i metodi: attacca(), difendi(), spostati(qui vediamo se farne uno oppure i 4: su,sinistra,destra,sotto) -> questi metodi dovranno essere definiti dagli Arcieri, Cavalieri.....
-    -Possibili attributi: salute,velocità,attacco,difesa,esperienza,,stato (vivo/morto??),equipaggiamento (useremo classe oggetto di tipo Equipaggiamento), posizione griglia (sicuro un array/matrice)
+- Personaggio: classe astratta con dentro ad esempio i metodi: attacca(qui gestiamo l'effettivo attacco tra i due personaggi), spostati(sposta di un movimento di uno scacchetto, con i 4 movimenti: su,sinistra,destra,sotto)
+    -Possibili attributi: salute,velocità,attacco,difesa,esperienza,stato (vivo/morto??),equipaggiamento (useremo classe oggetto di tipo Equipaggiamento), posizione griglia (sicuro un array/matrice)
 
