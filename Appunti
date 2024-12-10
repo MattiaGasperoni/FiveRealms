@@ -58,7 +58,8 @@ Regole gioco:
   La generazione dei personaggi dipende da un area che gestiremo.
   Ad ogni livello possono arrivare dei possibili personaggi gestiti all'inizio del livello, in base a quanti personaggi muoiono.
   Ad ogni di ogni nuovo livello la dimensione della mappa (matrice) aumenta
-
+  Settiamo uno sfondo nella mappa 
+  Ogni personaggio avrà un immagine per capire chi è (gia abbiamo il sito : https://rolladvantage.com/tokenstamp/)
 
 Idee Mattia:
 
