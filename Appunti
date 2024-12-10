@@ -61,5 +61,3 @@ Idee Marchio:
 - Personaggio: classe astratta con dentro ad esempio i metodi: attacca(), difendi(), spostati(qui vediamo se farne uno oppure i 4: su,sinistra,destra,sotto) -> questi metodi dovranno essere definiti dagli Arcieri, Cavalieri.....
     -Possibili attributi: salute,velocità,attacco,difesa,esperienza,,stato (vivo/morto??),equipaggiamento (useremo classe oggetto di tipo Equipaggiamento), posizione griglia (sicuro un array/matrice)
 
-
-
