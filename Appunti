@@ -83,3 +83,111 @@ Idee Gaspar:
 Idee Marchio:
 
 - Quando si avvia il programma si apre una sorta di JWindows (come quella di eclipse) per qualche secondo
+
+
+Possibile  UML:
+
+class Personaggi {
+    - int salute
+    - int velocita
+    - int attacco
+    - int difesa
+    - int esperienza
+    + int calcolaLivello()
+    + boolean isAlive()
+}
+
+class Arciere extends Personaggi {}
+class BossArciere extends Arciere {}
+
+class Fante extends Personaggi {}
+class BossFante extends Fante {}
+
+class Mago extends Personaggi {}
+class BossMago extends Mago {}
+class MagoCuratore extends Mago {
+    + void cura(Personaggi target)
+}
+class MagoAttacco extends Mago {
+    + void lanciaMagia(Personaggi target)
+}
+
+class Cavaliere extends Personaggi {}
+class BossCavaliere extends Cavaliere {}
+
+class Tank extends Personaggi {}
+
+class Equipaggiamento {}
+
+class Arma extends Equipaggiamento {
+    - int distanzaAttacco
+    + int calcolaDanno()
+}
+class ArmaPesante extends Arma {}
+class SpadaLunga extends ArmaPesante {}
+class LanciaLunga extends ArmaPesante {}
+class SpadaCorta extends ArmaPesante {}
+
+class Pozione extends Equipaggiamento {
+    + void usa(Personaggi target)
+}
+class PozioneAumentaCura extends Pozione {}
+class PozioneAumentaAttacco extends Pozione {}
+class PozioneVelocita extends Pozione {}
+
+class Bacchetta extends Equipaggiamento {
+    + void usa(Personaggi target)
+}
+class BacchettaAZona extends Bacchetta {}
+class BacchettaSingola extends Bacchetta {}
+
+class Mappa {
+    - int larghezza
+    - int altezza
+    - Personaggi[][] griglia
+    + void aumentaDimensione()
+    + void posizionaPersonaggio(Personaggi p, int x, int y)
+    + boolean controllaCassa(int x, int y)
+}
+
+class Gioco {
+    - List<Personaggi> listaAlleati
+    - List<Personaggi> listaNemici
+    - List<Integer> velocitaPersonaggi
+    - Mappa mappa
+    + void iniziaPartita()
+    + void eseguiTurno()
+    + void assegnaLoot(Personaggi vincitore)
+}
+
+Personaggi <|-- Arciere
+Arciere <|-- BossArciere
+Personaggi <|-- Fante
+Fante <|-- BossFante
+Personaggi <|-- Mago
+Mago <|-- BossMago
+Mago <|-- MagoCuratore
+Mago <|-- MagoAttacco
+Personaggi <|-- Cavaliere
+Cavaliere <|-- BossCavaliere
+Personaggi <|-- Tank
+
+Equipaggiamento <|-- Arma
+Arma <|-- ArmaPesante
+ArmaPesante <|-- SpadaLunga
+ArmaPesante <|-- LanciaLunga
+ArmaPesante <|-- SpadaCorta
+
+Equipaggiamento <|-- Pozione
+Pozione <|-- PozioneAumentaCura
+Pozione <|-- PozioneAumentaAttacco
+Pozione <|-- PozioneVelocita
+
+Equipaggiamento <|-- Bacchetta
+Bacchetta <|-- BacchettaAZona
+Bacchetta <|-- BacchettaSingola
+
+Mappa "1" *-- "*" Personaggi
+Gioco "1" *-- "1" Mappa
+Gioco "1" *-- "*" Personaggi
+
