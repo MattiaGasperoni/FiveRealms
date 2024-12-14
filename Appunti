@@ -3,8 +3,8 @@ Classi:
 -Personaggi (attributi: salute, velocità, attacco, difesa, esperienza (+alto è più aumentano le stats)
   - Arciere
       - BossArciere (+forte)
-  - Fantiere
-      - BossFantiere (+forte)
+  - Fante
+      - BossFante (+forte)
   - Mago
       - BossMago (+forte)
       - MagoCuratore (può curare i personaggi, anche con molta distanza tra essi (2-3blocchi))
@@ -49,9 +49,10 @@ Regole gioco:
   Calcolo del livello: esperienza / 1000.     (3000/1000 = 3 livello)
   Quando un personaggio vince il combattimento prende l'esperienza del nemico (morto) / 2.
   Dopo uno scontro puoi decidere di scappare invece che di riscontrarti di nuovo contro il nemico.
-  Finici il turno dopo aver attaccato (senza timer)
-  Quando finisce un combattimento il nemico sconfitto rilascia del loot randomico in base all'esperienza di esso, 1) Se hai spazio la può prendere il tuo
-  personaggio con cui hai attaccato, oppure decidi se darla agli altri personaggi tuoi, oppure la lasci li; e tutto questo in una finestra che ti dice il messaggio!
+  Finisci il turno dopo aver attaccato (senza timer)
+  Quando finisce un combattimento il nemico sconfitto rilascia del loot randomico (Se sei fortunato droppa una pozione, altrimenti solo l'esperienza),in base all'esperienza di esso, 1) Se hai spazio la può prendere il tuo
+  personaggio con cui hai attaccato, oppure decidi se darla agli altri personaggi tuoi, oppure la lasci li; e tutto questo in una finestra che ti dice il messaggio! e si può utilizzare un inventario comune per tutti 
+  
   Per capire di chi è il turno ci sarà una sorta di lista con tutte le velocità + valore Randomico dei personaggi che gestisce chi attacca prima,
   I personaggi saranno una lista: ListaAlleati e ListaNemici in modo tale da gestire il tutto
   I vari personaggi avranno dei colori differenti tipo: Blue-> Alleati, Rossi->Nemici.
@@ -60,6 +61,18 @@ Regole gioco:
   Ad ogni di ogni nuovo livello la dimensione della mappa (matrice) aumenta
   Settiamo uno sfondo nella mappa 
   Ogni personaggio avrà un immagine per capire chi è (gia abbiamo il sito : https://rolladvantage.com/tokenstamp/)
+
+  Modifiche del 14/12/
+  Aggiunta di casse, in base alla rarità ti da qualcosa, se basta che ci vai vicino e ti esce un pop-up ("HAI TROVATO UNA CASAAA!)
+  Ci sarà un unica lista delle velocità di tutti i personaggi
+  I rinforzi nemici arrivano in base ad un Trigger
+  I primi livelli il trigger uccididendo i nemici, gli ultimi livelli dopo un po di turni passati
+  Quando uccidi i nemici puoi cercare la cassa speciale oppure passare al prossimo livello con una "Porta"
+  Quando un personaggio passa al livello successivo, la sua vita sale in base a una % con un metodo,     (Vita personaggio = 25 su 50, quando fai il level-up, quando finisci il livello da punti xp e una % di salute che dicidiamo, tipo 20% della salute totale attuale)
+  Pop-up quando finisci il tutorial ridà tutta la vita ai tuoi personaggi 
+  Nel livello tutorial mettiamo pochi nemici, tipo un nemico e poi altri 2 a cascata.
+  Meccaniche uniche per il boss (modifiche alla classe del personaggio boss)
+  
 
 Idee Mattia:
 
@@ -70,7 +83,3 @@ Idee Gaspar:
 Idee Marchio:
 
 - Quando si avvia il programma si apre una sorta di JWindows (come quella di eclipse) per qualche secondo
-
-- Personaggio: classe astratta con dentro ad esempio i metodi: attacca(qui gestiamo l'effettivo attacco tra i due personaggi), spostati(sposta di un movimento di uno scacchetto, con i 4 movimenti: su,sinistra,destra,sotto)
-    -Possibili attributi: salute,velocità,attacco,difesa,esperienza,stato (vivo/morto??),equipaggiamento (useremo classe oggetto di tipo Equipaggiamento), posizione griglia (sicuro un array/matrice)
-
