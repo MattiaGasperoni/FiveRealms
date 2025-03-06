@@ -1,61 +1,50 @@
 package model.equipment.weapons;
-import model.characters.Character;
 
 public class ShortSword extends AbstractWeapon{
 
-	public ShortSword(Character character) {
-		super(character);
+	public ShortSword() {
+		super(10,10,10,10);
 	}
 
 	@Override
-	public void increasePower() {
-		int power = super.getCharacter().getPower();
-		power += (power * AbstractWeapon.LOW) / 100;
-		super.getCharacter().setPower(power);
-				
+	public int getSpeed() {
+		return super.getSpeed();
 	}
 
 	@Override
-	public void decreasePower() {
+	public void setSpeed(int speed) {
+		super.setSpeed(speed);
+	}
+
+	@Override
+	public int getPower() {
+		return super.getPower();
+	}
+
+	@Override
+	public void setPower(int power) {
+		super.setPower(power);
+	}
+
+	@Override
+	public int getDefence() {
+		return super.getDefence();
+	}
+
+	@Override
+	public void setDefence(int defence) {
+		super.setDefence(defence);
+	}
+
+	@Override
+	public int getRange() {
+		return super.getRange();
+	}
+
+	@Override
+	public void setRange(int range) {
 		// TODO Auto-generated method stub
-		
+		super.setRange(range);
 	}
-
-	@Override
-	public void increaseSpeed() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void decreaseSpeed() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void increaseDefence() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void decreaseDefence() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void increaseRange() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void decreaseRange() {
-		// TODO Auto-generated method stub
-		
-	}
-	
 
 }

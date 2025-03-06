@@ -1,34 +1,43 @@
 package model.equipment.weapons;
-import model.characters.Character;
-
 
 public abstract class AbstractWeapon implements Weapon{
 
-	
-	public static final int LOW = 20;
-	public static final int MEDIUM = 40;
-	public static final int HIGH = 60;
-	
+	private int speed;
+	private int power;
+	private int defence;
 	private int range;
-	private Character character;
 	
-	public AbstractWeapon(Character character) {
-		this.range = 0;
-		this.character = character;
+	public AbstractWeapon(int speed, int power, int defence, int range) {
+		this.speed = speed;
+		this.power = power;
+		this.defence = defence;
+		this.range = range;
 	}
-	
-	public abstract void increasePower();
-	public abstract void decreasePower();
-	
-	public abstract void increaseSpeed();
-	public abstract void decreaseSpeed();
-	
-	public abstract void increaseDefence();
-	public abstract void decreaseDefence();
-	
-	public abstract void increaseRange();
-	public abstract void decreaseRange();
-	
+
+	public int getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(int speed) {
+		this.speed = speed;
+	}
+
+	public int getPower() {
+		return power;
+	}
+
+	public void setPower(int power) {
+		this.power = power;
+	}
+
+	public int getDefence() {
+		return defence;
+	}
+
+	public void setDefence(int defence) {
+		this.defence = defence;
+	}
+
 	public int getRange() {
 		return range;
 	}
@@ -36,10 +45,10 @@ public abstract class AbstractWeapon implements Weapon{
 	public void setRange(int range) {
 		this.range = range;
 	}
+	
+	
 
-	public Character getCharacter() {
-		return character;
-	}
+	
 	
 	
 }

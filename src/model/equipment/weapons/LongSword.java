@@ -1,63 +1,49 @@
 package model.equipment.weapons;
 
-import model.characters.Character;
-
 public class LongSword extends AbstractWeapon{
 
-	public LongSword(Character character) {
-		super(character);
-		// Qui devo assegnare il range
+	public LongSword() {
+		super(10,10,10,10);
 	}
 
 	@Override
-	public void increasePower() {
-		int power = super.getCharacter().getPower();
-		power += (power * AbstractWeapon.MEDIUM) / 100;
-		super.getCharacter().setPower(power);
+	public int getSpeed() {
+		return super.getSpeed();
 	}
 
 	@Override
-	public void decreasePower() {
-		// TODO Auto-generated method stub
-		
+	public void setSpeed(int speed) {
+		super.setSpeed(speed);
 	}
 
 	@Override
-	public void increaseSpeed() {
-		// TODO Auto-generated method stub
-		
+	public int getPower() {
+		return super.getPower();
 	}
 
 	@Override
-	public void decreaseSpeed() {
-		int speed = super.getCharacter().getSpeed();
-		speed  -= (speed * AbstractWeapon.LOW) / 100;
-		super.getCharacter().setPower(speed );
+	public void setPower(int power) {
+		super.setPower(power);
 	}
 
 	@Override
-	public void increaseDefence() {
-		// TODO Auto-generated method stub
-		
+	public int getDefence() {
+		return super.getDefence();
 	}
 
 	@Override
-	public void decreaseDefence() {
-		// TODO Auto-generated method stub
-		
+	public void setDefence(int defence) {
+		super.setDefence(defence);
 	}
 
 	@Override
-	public void increaseRange() {
-		// TODO Auto-generated method stub
-		
+	public int getRange() {
+		return super.getRange();
 	}
 
 	@Override
-	public void decreaseRange() {
-		// TODO Auto-generated method stub
-		
+	public void setRange(int range) {
+		super.setRange(range);
 	}
-	
 
 }
