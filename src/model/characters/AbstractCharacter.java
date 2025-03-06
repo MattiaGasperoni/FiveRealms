@@ -68,14 +68,14 @@ public abstract class AbstractCharacter implements Character{
 	}
 
 	@Override
-	public void setWeapon(AbstractWeapon weapon) {
-		this.weapon = weapon;
-	}
-
-	@Override
 	public void levelUp() {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@Override
+	public boolean isAlive() {
+		return this.health > 0;
 	}
 
 	@Override
@@ -110,7 +110,7 @@ public abstract class AbstractCharacter implements Character{
 
 	@Override
 	public int getPower() {
-		return this.power;
+		return this.power + this.weapon.getPower();
 	}
 
 	@Override
@@ -137,9 +137,5 @@ public abstract class AbstractCharacter implements Character{
 	public void setWeapon(Weapon weapon) {
 		this.weapon = weapon;
 	}
-		
-	
-	
-	
 	
 }
