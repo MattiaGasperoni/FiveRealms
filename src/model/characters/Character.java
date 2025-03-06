@@ -1,6 +1,7 @@
 package model.characters;
 
 import model.equipment.weapons.AbstractWeapon;
+import model.equipment.weapons.Weapon;
 import model.point.Point;
 
 public interface Character {
@@ -23,6 +24,22 @@ public interface Character {
 	
 	public void levelUp();
 	
+	public int getExperience();
 	public void setExperience(int value);
+	
+	public int getHealth();
+	public void setHealth(int health);
+	
+	public int getSpeed();
+	public void setSpeed(int speed);
+	
+	public int getPower();
+	public void setPower(int power);
+	
+	public int getDefence();
+	public void setDefence(int defence);
+	
+	public Weapon getWeapon();
+	public void setWeapon(Weapon weapon);
 	
 }

@@ -24,35 +24,122 @@ public abstract class AbstractCharacter implements Character{
 		this.weapon = null;
 		this.potion = null;
 	}
+
+	@Override
 	public void moveTo(Point point) {
+		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
 	public void getPosition() {
+		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
 	public void getDistance(Point point) {
+		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
 	public void reduceHealth(int value) {
+		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
 	public void increaseHealth(int value) {
+		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
 	public void usePotion() {
+		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
 	public void getPotion() {
+		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
 	public void setWeapon(AbstractWeapon weapon) {
-		
+		this.weapon = weapon;
 	}
+
+	@Override
 	public void levelUp() {
+		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public int getExperience() {
+		return this.experience;
+	}
+
+	@Override
 	public void setExperience(int value) {
-		
+		this.experience = value;
 	}
+
+	@Override
+	public int getHealth() {
+		return this.health;
+	}
+
+	@Override
+	public void setHealth(int health) {
+		this.health = health;
+	}
+
+	@Override
+	public int getSpeed() {
+		return this.speed;
+	}
+
+	@Override
+	public void setSpeed(int speed) {
+		this.speed = speed;
+	}
+
+	@Override
+	public int getPower() {
+		return this.power;
+	}
+
+	@Override
+	public void setPower(int power) {
+		this.power = power;
+	}
+
+	@Override
+	public int getDefence() {
+		return this.defence;
+	}
+
+	@Override
+	public void setDefence(int defence) {
+		this.defence = defence;
+	}
+
+	@Override
+	public Weapon getWeapon() {
+		return this.weapon;
+	}
+
+	@Override
+	public void setWeapon(Weapon weapon) {
+		this.weapon = weapon;
+	}
+		
+	
+	
+	
 	
 }
