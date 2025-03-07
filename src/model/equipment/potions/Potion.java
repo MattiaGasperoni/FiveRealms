@@ -2,8 +2,7 @@ package model.equipment.potions;
 
 public interface Potion {
 	
-	public void usePotionHealth();
+	public int getHealtIncreased();
 	
-
 
 }

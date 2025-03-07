@@ -14,41 +14,44 @@ public abstract class AbstractWeapon implements Weapon{
 		this.range = range;
 	}
 
+	@Override
 	public int getSpeed() {
-		return speed;
+		return this.speed;
 	}
 
+	@Override
 	public void setSpeed(int speed) {
 		this.speed = speed;
 	}
 
+	@Override
 	public int getPower() {
-		return power;
+		return this.power;
 	}
 
+	@Override
 	public void setPower(int power) {
 		this.power = power;
 	}
 
+	@Override
 	public int getDefence() {
-		return defence;
+		return this.defence;
 	}
 
+	@Override
 	public void setDefence(int defence) {
 		this.defence = defence;
 	}
 
+	@Override
 	public int getRange() {
-		return range;
+		return this.range;
 	}
 
+	@Override
 	public void setRange(int range) {
 		this.range = range;
 	}
-	
-	
-
-	
-	
 	
 }

@@ -52,19 +52,16 @@ public abstract class AbstractCharacter implements Character{
 	@Override
 	public void increaseHealth(int value) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void usePotion() {
-		// TODO Auto-generated method stub
-		
+	    this.health += this.health * (potion.getHealtIncreased() / 100.0);
 	}
 
 	@Override
-	public void getPotion() {
-		// TODO Auto-generated method stub
-		
+	public Potion getPotion() {
+		return this.potion;
 	}
 
 	@Override

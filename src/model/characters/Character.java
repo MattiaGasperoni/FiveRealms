@@ -1,6 +1,6 @@
 package model.characters;
 
-import model.equipment.weapons.AbstractWeapon;
+import model.equipment.potions.Potion;
 import model.equipment.weapons.Weapon;
 import model.point.Point;
 
@@ -14,7 +14,7 @@ public interface Character {
 	public void increaseHealth(int value);
 	
 	public void usePotion();
-	public void getPotion();
+	public Potion getPotion();
 		
 	public void levelUp();
 	public int getExperience();
