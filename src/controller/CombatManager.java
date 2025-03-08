@@ -2,6 +2,8 @@ package controller;
 import model.characters.Character;
 public class CombatManager {
 
+	//NOTE: two ways to do this, this can be a static inner class of Level if this should handle character removal from list OR character removal is handled within Level and NOT here
+	//same goes for attack range/distance validation
 	public static void fight(Character attackingCharacter, Character attackedCharacter) {
 		//WIP
 		//if range is valid then

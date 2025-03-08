@@ -7,8 +7,8 @@ import model.point.Point;
 public interface Character {
 
 	public void moveTo(Point point);
-	public void getPosition();
-	public void getDistance(Point point);
+	public Point getPosition();
+	public int getDistance(Point point);
 	
 	public void reduceHealth(int value);
 	public void increaseHealth(int value);
@@ -18,7 +18,7 @@ public interface Character {
 		
 	public void levelUp();
 	public int getExperience();
-	public void setExperience(int value);
+	public void gainExperience(int value);
 	
 	public int getHealth();
 	public void setHealth(int health);

@@ -1,22 +1,25 @@
 package model.characters;
 
 import model.equipment.potions.Potion;
-import model.equipment.weapons.AbstractWeapon;
 import model.equipment.weapons.Weapon;
 import model.point.Point;
 
 public abstract class AbstractCharacter implements Character{
 	
-	private int health;
+	private final int EXP_LEVELUP_THRESHOLD = 1000; //placeholder value
+	private int maxHealth;
+	private int currentHealth;
 	private int speed;
 	private int power;
 	private int defence;
 	private int experience;
 	private Weapon weapon;
 	private Potion potion;
+	private Point position; 
 	
 	public AbstractCharacter(int health, int speed, int power, int defence) {
-		this.health = health;
+		this.maxHealth = health;
+		this.currentHealth = this.maxHealth;
 		this.speed = speed;
 		this.power = power;
 		this.defence = defence;
@@ -32,15 +35,14 @@ public abstract class AbstractCharacter implements Character{
 	}
 
 	@Override
-	public void getPosition() {
-		// TODO Auto-generated method stub
+	public Point getPosition() {
+		return this.position;
 		
 	}
 
 	@Override
-	public void getDistance(Point point) {
-		// TODO Auto-generated method stub
-		
+	public int getDistance(Point point) {
+		return Math.abs(point.getX() - this.position.getX()) + Math.abs(point.getY() - this.position.getY()); //note that a diagonal spot is counted as two squares away, which is fine
 	}
 
 	@Override
@@ -56,7 +58,7 @@ public abstract class AbstractCharacter implements Character{
 
 	@Override
 	public void usePotion() {
-	    this.health += this.health * (potion.getHealtIncreased() / 100.0);
+	    this.currentHealth += this.maxHealth * (potion.getHealtIncreased() / 100.0);
 	}
 
 	@Override
@@ -72,7 +74,7 @@ public abstract class AbstractCharacter implements Character{
 	
 	@Override
 	public boolean isAlive() {
-		return this.health > 0;
+		return this.currentHealth > 0;
 	}
 
 	@Override
@@ -81,23 +83,27 @@ public abstract class AbstractCharacter implements Character{
 	}
 
 	@Override
-	public void setExperience(int value) {
-		this.experience = value;
+	public void gainExperience(int value) {
+		this.experience += value;
+		if(this.experience >= this.EXP_LEVELUP_THRESHOLD) {
+			this.levelUp();
+			this.experience -= this.EXP_LEVELUP_THRESHOLD;
+		}
 	}
 
 	@Override
 	public int getHealth() {
-		return this.health;
+		return this.currentHealth;
 	}
 
 	@Override
 	public void setHealth(int health) {
-		this.health = health;
+		this.currentHealth = health;
 	}
 
 	@Override
 	public int getSpeed() {
-		return this.speed;
+		return this.speed + this.weapon.getSpeed();
 	}
 
 	@Override
@@ -117,7 +123,7 @@ public abstract class AbstractCharacter implements Character{
 
 	@Override
 	public int getDefence() {
-		return this.defence;
+		return this.defence + this.weapon.getDefence();
 	}
 
 	@Override
