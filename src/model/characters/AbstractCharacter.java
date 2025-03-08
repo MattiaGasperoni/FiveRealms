@@ -1,5 +1,7 @@
 package model.characters;
 
+import java.util.Random;
+
 import model.equipment.potions.Potion;
 import model.equipment.weapons.Weapon;
 import model.point.Point;
@@ -16,6 +18,7 @@ public abstract class AbstractCharacter implements Character{
 	private Weapon weapon;
 	private Potion potion;
 	private Point position; 
+	protected static final Random rand = new Random();
 	
 	public AbstractCharacter(int health, int speed, int power, int defence) {
 		this.maxHealth = health;
@@ -26,12 +29,16 @@ public abstract class AbstractCharacter implements Character{
 		this.experience = 0;
 		this.weapon = null;
 		this.potion = null;
+		this.position = new Point(0,0);
 	}
 
 	@Override
 	public void moveTo(Point point) {
 		// TODO Auto-generated method stub
-		
+	}
+	
+	public void setPosition(Point point) {
+		this.position = point;
 	}
 
 	@Override
