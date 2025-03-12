@@ -32,6 +32,7 @@ public abstract class AbstractCharacter implements Character{
 		this.potion = null;
 		this.position = startingPosition;
 		this.isAllied = false;
+		this.image = image;
 	}
 	
 	@Override
