@@ -123,7 +123,7 @@ public class Game
         for (AbstractCharacter ally : allies) 
 		{
 			// Da fare metodo per capire se un personaggio e' ancora giocabile
-            if (ally.isPlayable()) 
+            if (ally.isAlive()) 
 			{
                 updatedAllies.add(ally);
             }

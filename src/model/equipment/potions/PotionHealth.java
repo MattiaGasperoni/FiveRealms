@@ -1,15 +1,8 @@
 package model.equipment.potions;
 
-public class PotionHealth extends AbstractPotion{
+public class PotionHealth extends AbstractPotion {
 
-	public PotionHealth() {
-		super(50);
-	}
-
-	@Override
-	public int getHealtIncreased() {
-		return super.getHealtIncreased();
-	}
-
-	
+    public PotionHealth() {
+        super(50, 0, 0, 0); 
+    }
 }

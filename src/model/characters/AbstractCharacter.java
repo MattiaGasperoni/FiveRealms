@@ -3,9 +3,12 @@ package model.characters;
 import java.util.Random;
 
 import model.equipment.potions.Potion;
+import model.equipment.potions.PotionDefence;
+import model.equipment.potions.PotionHealth;
+import model.equipment.potions.PotionPower;
 import model.equipment.weapons.Weapon;
 import model.point.Point;
-
+import model.equipment.potions.Potion;
 public abstract class AbstractCharacter implements Character{
 	
 	private final int EXP_LEVELUP_THRESHOLD = 1000; //placeholder value
@@ -65,7 +68,18 @@ public abstract class AbstractCharacter implements Character{
 
 	@Override
 	public void usePotion() {
-	    this.currentHealth += this.maxHealth * (potion.getHealtIncreased() / 100.0);
+		if(potion instanceof PotionHealth) {
+			this.currentHealth += this.maxHealth * (potion.getHealtIncreased() / 100.0);
+			
+		}else if(potion instanceof PotionDefence) {
+			this.defence += potion.getDefenceIncreased();
+			
+		}else if(potion instanceof PotionPower) {
+			this.power += potion.getPowerIncreased();
+			
+		}else {
+			this.speed += potion.getSpeedIncreased();
+		}
 	}
 
 	@Override

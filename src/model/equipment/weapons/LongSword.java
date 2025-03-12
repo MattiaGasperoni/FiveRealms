@@ -3,47 +3,9 @@ package model.equipment.weapons;
 public class LongSword extends AbstractWeapon{
 
 	public LongSword() {
-		super(10,10,10,10);
+		super(-3,10,8,1);
 	}
 
-	@Override
-	public int getSpeed() {
-		return super.getSpeed();
-	}
-
-	@Override
-	public void setSpeed(int speed) {
-		super.setSpeed(speed);
-	}
-
-	@Override
-	public int getPower() {
-		return super.getPower();
-	}
-
-	@Override
-	public void setPower(int power) {
-		super.setPower(power);
-	}
-
-	@Override
-	public int getDefence() {
-		return super.getDefence();
-	}
-
-	@Override
-	public void setDefence(int defence) {
-		super.setDefence(defence);
-	}
-
-	@Override
-	public int getRange() {
-		return super.getRange();
-	}
-
-	@Override
-	public void setRange(int range) {
-		super.setRange(range);
-	}
+	
 
 }
