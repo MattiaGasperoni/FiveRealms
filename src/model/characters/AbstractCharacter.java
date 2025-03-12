@@ -31,6 +31,7 @@ public abstract class AbstractCharacter implements Character{
 		this.setWeapon();
 		this.potion = null;
 		this.position = startingPosition;
+		this.isAllied = false;
 	}
 	
 	@Override
