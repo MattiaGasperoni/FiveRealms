@@ -3,7 +3,7 @@ package model.gameStatus;
 import java.util.ArrayList;
 import java.util.List;
 
-import controller.CombatManager;
+import controller.StaticCombatManager;
 import model.characters.AbstractCharacter;
 import view.LevelMap;
 
@@ -31,7 +31,7 @@ public class Level
     }
 
     //Metodo Pubblico per giocare il livello
-    public boolean playLevel(EnemyManager enemyManager, CombatManager combatManager) {
+    public boolean playLevel(EnemyManager enemyManager, StaticCombatManager combatManager) {
         
         // Spawn dei nemici
         enemyManager.spawnEnemies(this.enemiesList);

@@ -2,9 +2,9 @@ package model.characters.bosses;
 
 import model.characters.AbstractCharacter;
 
-public class MageBoss extends AbstractCharacter{
+public class WizardBoss extends AbstractCharacter{
 
-	public MageBoss() {
+	public WizardBoss() {
 		super(rand.nextInt(10,30), rand.nextInt(10,30), rand.nextInt(10,30), rand.nextInt(10,30)); //Random
 	}
 	

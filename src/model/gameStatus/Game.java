@@ -3,7 +3,7 @@ package model.gameStatus;
 import java.util.ArrayList;
 import java.util.List;
 
-import controller.CombatManager;
+import controller.StaticCombatManager;
 import model.characters.AbstractCharacter;
 import model.characters.Archer;
 import model.characters.Barbarian;
@@ -17,7 +17,7 @@ public class Game
     private List<AbstractCharacter> alliesList;
     
     private EnemyManager enemyManager;
-    private CombatManager combatManager;
+    private StaticCombatManager combatManager;
 
     private boolean tutorialCompleted;
 
@@ -26,7 +26,7 @@ public class Game
         this.levelList         = new ArrayList<>();
         this.alliesList        = new ArrayList<>();
         this.enemyManager      = new EnemyManager();
-        this.combatManager     = new CombatManager();
+        this.combatManager     = new StaticCombatManager();
         this.tutorialCompleted = false;
         initializeLevels();
         startGame();
