@@ -1,10 +1,20 @@
 package model.characters.bosses;
 
 import model.characters.AbstractCharacter;
+import model.characters.Barbarian;
+import model.point.Point;
 
-public class BarbarianBoss extends AbstractCharacter{
+public class BarbarianBoss extends Barbarian{
 
-	public BarbarianBoss() {
-		super(rand.nextInt(10,30), rand.nextInt(10,30), rand.nextInt(10,30), rand.nextInt(10,30)); //Random
+	public BarbarianBoss(Point startingPosition) {
+		super(startingPosition, "images/characters/barbarian/barbarianBoss.png"); //Random
+		this.increaseMaxHealth(0.5);
+		this.increasePower(0.3);
+		this.increaseDefence(0.2);
+		this.increaseSpeed(0.4);
+	}
+	
+	@Override
+	public void setWeapon() {
 	}
 }

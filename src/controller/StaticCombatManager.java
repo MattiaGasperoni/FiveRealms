@@ -5,7 +5,7 @@ import model.characters.Character;
 public class StaticCombatManager {
 
 	public static void fight(Character attackingCharacter, Character attackedCharacter, List<Character> alliedList, List<Character> enemyList) {
-		//TODO: account for mage AoE attack
+		//TODO: account for mage AoE attack, do exceptions/errors for stuff like attacking your own ally
 		if(isWithinAttackRange(attackingCharacter,attackedCharacter)) {
 			attackedCharacter.reduceCurrentHealth(attackingCharacter.getPower() - attackedCharacter.getDefence()); //start of combat
 			

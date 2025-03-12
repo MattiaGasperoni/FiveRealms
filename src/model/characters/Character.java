@@ -30,7 +30,7 @@ public interface Character {
 	
 	public Weapon getWeapon();
 	public void setWeapon();	
-	int getRange();
+	public int getRange();
 	
 	public boolean isAllied();
 	public void becomeHero();

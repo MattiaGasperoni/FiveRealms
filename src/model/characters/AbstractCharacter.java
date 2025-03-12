@@ -110,22 +110,23 @@ public abstract class AbstractCharacter implements Character{
 			this.increasePower(heroStatIncreasePercentage);
 			this.increaseDefence(heroStatIncreasePercentage);
 			this.increaseSpeed(heroStatIncreasePercentage);
+			//also needs to edit the image
 		}
 	}
 	
-	private void increaseMaxHealth(double percentage) {
+	protected void increaseMaxHealth(double percentage) {
 		this.maxHealth += this.maxHealth * percentage;
 	}
 	
-	private void increasePower(double percentage) {
+	protected void increasePower(double percentage) {
 		this.power += this.power * percentage;
 	}
 	
-	private void increaseDefence(double percentage) {
+	protected void increaseDefence(double percentage) {
 		this.defence += this.defence * percentage;
 	}
 	
-	private void increaseSpeed(double percentage) {
+	protected void increaseSpeed(double percentage) {
 		this.speed += this.speed * percentage;
 	}
 	
