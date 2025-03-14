@@ -1,11 +1,12 @@
 package controller;
 import java.util.List;
 
-import model.characters.AbstractCharacter;
+import model.characters.*;
+import model.characters.Character;
 
 public class StaticCombatManager {
 
-	public static void fight(AbstractCharacter attackingCharacter, AbstractCharacter attackedCharacter, List<AbstractCharacter> alliedList, List<AbstractCharacter> enemyList) {
+	public static void fight(Character attackingCharacter, Character attackedCharacter, List<Character> alliedList, List<Character> enemyList) {
 		//TODO: account for mage AoE attack, do exceptions/errors for stuff like attacking your own ally
 		if(isWithinAttackRange(attackingCharacter,attackedCharacter)) {
 			attackedCharacter.reduceCurrentHealth(attackingCharacter.getPower() - attackedCharacter.getDefence()); //start of combat
@@ -23,11 +24,11 @@ public class StaticCombatManager {
 		}
 	}
 	
-	private static boolean isWithinAttackRange(AbstractCharacter attackingCharacter, AbstractCharacter attackedCharacter) {
+	private static boolean isWithinAttackRange(Character attackingCharacter, Character attackedCharacter) {
 		return attackingCharacter.getDistanceInSquares(attackedCharacter.getPosition()) <= attackingCharacter.getRange();
 	}
 	
-	private static void removeDeadCharacterFromList(AbstractCharacter deadCharacter, List<AbstractCharacter> alliedList, List<AbstractCharacter> enemyList) {
+	private static void removeDeadCharacterFromList(Character deadCharacter, List<Character> alliedList, List<Character> enemyList) {
 		if(!deadCharacter.isAllied())
 			enemyList.remove(deadCharacter);
 		else

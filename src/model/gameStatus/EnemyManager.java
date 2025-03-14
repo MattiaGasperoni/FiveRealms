@@ -2,14 +2,14 @@ package model.gameStatus;
 
 import java.util.List;
 
-import model.characters.AbstractCharacter;
+import model.characters.Character;
 
 // Questa classe gestisce lo spawn e il despawn dei nemici nel gioco
 public class EnemyManager 
 {
     private int enemiesRemaining;
 
-    public void spawnEnemies(List<AbstractCharacter> enemies) 
+    public void spawnEnemies(List<Character> enemies) 
     {
         this.enemiesRemaining = enemies.size();
         // Logica per spawnare i nemici

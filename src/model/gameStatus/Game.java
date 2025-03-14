@@ -2,11 +2,12 @@ package model.gameStatus;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import controller.StaticCombatManager;
-import model.characters.AbstractCharacter;
-import model.characters.Archer;
-import model.characters.Barbarian;
+import model.characters.*;
+import model.characters.Character;
+import model.point.Point;
 import view.LevelMap;
 
 public class Game 
@@ -15,19 +16,19 @@ public class Game
     private static final int NUMALLIES = 3;     // Numero di personaggi giocabili per round
     
     private List<Level> levelList;              // Lista dei livelli del gioco  
-    private List<AbstractCharacter> alliesList; // Lista dei personaggi giocabili 
+    private List<Character> alliesList; // Lista dei personaggi giocabili 
     
     private EnemyManager enemyManager;  
-    private StaticCombatManager combatManager;  
 
     private boolean tutorialCompleted;           // Flag che indica se il tutorial è stato completato
-
+    private static final Random rand = new Random();
+	
+    
     public Game() 
     {
         this.levelList         = new ArrayList<>();
         this.alliesList        = new ArrayList<>();
         this.enemyManager      = new EnemyManager();
-        this.combatManager     = new StaticCombatManager();
         this.tutorialCompleted = false;
         initializeLevels();
         startGame();
@@ -38,30 +39,30 @@ public class Game
         // Inizializziamo la lista dei livelli con il tutorial e i livelli principali
 
         // Creo e aggiungo il tutorial
-        List<AbstractCharacter> tutorialEnemies = new ArrayList<>();
-        tutorialEnemies.add(new Barbarian());
-        tutorialEnemies.add(new Archer());
+        List<Character> tutorialEnemies = new ArrayList<>();
+        tutorialEnemies.add(new Barbarian(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
+        tutorialEnemies.add(new Archer(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
 
         // Creo i livelli principali 
-        List<AbstractCharacter> level1Enemies = new ArrayList<>();
-        level1Enemies.add(new Barbarian());
-        level1Enemies.add(new Archer());
+        List<Character> level1Enemies = new ArrayList<>();
+        level1Enemies.add(new Barbarian(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
+        level1Enemies.add(new Archer(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
 
-        List<AbstractCharacter> level2Enemies = new ArrayList<>();
-        level2Enemies.add(new Barbarian());
-        level2Enemies.add(new Archer());
+        List<Character> level2Enemies = new ArrayList<>();
+        level2Enemies.add(new Barbarian(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
+        level2Enemies.add(new Archer(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
 
-        List<AbstractCharacter> level3Enemies = new ArrayList<>();
-        level3Enemies.add(new Barbarian());
-        level3Enemies.add(new Archer());
+        List<Character> level3Enemies = new ArrayList<>();
+        level3Enemies.add(new Barbarian(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
+        level3Enemies.add(new Archer(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
 
-        List<AbstractCharacter> level4Enemies = new ArrayList<>();
-        level4Enemies.add(new Barbarian());
-        level4Enemies.add(new Archer());
+        List<Character> level4Enemies = new ArrayList<>();
+        level4Enemies.add(new Barbarian(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
+        level4Enemies.add(new Archer(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
 
-        List<AbstractCharacter> level5Enemies = new ArrayList<>();
-        level5Enemies.add(new Barbarian());
-        level5Enemies.add(new Archer());
+        List<Character> level5Enemies = new ArrayList<>();
+        level5Enemies.add(new Barbarian(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
+        level5Enemies.add(new Archer(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
 
         //aggiungo tutti i livelli alla lista
         this.levelList.add(new Level(new LevelMap(), tutorialEnemies, this.alliesList));
@@ -78,17 +79,19 @@ public class Game
 
     public void startGame() 
     {
-        // Da fare il controllo se hai cliccato il bottone per saltare il tutorial 
-        
+        // Da fare il controllo se hai cliccato il bottone per saltare il tutorial
+    	
+        // Menù iniziale
+    	
         if (!tutorialCompleted) 
         {
             // Gioca il tutorial
-           	this.tutorialCompleted = levelList.get(0).playLevel(enemyManager, combatManager);
+           	this.tutorialCompleted = levelList.get(0).playLevel(enemyManager);
         }
 
         for (int i = 1; i < levelList.size(); i++) 
         {
-            if(levelList.get(i).playLevel(enemyManager, combatManager))
+            if(levelList.get(i).playLevel(enemyManager))
             	checkAndReplaceDeadAllies();
         }
     }
@@ -101,7 +104,7 @@ public class Game
 		// Aggiungi nuovi alleati se necessario
 		while (this.alliesList.size() < NUMALLIES) 
 		{
-			this.alliesList.add(new Archer()); // Aggiungi un nuovo alleato scelto dall'utente
+			this.alliesList.add(new Archer(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),"")); // Aggiungi un nuovo alleato scelto dall'utente
 		}
     }
 

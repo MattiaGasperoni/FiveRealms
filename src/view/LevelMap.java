@@ -16,9 +16,11 @@ public class LevelMap {
     private JLabel levelLabel;
     private JButton nextLevelButton;
     private int currentLevel = 1;
+    
     private String[] enemyImages = {"images/barbarianBoss.png", "images/juggernautBoss.png", "images/knightBoss.png", "images/wizardBoss.png"};
     private String[] allyImages = {"images/barbarianHero.png", "images/juggernautHero.png", "images/knightHero.png", "images/mageHero.png", "images/mageHeroHealer.png"};
     private String[] backgrounds = {"images/background1.jpg", "images/background2.jpg", "images/background3.jpg", "images/background4.jpg", "images/background5.jpg"};
+
     private Random random = new Random();
 
     public LevelMap() {

@@ -5,19 +5,19 @@ import java.util.stream.Stream;
 
 
 import controller.StaticCombatManager;
-import model.characters.AbstractCharacter;
+import model.characters.Character;
 import view.LevelMap;
 
 public class Level 
 {
     private final LevelMap LevelMap;              // Mappa del livello
-    private List<AbstractCharacter> enemiesList;  // Lista dei nemici del livello
-    private List<AbstractCharacter> alliesList;   // Lista dei personaggi giocabili
+    private List<Character> enemiesList;  // Lista dei nemici del livello
+    private List<Character> alliesList;   // Lista dei personaggi giocabili
     private boolean doorIsOpen;                   // Flag che indica se la porta per il prossimo livello è aperta
 
     private int initialAlliesCount;              // Numero di alleati a inizio livello
 
-    public Level(LevelMap map, List<AbstractCharacter> enemies, List<AbstractCharacter> allies) 
+    public Level(LevelMap map, List<Character> enemies, List<Character> allies) 
     {
         this.LevelMap     = map;
         this.enemiesList  = enemies;
@@ -26,11 +26,11 @@ public class Level
         this.initialAlliesCount = allies.size();
     }
 
-    public List<AbstractCharacter> getEnemies() {
+    public List<Character> getEnemies() {
         return this.enemiesList;
     }
 
-    public List<AbstractCharacter> getAllies() {
+    public List<Character> getAllies() {
         return this.alliesList;
     }
 
@@ -43,7 +43,7 @@ public class Level
     }
 
     //Metodo Pubblico per giocare il livello, restituisce true se il livello è stato completato, false altrimenti
-    public boolean playLevel(EnemyManager enemyManager, StaticCombatManager combatManager) 
+    public boolean playLevel(EnemyManager enemyManager) 
     {
         // Spawn dei nemici
         enemyManager.spawnEnemies(this.enemiesList);
@@ -57,13 +57,13 @@ public class Level
             // INIZIO FASE DI ATTACCO
 
             // Otteniamo l'ordine di attacco dei personaggi
-            PriorityQueue<AbstractCharacter> attackTurnOrder = this.getTurnOrder(this.alliesList, this.enemiesList);
+            PriorityQueue<Character> attackTurnOrder = this.getTurnOrder(this.alliesList, this.enemiesList);
 
             // Fase di attacco, continua finche la coda del turno non è vuota
             while (!attackTurnOrder.isEmpty()) 
             {
                 // Estrai il personaggio più veloce e lo rimuove dalla coda
-                AbstractCharacter attacker = attackTurnOrder.poll(); 
+                Character attacker = attackTurnOrder.poll(); 
                 
                 // Se è morto, salta il turno e passa al prossimo
                 if (!attacker.isAlive()) continue; 
@@ -75,7 +75,7 @@ public class Level
                 attackTurnOrder = new PriorityQueue<>(attackTurnOrder.comparator());
                 attackTurnOrder.addAll(
                     Stream.concat(alliesList.stream(), enemiesList.stream())
-                          .filter(AbstractCharacter::isAlive)
+                          .filter(Character::isAlive)
                           .toList()
                 );
             }
@@ -100,15 +100,15 @@ public class Level
         return true;
     }
 
-    private void spawnAllies(List<AbstractCharacter> alliesList) 
+    private void spawnAllies(List<Character> alliesList) 
     {
         // Metodo per lo spawn degli alleati
     }
 
     // Metodo per verificare l'ordine di attacco dei personaggi in un turno
-    private PriorityQueue<AbstractCharacter> getTurnOrder(List<AbstractCharacter> allies, List<AbstractCharacter> enemies) 
+    private PriorityQueue<Character> getTurnOrder(List<Character> allies, List<Character> enemies) 
     {
-        PriorityQueue<AbstractCharacter> queue = new PriorityQueue<>((a, b) -> Integer.compare(b.getSpeed(), a.getSpeed()));
+        PriorityQueue<Character> queue = new PriorityQueue<>((a, b) -> Integer.compare(b.getSpeed(), a.getSpeed()));
     
         queue.addAll(allies);
         queue.addAll(enemies);
