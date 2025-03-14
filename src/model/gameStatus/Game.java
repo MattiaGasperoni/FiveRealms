@@ -11,15 +11,16 @@ import view.LevelMap;
 
 public class Game 
 {   
-    private static final int NUMLEVELS = 5;
-    private static final int NUMALLIES = 3;
-    private List<Level> levelList;    
-    private List<AbstractCharacter> alliesList;
+    private static final int NUMLEVELS = 5;     // Numero di livelli del gioco
+    private static final int NUMALLIES = 3;     // Numero di personaggi giocabili per round
     
-    private EnemyManager enemyManager;
-    private StaticCombatManager combatManager;
+    private List<Level> levelList;              // Lista dei livelli del gioco  
+    private List<AbstractCharacter> alliesList; // Lista dei personaggi giocabili 
+    
+    private EnemyManager enemyManager;  
+    private StaticCombatManager combatManager;  
 
-    private boolean tutorialCompleted;
+    private boolean tutorialCompleted;           // Flag che indica se il tutorial è stato completato
 
     public Game() 
     {

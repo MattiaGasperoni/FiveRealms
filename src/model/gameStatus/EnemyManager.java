@@ -4,7 +4,9 @@ import java.util.List;
 
 import model.characters.AbstractCharacter;
 
-public class EnemyManager {
+// Questa classe gestisce lo spawn e il despawn dei nemici nel gioco
+public class EnemyManager 
+{
     private int enemiesRemaining;
 
     public void spawnEnemies(List<AbstractCharacter> enemies) 
@@ -13,18 +15,22 @@ public class EnemyManager {
         // Logica per spawnare i nemici
     }
 
-    public void despawnEnemies() {
+    public void despawnEnemies() 
+    {
         this.enemiesRemaining = 0;
         // Logica per despawnare i nemici
     }
 
-    public boolean allEnemiesDefeated() {
-        return enemiesRemaining == 0;
+    public boolean allEnemiesDefeated() 
+    {
+        return this.enemiesRemaining == 0;
     }
 
-    public void enemyDefeated() {
-        if (enemiesRemaining > 0) {
-            enemiesRemaining--;
+    public void enemyDefeated() 
+    {
+        if (this.enemiesRemaining > 0) 
+        {
+            this.enemiesRemaining--;
         }
     }
 }
