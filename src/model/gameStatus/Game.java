@@ -8,6 +8,7 @@ import controller.StaticCombatManager;
 import model.characters.*;
 import model.characters.Character;
 import model.point.Point;
+import view.GraphicsMenu;
 import view.LevelMap;
 
 public class Game 
@@ -16,7 +17,7 @@ public class Game
     private static final int NUMALLIES = 3;     // Numero di personaggi giocabili per round
     
     private List<Level> levelList;              // Lista dei livelli del gioco  
-    private List<Character> alliesList; // Lista dei personaggi giocabili 
+    private List<Character> alliesList; 		// Lista dei personaggi giocabili 
     
     private EnemyManager enemyManager;  
 
@@ -77,24 +78,28 @@ public class Game
         return this.levelList;
     }
 
-    public void startGame() 
-    {
+    public void startGame() {
         // Da fare il controllo se hai cliccato il bottone per saltare il tutorial
-    	
+        
         // Menù iniziale
-    	
-        if (!tutorialCompleted) 
-        {
+        //GraphicsMenu.startMenu();
+        
+        if (!tutorialCompleted) {
             // Gioca il tutorial
-           	this.tutorialCompleted = levelList.get(0).playLevel(enemyManager);
+            this.tutorialCompleted = levelList.get(0).playLevel(enemyManager);
         }
 
-        for (int i = 1; i < levelList.size(); i++) 
-        {
-            if(levelList.get(i).playLevel(enemyManager))
-            	checkAndReplaceDeadAllies();
+        for (int i = 1; i < levelList.size(); i++) {
+            // Verifica se il livello è stato completato, altrimenti esce dal ciclo
+            boolean levelCompleted = levelList.get(i).playLevel(enemyManager);
+            if (!levelCompleted) {
+                System.out.println("Il livello non è stato completato, uscita dal ciclo.");
+                break;  // Esce dal ciclo se il livello non è completato
+            }
+            checkAndReplaceDeadAllies();
         }
     }
+
 
     private void checkAndReplaceDeadAllies() 
     {

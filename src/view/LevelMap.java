@@ -16,10 +16,11 @@ public class LevelMap {
     private JLabel levelLabel;
     private JButton nextLevelButton;
     private int currentLevel = 1;
+    // Due liste: nemici/alleati
     
-    private String[] enemyImages = {"images/barbarianBoss.png", "images/juggernautBoss.png", "images/knightBoss.png", "images/wizardBoss.png"};
-    private String[] allyImages = {"images/barbarianHero.png", "images/juggernautHero.png", "images/knightHero.png", "images/mageHero.png", "images/mageHeroHealer.png"};
-    private String[] backgrounds = {"images/background1.jpg", "images/background2.jpg", "images/background3.jpg", "images/background4.jpg", "images/background5.jpg"};
+    private String[] enemyImages = {"images/Character/Barbarian/barbarianBoss.png", "images/Character/Juggernaut/juggernautBoss.png", "images/Character/Knight/knightBoss.png", "images/Character/Wizard/wizardBoss.png"};
+    private String[] allyImages = {"images/CharacterbarbarianHero.png", "images/CharacterjuggernautHero.png", "images/CharacterknightHero.png", "images/CharactermageHero.png", "images/CharactermageHeroHealer.png"};
+    private String[] backgrounds = {"images/Background/background1.jpg", "images/Background/background2.jpg", "images/Background/background3.jpg", "images/Background/background4.jpg", "images/Background/background5.jpg"};
 
     private Random random = new Random();
 
