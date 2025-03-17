@@ -6,8 +6,6 @@ import model.point.Point;
 public abstract class AbstractCharacter implements Character{
 	//TODO: implement exceptions/error messages
 	public static final int EXP_LEVELUP_THRESHOLD = 1000; //threshold at which you level up each time. placeholder value
-	//private final double LEVELUP_STAT_PERCENTUAL_INCREASE = 0.10; //by what percentage of the stat do you increase each stat when you levelup? placeholder value, 10% as is
-	//those maybe don't need to be constants since they're only used within one method each?
 	private int maxHealth;
 	private int currentHealth;
 	private int speed;
@@ -51,7 +49,7 @@ public abstract class AbstractCharacter implements Character{
 
 	@Override
 	public void usePotion() {
-		if (this.potion != null) {
+		if (this.hasPotion()) {
 			if(this.potion instanceof PotionHealth) {
 				this.increaseCurrentHealth(this.potion.getPotionValue());
 				
@@ -80,7 +78,7 @@ public abstract class AbstractCharacter implements Character{
 	@Override
 	public void gainExperience(int value) {		
 		this.experience += value;
-		while(this.experience >= AbstractCharacter.EXP_LEVELUP_THRESHOLD) { //why While instead of if? this way, you can immediatly give, say, 5 thresholds worth of exp to an enemy and he levels up to 5 immediatly
+		while(this.experience >= AbstractCharacter.EXP_LEVELUP_THRESHOLD) { //why While instead of if? this way, you can immediatly give, say, 5 thresholds worth of exp to a character and he levels up to 5 immediatly
 			this.levelUp();
 			this.experience -= AbstractCharacter.EXP_LEVELUP_THRESHOLD;
 		}
@@ -112,7 +110,7 @@ public abstract class AbstractCharacter implements Character{
 			this.increasePower(heroStatIncreasePercentage);
 			this.increaseDefence(heroStatIncreasePercentage);
 			this.increaseSpeed(heroStatIncreasePercentage);
-			//also needs to edit the image
+			this.image = "images/characters/" + getClass().getSimpleName().toLowerCase() + "/" + getClass().getSimpleName().toLowerCase() + "Hero.png"; //not sure this is correct, needs testing
 		}
 	}
 	
@@ -132,12 +130,12 @@ public abstract class AbstractCharacter implements Character{
 		this.speed += this.speed * percentage;
 	}
 	
-	//needs checks for class instance (or using subclasses to do that, depends)
-	//needs a lot more than that even
 	@Override
 	public abstract void spawnWeapon();
 	
-	//need swapWeapon
+	//the implementation is ugly but I see no better way to do it
+	@Override
+	public abstract void swapWeapon();
 	
 	protected void setWeapon(Weapon weapon) {
 		this.weapon = weapon;
@@ -189,13 +187,18 @@ public abstract class AbstractCharacter implements Character{
 	}
 	
 	@Override
-	public String getImage() {
-		return image;
-	}
-
-	@Override
 	public Potion getPotion() {
 		return this.potion;
+	}
+	
+	@Override
+	public boolean hasPotion() {
+		return this.potion != null;
+	}
+	
+	@Override
+	public String getImage() {
+		return image;
 	}
 
 	@Override
@@ -207,5 +210,4 @@ public abstract class AbstractCharacter implements Character{
 	public boolean isAlive() {
 		return this.currentHealth > 0;
 	}
-
 }

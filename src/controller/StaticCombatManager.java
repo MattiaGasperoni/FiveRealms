@@ -11,7 +11,7 @@ public class StaticCombatManager {
 		if(isWithinAttackRange(attackingCharacter,attackedCharacter)) {
 			attackedCharacter.reduceCurrentHealth(attackingCharacter.getPower() - attackedCharacter.getDefence()); //start of combat
 			
-			if(attackedCharacter.isAlive() && isWithinAttackRange(attackedCharacter,attackingCharacter)) //if attacked character is still alive, it counterattacks
+			if(attackedCharacter.isAlive() && isWithinAttackRange(attackedCharacter,attackingCharacter)) //if attacked character is still alive and his weapon can reach you, it counterattacks
 				attackingCharacter.reduceCurrentHealth(attackedCharacter.getPower() - attackingCharacter.getDefence());
 			
 			if(!attackedCharacter.isAlive()) {

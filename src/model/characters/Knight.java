@@ -18,4 +18,12 @@ public class Knight extends AbstractCharacter{
 			this.setWeapon(new LongSword());
 		}
 	}
+	
+	@Override
+	public void swapWeapon() {
+		if(this.getWeapon() instanceof Spear)
+			this.setWeapon(new LongSword());
+		else
+			this.setWeapon(new Spear());
+	}
 }

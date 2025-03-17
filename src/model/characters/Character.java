@@ -18,6 +18,7 @@ public interface Character {
 	
 	public void usePotion();
 	public Potion getPotion();
+	boolean hasPotion();
 		
 	public int getExperience();
 	public void gainExperience(int value);
@@ -30,6 +31,7 @@ public interface Character {
 	
 	public Weapon getWeapon();
 	public void spawnWeapon();	
+	void swapWeapon();
 	public int getRange();
 	
 	public boolean isAllied();

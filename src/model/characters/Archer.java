@@ -18,4 +18,12 @@ public class Archer extends AbstractCharacter{
 			this.setWeapon(new LongBow());
 		}
 	}
+	
+	@Override
+	public void swapWeapon() {
+		if(this.getWeapon() instanceof ShortBow)
+			this.setWeapon(new LongBow());
+		else
+			this.setWeapon(new ShortBow());
+	}
 }

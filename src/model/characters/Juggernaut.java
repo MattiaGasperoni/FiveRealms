@@ -18,4 +18,12 @@ public class Juggernaut extends AbstractCharacter{
 			this.setWeapon(new Axe());
 		}
 	}
+	
+	@Override
+	public void swapWeapon() {
+		if(this.getWeapon() instanceof ShortSword)
+			this.setWeapon(new Axe());
+		else
+			this.setWeapon(new ShortSword());
+	}
 }

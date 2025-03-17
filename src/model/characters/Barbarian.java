@@ -18,4 +18,12 @@ public class Barbarian extends AbstractCharacter{
 			this.setWeapon(new LongSword());
 		}
 	}
+
+	@Override
+	public void swapWeapon() {
+		if(this.getWeapon() instanceof Axe)
+			this.setWeapon(new LongSword());
+		else
+			this.setWeapon(new Axe());
+	}
 }
