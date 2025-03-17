@@ -13,7 +13,7 @@ public class Level
     private final LevelMap LevelMap;              // Mappa del livello
     private List<Character> enemiesList;  // Lista dei nemici del livello
     private List<Character> alliesList;   // Lista dei personaggi giocabili
-    private boolean doorIsOpen;                   // Flag che indica se la porta per il prossimo livello è aperta
+    private boolean isDoorOpen;                   // Flag che indica se la porta per il prossimo livello è aperta
 
     private int initialAlliesCount;              // Numero di alleati a inizio livello
 
@@ -22,7 +22,7 @@ public class Level
         this.LevelMap     = map;
         this.enemiesList  = enemies;
         this.alliesList   = allies;
-        this.doorIsOpen   = false;
+        this.isDoorOpen   = false;
         this.initialAlliesCount = allies.size();
     }
 
@@ -34,35 +34,27 @@ public class Level
         return this.alliesList;
     }
 
-    public boolean isDoorOpen() {
-        return this.doorIsOpen;
-    }
-
-    public int getAlliesDeathCount() {
-        return this.initialAlliesCount - this.alliesList.size();
-    }
-
     //Metodo Pubblico per giocare il livello, restituisce true se il livello è stato completato, false altrimenti
-    public boolean playLevel(EnemyManager enemyManager) 
+    public boolean playLevel() 
     {
-        // Spawn dei nemici
-        enemyManager.spawnEnemies(this.enemiesList);
+        // Metodo grafico per lo spawn dei nemici
+        GraphicsMenu.spawnEnemies();
+        
+        // Metodo grafico per lo spawn degli alleati
+        GraphicsMenu.spawnAllies();
 
-        // Metodo per lo spawn degli alleati
-        this.spawnAllies(this.alliesList);
-
-        // Il livello continua finche non apri la porta per il prossimo livello(sconfiggi tutti i nemici) o muoiono tutti e tre i tuoi personaggi 
-        while (!this.doorIsOpen || getAlliesDeathCount() < 3) 
+        // Il livello continua finche non muoiono tutti e tre i tuoi personaggi 
+        while (this.alliesList.isEmpty()) 
         {
             // INIZIO FASE DI ATTACCO
 
-            // Otteniamo l'ordine di attacco dei personaggi
+            // Otteniamo l'ordine di attacco dei personaggi per questo turno
             PriorityQueue<Character> attackTurnOrder = this.getTurnOrder(this.alliesList, this.enemiesList);
 
-            // Fase di attacco, continua finche la coda del turno non è vuota
+            // La fase di attacco, continua finche la coda del turno non è vuota
             while (!attackTurnOrder.isEmpty()) 
             {
-                // Estrai il personaggio più veloce e lo rimuove dalla coda
+                // Estrai il personaggio più veloce e lo rimuove dalla coda essedo il primo che attacca
                 Character attacker = attackTurnOrder.poll(); 
                 
                 // Se è morto, salta il turno e passa al prossimo
@@ -83,26 +75,22 @@ public class Level
             // FINE FASE DI ATTACCO
 
             // Controlla se tutti gli alleati sono morti
-            if (getAlliesDeathCount() == 3)
+            if (this.alliesList.isEmpty())
             {
                 System.out.println("Tutti i tuoi personaggi sono morti. Game Over.");
                 return false;
             }
 
             // Controlla se tutti i nemici sono stati sconfitti
-            if (enemyManager.allEnemiesDefeated()) 
+            if (this.enemiesList.isEmpty()) 
             {
                 // Attiva la porta per il prossimo livello
-                this.doorIsOpen = true;
+                this.isDoorOpen = true;
                 System.out.println("Hai sconfitto tutti i nemici. La porta per il prossimo livello e' aperta.");
+                GraphicsMenu.nextLevelDoorMenu();
             }
         }
         return true;
-    }
-
-    private void spawnAllies(List<Character> alliesList) 
-    {
-        // Metodo per lo spawn degli alleati
     }
 
     // Metodo per verificare l'ordine di attacco dei personaggi in un turno
@@ -115,6 +103,4 @@ public class Level
     
         return queue;
     }
-    
-
 }

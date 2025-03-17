@@ -13,38 +13,37 @@ import view.LevelMap;
 
 public class Game 
 {   
-    private static final int NUMLEVELS = 5;     // Numero di livelli del gioco
-    private static final int NUMALLIES = 3;     // Numero di personaggi giocabili per round
+    private static final int NUM_LEVELS = 5;      // Numero di livelli del gioco
+    private static final int NUM_ALLIES = 3;      // Numero di personaggi giocabili per round
     
-    private List<Level> levelList;              // Lista dei livelli del gioco  
-    private List<Character> alliesList; 		// Lista dei personaggi giocabili 
+    private List<Level> levels;                   // Lista dei livelli del gioco  
+    private List<Character> allAllies;            // Lista di tutti i personaggi giocabili
+    private List<Character> selectedAllies;       // Lista dei personaggi con cui l'utente giocherà il livello
     
-    private EnemyManager enemyManager;  
-
-    private boolean tutorialCompleted;           // Flag che indica se il tutorial è stato completato
     private static final Random rand = new Random();
 	
     
     public Game() 
     {
-        this.levelList         = new ArrayList<>();
-        this.alliesList        = new ArrayList<>();
-        this.enemyManager      = new EnemyManager();
-        this.tutorialCompleted = false;
+        this.levels              = new ArrayList<>();
+        this.allAllies           = new ArrayList<>();
+        this.selectedAllies      = new ArrayList<>();
         initializeLevels();
         startGame();
     }
 
     private void initializeLevels() 
     {
-        // Inizializziamo la lista dei livelli con il tutorial e i livelli principali
+        // Popolo la lista di personaggi giocabili
+        this.allAllies.add(new Barbarian(new Point(0,0),""));
+        this.allAllies.add(new Archer(new Point(0,0),""));
 
-        // Creo e aggiungo il tutorial
+        // Popolo le liste di nemici del tutorial
         List<Character> tutorialEnemies = new ArrayList<>();
         tutorialEnemies.add(new Barbarian(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
         tutorialEnemies.add(new Archer(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
 
-        // Creo i livelli principali 
+        // Popolo le liste di nemici dei livelli principali 
         List<Character> level1Enemies = new ArrayList<>();
         level1Enemies.add(new Barbarian(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
         level1Enemies.add(new Archer(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
@@ -65,55 +64,62 @@ public class Game
         level5Enemies.add(new Barbarian(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
         level5Enemies.add(new Archer(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
 
-        //aggiungo tutti i livelli alla lista
-        this.levelList.add(new Level(new LevelMap(), tutorialEnemies, this.alliesList));
-        this.levelList.add(new Level(new LevelMap(), level1Enemies, this.alliesList));
-        this.levelList.add(new Level(new LevelMap(), level2Enemies, this.alliesList));
-        this.levelList.add(new Level(new LevelMap(), level3Enemies, this.alliesList));
-        this.levelList.add(new Level(new LevelMap(), level4Enemies, this.alliesList));
-        this.levelList.add(new Level(new LevelMap(), level5Enemies, this.alliesList));
+        // Agggiungo tutti i livelli e il tutorial alla lista dei livelli
+        this.levels.add(new Level(new LevelMap(), tutorialEnemies, this.selectedAllies));
+        this.levels.add(new Level(new LevelMap(), level1Enemies, this.selectedAllies));
+        this.levels.add(new Level(new LevelMap(), level2Enemies, this.selectedAllies));
+        this.levels.add(new Level(new LevelMap(), level3Enemies, this.selectedAllies));
+        this.levels.add(new Level(new LevelMap(), level4Enemies, this.selectedAllies));
+        this.levels.add(new Level(new LevelMap(), level5Enemies, this.selectedAllies));
     }
 
-    public List<Level> getLevelList() {
-        return this.levelList;
-    }
-
-    public void startGame() {
-        // Da fare il controllo se hai cliccato il bottone per saltare il tutorial
-        
+    public void startGame() 
+    {       
         // Menù iniziale
-        //GraphicsMenu.startMenu();
-        
-        if (!tutorialCompleted) {
-            // Gioca il tutorial
-            this.tutorialCompleted = levelList.get(0).playLevel(enemyManager);
+   
+        // Seleziona se caricare una partita esistente o iniziarne una nuova
+        if(GraphicsMenu.startMenu()) 
+        {
+            // Carica il gioco
         }
+        else
+        {
+            // Nuovo gioco
 
-        for (int i = 1; i < levelList.size(); i++) {
-            // Verifica se il livello è stato completato, altrimenti esce dal ciclo
-            boolean levelCompleted = levelList.get(i).playLevel(enemyManager);
-            if (!levelCompleted) {
-                System.out.println("Il livello non è stato completato, uscita dal ciclo.");
-                break;  // Esce dal ciclo se il livello non è completato
+            // Scelta dei personaggi con cui l'utente vuole giocare
+            GraphicsMenu.chooseCharactersMenu();
+            this.selectedAllies = GraphicsMenu.selectedAllies(this.allAllies, NUM_ALLIES);
+
+            // Scegli se giocare il tutorial o saltarlo
+            if(GraphicsMenu.tutorialMenu()) 
+            {
+                // Gioca il tutorial
+                this.levels.get(0).playLevel();
             }
-            checkAndReplaceDeadAllies();
+
+            GraphicsMenu.startGameMenu();
+            // Gioca i livelli principali
+            for (int i = 1; i <= Game.NUM_LEVELS; i++) 
+            {
+                // Gioca il livello
+                boolean levelCompleted = levels.get(i).playLevel();
+
+                // Verifica se il livello è stato completato, altrimenti esce dal ciclo
+                if (!levelCompleted) 
+                {
+                    System.out.println("Il livello non è stato completato, uscita dal ciclo.");
+                    break;
+                }
+
+                checkAndReplaceDeadAllies();
+                System.out.println("Passaggio al livello " + (i + 1));
+            } 
         }
     }
 
-
+    // Metodo per sostituire gli alleati morti con nuovi alleati scelti dall'utente
     private void checkAndReplaceDeadAllies() 
     {
-		// Rimuovi alleati morti
-		this.alliesList.removeIf(ally -> !ally.isAlive());
-		
-		// Aggiungi nuovi alleati se necessario
-		while (this.alliesList.size() < NUMALLIES) 
-		{
-			this.alliesList.add(new Archer(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),"")); // Aggiungi un nuovo alleato scelto dall'utente
-		}
-    }
-
-    public void skipTutorial() {
-        this.tutorialCompleted = true;
+        GraphicsMenu.replaceDeadAlliesMenu();
     }
 }
