@@ -16,10 +16,12 @@ public class StaticCombatManager {
 			
 			if(!attackedCharacter.isAlive()) {
 				removeDeadCharacterFromList(attackedCharacter,alliedList,enemyList);
+				attackingCharacter.gainExperience(500);
 			}
 				
 			if(!attackingCharacter.isAlive()) {
 				removeDeadCharacterFromList(attackingCharacter,alliedList,enemyList);
+				attackedCharacter.gainExperience(500);
 			}
 		}
 	}

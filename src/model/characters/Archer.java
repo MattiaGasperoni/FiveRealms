@@ -1,5 +1,7 @@
 package model.characters;
 
+import model.equipment.weapons.LongBow;
+import model.equipment.weapons.ShortBow;
 import model.point.Point;
 
 public class Archer extends AbstractCharacter{
@@ -9,6 +11,11 @@ public class Archer extends AbstractCharacter{
 	}
 
 	@Override
-	public void setWeapon() {
+	public void spawnWeapon() {
+		if(rand.nextInt(0,2) == 0) {
+			this.setWeapon(new ShortBow());
+		} else {
+			this.setWeapon(new LongBow());
+		}
 	}
 }

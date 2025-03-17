@@ -1,6 +1,4 @@
 package model.characters.bosses;
-
-import model.characters.AbstractCharacter;
 import model.characters.Wizard;
 import model.point.Point;
 
@@ -13,9 +11,4 @@ public class WizardBoss extends Wizard{
 		this.increaseDefence(0.3);
 		this.increaseSpeed(0.2);
 	}
-
-	@Override
-	public void setWeapon() {
-	}
-	
 }

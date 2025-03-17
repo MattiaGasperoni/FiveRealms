@@ -28,7 +28,7 @@ public abstract class AbstractCharacter implements Character{
 		this.power = power;
 		this.defence = defence;
 		this.experience = 0;
-		this.setWeapon();
+		this.spawnWeapon();
 		this.potion = null;
 		this.position = startingPosition;
 		this.isAllied = false;
@@ -51,17 +51,19 @@ public abstract class AbstractCharacter implements Character{
 
 	@Override
 	public void usePotion() {
-		if(potion instanceof PotionHealth) {
-			this.increaseCurrentHealth(potion.getPotionValue());
-			
-		}else if(potion instanceof PotionDefence) {
-			this.increaseDefence(potion.getPotionValue());
-			
-		}else if(potion instanceof PotionPower) {
-			this.increasePower(potion.getPotionValue());
-			
-		}else if(potion instanceof PotionSpeed){
-			this.increaseSpeed(potion.getPotionValue());
+		if (this.potion != null) {
+			if(this.potion instanceof PotionHealth) {
+				this.increaseCurrentHealth(this.potion.getPotionValue());
+				
+			}else if(potion instanceof PotionDefence) {
+				this.increaseDefence(this.potion.getPotionValue());
+				
+			}else if(potion instanceof PotionPower) {
+				this.increasePower(this.potion.getPotionValue());
+				
+			}else if(potion instanceof PotionSpeed){
+				this.increaseSpeed(this.potion.getPotionValue());
+			}
 		}
 	}
 
@@ -133,7 +135,13 @@ public abstract class AbstractCharacter implements Character{
 	//needs checks for class instance (or using subclasses to do that, depends)
 	//needs a lot more than that even
 	@Override
-	public abstract void setWeapon();
+	public abstract void spawnWeapon();
+	
+	//need swapWeapon
+	
+	protected void setWeapon(Weapon weapon) {
+		this.weapon = weapon;
+	}
 	
 	@Override
 	public Point getPosition() {

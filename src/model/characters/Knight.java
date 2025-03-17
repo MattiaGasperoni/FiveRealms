@@ -1,5 +1,7 @@
 package model.characters;
 
+import model.equipment.weapons.LongSword;
+import model.equipment.weapons.Spear;
 import model.point.Point;
 
 public class Knight extends AbstractCharacter{
@@ -9,6 +11,11 @@ public class Knight extends AbstractCharacter{
 	}
 	
 	@Override
-	public void setWeapon() {
+	public void spawnWeapon() {
+		if(rand.nextInt(0,2) == 0) {
+			this.setWeapon(new Spear());
+		} else {
+			this.setWeapon(new LongSword());
+		}
 	}
 }

@@ -1,6 +1,4 @@
 package model.characters.bosses;
-
-import model.characters.AbstractCharacter;
 import model.characters.Juggernaut;
 import model.point.Point;
 
@@ -12,9 +10,5 @@ public class JuggernautBoss extends Juggernaut{
 		this.increasePower(0.3);
 		this.increaseDefence(0.5);
 		this.increaseSpeed(0.2);
-	}
-	
-	@Override
-	public void setWeapon() {
 	}
 }

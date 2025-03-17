@@ -1,5 +1,6 @@
 package model.characters;
-
+import model.equipment.weapons.SingleShotWand;
+import model.equipment.weapons.ZoneShotWand;
 import model.point.Point;
 
 public class Wizard extends AbstractCharacter{
@@ -9,6 +10,11 @@ public class Wizard extends AbstractCharacter{
 	}
 	
 	@Override
-	public void setWeapon() {
+	public void spawnWeapon() {
+		if(rand.nextInt(0,2) == 0) {
+			this.setWeapon(new SingleShotWand());
+		} else {
+			this.setWeapon(new ZoneShotWand());
+		}
 	}
 }

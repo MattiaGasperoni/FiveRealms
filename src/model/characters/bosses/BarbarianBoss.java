@@ -1,6 +1,4 @@
 package model.characters.bosses;
-
-import model.characters.AbstractCharacter;
 import model.characters.Barbarian;
 import model.point.Point;
 
@@ -12,9 +10,5 @@ public class BarbarianBoss extends Barbarian{
 		this.increasePower(0.3);
 		this.increaseDefence(0.2);
 		this.increaseSpeed(0.4);
-	}
-	
-	@Override
-	public void setWeapon() {
 	}
 }

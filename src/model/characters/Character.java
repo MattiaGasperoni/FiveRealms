@@ -29,7 +29,7 @@ public interface Character {
 	public int getDefence();
 	
 	public Weapon getWeapon();
-	public void setWeapon();	
+	public void spawnWeapon();	
 	public int getRange();
 	
 	public boolean isAllied();
