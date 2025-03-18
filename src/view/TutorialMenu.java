@@ -3,46 +3,48 @@ package view;
 import javax.swing.*;
 import java.awt.*;
 
-public class TutorialMenu extends JFrame {
+public class TutorialMenu {
 
-    public TutorialMenu() {
-        // Imposta il frame come JFrame (la finestra principale)
-        setTitle("Tutorial Menu");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 800);
-        setLocationRelativeTo(null);
-        setResizable(true);
+    public static void startTutorialMenu() {
+        JFrame frame = new JFrame("Tutorial Menu");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(800, 800);
+        frame.setLocationRelativeTo(null);
+        frame.setResizable(true);
 
-        // Set background and layout
         JLabel backgroundLabel = new JLabel(new ImageIcon("images/Background/background4.jpg"));
         backgroundLabel.setLayout(new GridBagLayout());
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
 
-        // Etichetta informativa centrata in alto
         JLabel infoLabel = new JLabel("Play tutorial easy level?", SwingConstants.CENTER);
         infoLabel.setFont(new Font("Arial", Font.BOLD, 20));
         infoLabel.setForeground(Color.WHITE);
-        gbc.gridy = 0; // Posiziona l'etichetta in alto
+        gbc.gridy = 0;
         backgroundLabel.add(infoLabel, gbc);
 
-        // Pulsanti
-        JButton YesButton = createButton("Yes", e -> System.out.println("Yes"));
-        JButton NoButton = createButton("No", e -> System.out.println("No"));
+        JButton yesButton = createButton("Yes", e -> {
+            System.out.println("Yes");
+            frame.dispose();
+        });
+        
+        JButton noButton = createButton("No", e -> {
+            System.out.println("No");
+            frame.dispose();
+        });
+        
         JButton exitButton = createButton("Exit", e -> System.exit(0));
 
-        // Posizione dei pulsanti
         gbc.gridy = 1;
-        backgroundLabel.add(YesButton, gbc);
+        backgroundLabel.add(yesButton, gbc);
         gbc.gridy = 2;
-        backgroundLabel.add(NoButton, gbc);
+        backgroundLabel.add(noButton, gbc);
         gbc.gridy = 3;
         backgroundLabel.add(exitButton, gbc);
 
-        // Aggiungi il backgroundLabel alla finestra (this è la finestra corrente)
-        add(backgroundLabel);
-        setVisible(true); // Rende visibile la finestra
+        frame.add(backgroundLabel);
+        frame.setVisible(true);
     }
 
     private static JButton createButton(String text, java.awt.event.ActionListener action) {
@@ -58,7 +60,6 @@ public class TutorialMenu extends JFrame {
     }
 
     public static void main(String[] args) {
-        // Avvia il menu tutorial
-        SwingUtilities.invokeLater(TutorialMenu::new);
+        SwingUtilities.invokeLater(TutorialMenu::startTutorialMenu);
     }
 }

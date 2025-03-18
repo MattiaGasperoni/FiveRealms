@@ -5,10 +5,9 @@ import java.awt.*;
 
 public class GraphicsMenu {
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(GraphicsMenu::startMenu);
-    }
-
+	public static boolean newGame = false; // Variabile per tracciare la scelta
+	public static boolean loadGame = false; // Variabile per tracciare la scelta
+	
     public static void startMenu() {
         JFrame frame = new JFrame("Graphics Menu");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -20,15 +19,16 @@ public class GraphicsMenu {
         backgroundLabel.setLayout(new GridBagLayout());
 
         JButton startButton = createButton("New Game", e -> {
+        	newGame = true;
             frame.dispose(); // Chiude il menu attuale
-            TutorialMenu tutorialMenu = new TutorialMenu(); // Apre il menu tutorial
-            tutorialMenu.setVisible(true); // Rende visibile il menu tutorial
+            TutorialMenu.startTutorialMenu(); // Apre il menu tutorial 
         });
 
         JButton loadButton = createButton("Load Game", e -> {
+        	loadGame = true;
             frame.dispose(); // Chiude il menu attuale
-            LoadGameMenu loadGameMenu = new LoadGameMenu(); // Crea una nuova istanza di LoadGameMenu
-            loadGameMenu.setVisible(true); // Rende visibile il menu di caricamento
+            LoadGameMenu.startLoadGame(); 
+            
         });
 
         JButton exitButton = createButton("Exit", e -> System.exit(0));
@@ -66,4 +66,9 @@ public class GraphicsMenu {
         // Qui puoi aggiungere la logica per verificare la presenza di salvataggi
         return true; // Modifica questo valore in base ai tuoi dati
     }
+    
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(GraphicsMenu::startMenu);
+    }
+
 }

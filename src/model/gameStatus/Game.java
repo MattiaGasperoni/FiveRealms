@@ -10,6 +10,8 @@ import model.characters.Character;
 import model.point.Point;
 import view.GraphicsMenu;
 import view.LevelMap;
+import view.LoadGameMenu;
+import view.TutorialMenu;
 
 public class Game 
 {   
@@ -28,7 +30,7 @@ public class Game
         this.levels              = new ArrayList<>();
         this.allAllies           = new ArrayList<>();
         this.selectedAllies      = new ArrayList<>();
-        initializeLevels();
+        //initializeLevels();
         startGame();
     }
 
@@ -76,13 +78,17 @@ public class Game
     public void startGame() 
     {       
         // Menù iniziale
-   
-        // Seleziona se caricare una partita esistente o iniziarne una nuova
-        if(GraphicsMenu.startMenu()) 
-        {
-            // Carica il gioco
+    	GraphicsMenu.startMenu(); //il menù deve iniziare per forza all'inizio per scegliere
+    	
+    	/*if(GraphicsMenu.newGame == true){
+            TutorialMenu.startTutorialMenu();
         }
-        else
+    	else if(GraphicsMenu.loadGame == true)
+        {
+        	LoadGameMenu.startLoadGame();
+        }*/ /*Il controllo non servirebbe*/
+    	
+        /*else
         {
             // Nuovo gioco
 
@@ -91,13 +97,14 @@ public class Game
             this.selectedAllies = GraphicsMenu.selectedAllies(this.allAllies, NUM_ALLIES);
 
             // Scegli se giocare il tutorial o saltarlo
-            if(GraphicsMenu.tutorialMenu()) 
+            //if(GraphicsMenu.tutorialMenu())
+            if(TutorialMenu.tutorialSelected == true) 
             {
                 // Gioca il tutorial
                 this.levels.get(0).playLevel();
             }
 
-            GraphicsMenu.startGameMenu();
+            //GraphicsMenu.startMenu();
             // Gioca i livelli principali
             for (int i = 1; i <= Game.NUM_LEVELS; i++) 
             {
@@ -114,7 +121,7 @@ public class Game
                 checkAndReplaceDeadAllies();
                 System.out.println("Passaggio al livello " + (i + 1));
             } 
-        }
+        }*/
     }
 
     // Metodo per sostituire gli alleati morti con nuovi alleati scelti dall'utente
