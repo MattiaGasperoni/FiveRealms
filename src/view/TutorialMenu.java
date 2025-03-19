@@ -2,8 +2,11 @@ package view;
 
 import javax.swing.*;
 import java.awt.*;
+import model.gameStatus.Level;
 
 public class TutorialMenu {
+	
+	public static boolean tutorialSelected = false;
 
     public static void startTutorialMenu() {
         JFrame frame = new JFrame("Tutorial Menu");
@@ -18,7 +21,7 @@ public class TutorialMenu {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
 
-        JLabel infoLabel = new JLabel("Play tutorial easy level?", SwingConstants.CENTER);
+        JLabel infoLabel = new JLabel("Do you want to play Tutorial?", SwingConstants.CENTER);
         infoLabel.setFont(new Font("Arial", Font.BOLD, 20));
         infoLabel.setForeground(Color.WHITE);
         gbc.gridy = 0;
@@ -26,13 +29,19 @@ public class TutorialMenu {
 
         JButton yesButton = createButton("Yes", e -> {
             System.out.println("Yes");
-            frame.dispose();
+            tutorialSelected = true; 
+            
         });
         
         JButton noButton = createButton("No", e -> {
             System.out.println("No");
-            frame.dispose();
+            tutorialSelected = false;
+            
+            
         });
+        
+        System.out.println(tutorialSelected);
+        
         
         JButton exitButton = createButton("Exit", e -> System.exit(0));
 
@@ -62,4 +71,5 @@ public class TutorialMenu {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(TutorialMenu::startTutorialMenu);
     }
+    
 }

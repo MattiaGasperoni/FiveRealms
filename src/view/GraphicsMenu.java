@@ -21,14 +21,13 @@ public class GraphicsMenu {
         JButton startButton = createButton("New Game", e -> {
         	newGame = true;
             frame.dispose(); // Chiude il menu attuale
-            TutorialMenu.startTutorialMenu(); // Apre il menu tutorial 
+            TutorialMenu.startTutorialMenu(); // Apre il menu tutorial
         });
 
         JButton loadButton = createButton("Load Game", e -> {
         	loadGame = true;
             frame.dispose(); // Chiude il menu attuale
             LoadGameMenu.startLoadGame(); 
-            
         });
 
         JButton exitButton = createButton("Exit", e -> System.exit(0));

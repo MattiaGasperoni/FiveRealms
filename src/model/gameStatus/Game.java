@@ -8,6 +8,7 @@ import controller.StaticCombatManager;
 import model.characters.*;
 import model.characters.Character;
 import model.point.Point;
+import view.CharactersMenu;
 import view.GraphicsMenu;
 import view.LevelMap;
 import view.LoadGameMenu;
@@ -31,11 +32,13 @@ public class Game
         this.allAllies           = new ArrayList<>();
         this.selectedAllies      = new ArrayList<>();
         //initializeLevels();
-        startGame();
+        GraphicsMenu.startMenu(this); 
+    	
     }
 
     private void initializeLevels() 
     {
+    	
         // Popolo la lista di personaggi giocabili
         this.allAllies.add(new Barbarian(new Point(0,0),""));
         this.allAllies.add(new Archer(new Point(0,0),""));
@@ -78,50 +81,35 @@ public class Game
     public void startGame() 
     {       
         // Menù iniziale
-    	GraphicsMenu.startMenu(); //il menù deve iniziare per forza all'inizio per scegliere
     	
-    	/*if(GraphicsMenu.newGame == true){
-            TutorialMenu.startTutorialMenu();
-        }
-    	else if(GraphicsMenu.loadGame == true)
-        {
-        	LoadGameMenu.startLoadGame();
-        }*/ /*Il controllo non servirebbe*/
+    	TutorialMenu.startTutorialMenu(); // Apre il menu tutorial
+        
+    	if(TutorialMenu.tutorialSelected == true) {
+            this.levels.get(0).playTutorial(); 
+
+    	}
     	
-        /*else
+    	// Scelta dei personaggi con cui l'utente vuole giocare
+    	this.selectedAllies = CharactersMenu.selectedAllies(this.allAllies, NUM_ALLIES);
+
+    	// Gioca i livelli principali
+        for (int i = 1; i <= Game.NUM_LEVELS; i++) 
         {
-            // Nuovo gioco
+        	
+            // Gioca il livello
+            boolean levelCompleted = levels.get(i).playLevel();
 
-            // Scelta dei personaggi con cui l'utente vuole giocare
-            GraphicsMenu.chooseCharactersMenu();
-            this.selectedAllies = GraphicsMenu.selectedAllies(this.allAllies, NUM_ALLIES);
-
-            // Scegli se giocare il tutorial o saltarlo
-            //if(GraphicsMenu.tutorialMenu())
-            if(TutorialMenu.tutorialSelected == true) 
+            // Verifica se il livello è stato completato, altrimenti esce dal ciclo
+            if (!levelCompleted) 
             {
-                // Gioca il tutorial
-                this.levels.get(0).playLevel();
+                System.out.println("Il livello non è stato completato, uscita dal ciclo.");
+                break;
             }
 
-            //GraphicsMenu.startMenu();
-            // Gioca i livelli principali
-            for (int i = 1; i <= Game.NUM_LEVELS; i++) 
-            {
-                // Gioca il livello
-                boolean levelCompleted = levels.get(i).playLevel();
-
-                // Verifica se il livello è stato completato, altrimenti esce dal ciclo
-                if (!levelCompleted) 
-                {
-                    System.out.println("Il livello non è stato completato, uscita dal ciclo.");
-                    break;
-                }
-
-                checkAndReplaceDeadAllies();
-                System.out.println("Passaggio al livello " + (i + 1));
-            } 
-        }*/
+            checkAndReplaceDeadAllies();
+            System.out.println("Passaggio al livello " + (i + 1));
+       } 
+       
     }
 
     // Metodo per sostituire gli alleati morti con nuovi alleati scelti dall'utente

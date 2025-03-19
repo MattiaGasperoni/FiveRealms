@@ -1,34 +1,50 @@
 package view;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Random;
-import javax.swing.*;
 
 public class LevelMap {
     private static final int GRID_SIZE = 6;
     private static final int BUTTON_SIZE = 80;
     private static final int MAX_LEVEL = 5;
-    
+
     private JFrame frame;
     private JPanel gridPanel;
     private JLabel levelLabel;
     private JButton nextLevelButton;
     private int currentLevel = 1;
-    // Due liste: nemici/alleati
-    
-    private String[] enemyImages = {"images/Character/Barbarian/barbarianBoss.png", "images/Character/Juggernaut/juggernautBoss.png", "images/Character/Knight/knightBoss.png", "images/Character/Wizard/wizardBoss.png"};
-    private String[] allyImages = {"images/CharacterbarbarianHero.png", "images/CharacterjuggernautHero.png", "images/CharacterknightHero.png", "images/CharactermageHero.png", "images/CharactermageHeroHealer.png"};
-    private String[] backgrounds = {"images/Background/background1.jpg", "images/Background/background2.jpg", "images/Background/background3.jpg", "images/Background/background4.jpg", "images/Background/background5.jpg"};
 
-    private Random random = new Random();
+    private final String[] enemyImages = {
+        "images/Character/Barbarian/barbarianBoss.png",
+        "images/Character/Juggernaut/juggernautBoss.png",
+        "images/Character/Knight/knightBoss.png",
+        "images/Character/Wizard/wizardBoss.png"
+    };
+    
+    private final String[] allyImages = {
+        "images/Character/barbarianHero.png",
+        "images/Character/juggernautHero.png",
+        "images/Character/knightHero.png",
+        "images/Character/mageHero.png",
+        "images/Character/mageHeroHealer.png"
+    };
+    
+    private final String[] backgrounds = {
+        "images/Background/background1.jpg",
+        "images/Background/background2.jpg",
+        "images/Background/background3.jpg",
+        "images/Background/background4.jpg",
+        "images/Background/background5.jpg"
+    };
+
+    private final Random random = new Random();
 
     public LevelMap() {
         initializeFrame();
-        initializeLevelLabel();
-        initializeNextLevelButton();
-        initializeGridPanel();
+        initializeComponents();
         showTutorial();
     }
 
@@ -38,16 +54,15 @@ public class LevelMap {
         frame.setSize(1000, 1000);
         frame.setLocationRelativeTo(null);
 
-        JPanel contentPanel = createContentPanel();
-        frame.setContentPane(contentPanel);
-
+        frame.setContentPane(createContentPanel());
+        frame.setLayout(null);
         frame.setVisible(true);
     }
 
     private JPanel createContentPanel() {
         return new JPanel(null) {
-            private Image background = new ImageIcon(backgrounds[random.nextInt(backgrounds.length)]).getImage();
-
+            private final Image background = new ImageIcon(backgrounds[random.nextInt(backgrounds.length)]).getImage();
+            
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -56,146 +71,119 @@ public class LevelMap {
         };
     }
 
-    private void initializeLevelLabel() {
+    private void initializeComponents() {
         levelLabel = new JLabel("Livello: " + currentLevel, SwingConstants.CENTER);
         levelLabel.setBounds(400, 10, 200, 30);
         levelLabel.setFont(new Font("Arial", Font.BOLD, 20));
         levelLabel.setForeground(Color.WHITE);
         frame.getContentPane().add(levelLabel);
-    }
 
-    private void initializeNextLevelButton() {
         nextLevelButton = new JButton("Prossimo Livello");
         nextLevelButton.setBounds(400, 50, 200, 30);
         nextLevelButton.addActionListener(e -> nextLevel());
         frame.getContentPane().add(nextLevelButton);
-    }
 
-    private void initializeGridPanel() {
         gridPanel = new JPanel(new GridLayout(GRID_SIZE, GRID_SIZE));
         gridPanel.setOpaque(false);
-        gridPanel.setBounds(0, 100, frame.getWidth(), frame.getHeight() - 150);
+        gridPanel.setBounds(50, 100, 900, 800);
         frame.getContentPane().add(gridPanel);
     }
 
     private void showTutorial() {
         levelLabel.setText("Tutorial");
-        gridPanel.removeAll();
-        addCellsToGrid(true);
-        gridPanel.revalidate();
-        gridPanel.repaint();
+        initializeGrid(true);
     }
 
     private void nextLevel() {
         if (currentLevel < MAX_LEVEL) {
             currentLevel++;
             levelLabel.setText("Livello: " + currentLevel);
-            initializeGrid();
+            initializeGrid(false);
         } else {
-            nextLevelButton.setEnabled(false);
-            JDialog dialog = new JDialog(frame, "Fine", true);
-            dialog.setLayout(new BorderLayout());
-            dialog.setSize(300, 150);
-            dialog.setLocationRelativeTo(frame);
-
-            JLabel messageLabel = new JLabel("Gioco finito! Hai completato tutti i livelli!", SwingConstants.CENTER);
-            dialog.add(messageLabel, BorderLayout.CENTER);
-
-            JPanel buttonPanel = new JPanel(new FlowLayout());
-
-            JButton replayButton = new JButton("Rigioca");
-            replayButton.setPreferredSize(new Dimension(100, 30));
-            replayButton.addActionListener(e -> {
-                resetGame();
-                dialog.dispose();
-            });
-
-            JButton exitButton = new JButton("Esci");
-            exitButton.setPreferredSize(new Dimension(100, 30));
-            exitButton.addActionListener(e -> System.exit(0));
-
-            buttonPanel.add(replayButton);
-            buttonPanel.add(exitButton);
-
-            dialog.add(buttonPanel, BorderLayout.SOUTH);
-            dialog.setVisible(true);
+            showEndGameDialog();
         }
+    }
+
+    private void showEndGameDialog() {
+        nextLevelButton.setEnabled(false);
+        JDialog dialog = new JDialog(frame, "Fine", true);
+        dialog.setLayout(new BorderLayout());
+        dialog.setSize(300, 150);
+        dialog.setLocationRelativeTo(frame);
+
+        JLabel messageLabel = new JLabel("Gioco finito! Hai completato tutti i livelli!", SwingConstants.CENTER);
+        dialog.add(messageLabel, BorderLayout.CENTER);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+
+        JButton replayButton = new JButton("Rigioca");
+        replayButton.addActionListener(e -> {
+            resetGame();
+            dialog.dispose();
+        });
+        buttonPanel.add(replayButton);
+
+        JButton exitButton = new JButton("Esci");
+        exitButton.addActionListener(e -> System.exit(0));
+        buttonPanel.add(exitButton);
+
+        dialog.add(buttonPanel, BorderLayout.SOUTH);
+        dialog.setVisible(true);
     }
 
     private void resetGame() {
         currentLevel = 1;
         levelLabel.setText("Livello: " + currentLevel);
         nextLevelButton.setEnabled(true);
-        initializeGrid();
+        initializeGrid(false);
     }
 
-    private void initializeGrid() {
+    private void initializeGrid(boolean isTutorial) {
         gridPanel.removeAll();
-        addCellsToGrid(false);
-        gridPanel.revalidate();
-        gridPanel.repaint();
-    }
-
-    private void addCellsToGrid(boolean isTutorial) {
         for (int row = 0; row < GRID_SIZE; row++) {
             for (int col = 0; col < GRID_SIZE; col++) {
                 JButton button = new JButton();
                 button.setContentAreaFilled(false);
                 button.setBorderPainted(false);
                 button.setPreferredSize(new Dimension(BUTTON_SIZE, BUTTON_SIZE));
-                button.setEnabled(false);
                 
-                if (isTutorial) {
-                    setTutorialImage(row, col,button);
-                } else {
-                    setCellImage(row, col,button);
+                if (isTutorial || random.nextBoolean()) {
+                    setCellImage(button);
                 }
                 gridPanel.add(button);
             }
         }
+        gridPanel.revalidate();
+        gridPanel.repaint();
     }
 
-    private void setTutorialImage(int row, int col, JButton button) {
-        setCellImage(row, col,button);
-    }
-
-    private void setCellImage(int row, int col,JButton button) {
-        int chance = random.nextInt(3);
+    private void setCellImage(JButton button) {
+        int type = random.nextInt(3);
+        String imagePath = null;
         
-        if (chance == 1 && row < GRID_SIZE / 2) {
-            String enemyImage = enemyImages[random.nextInt(enemyImages.length)];
-            button.setIcon(resizeImage(enemyImage, BUTTON_SIZE, BUTTON_SIZE));
+        if (type == 1) {
+            imagePath = enemyImages[random.nextInt(enemyImages.length)];
+        } else if (type == 2) {
+            imagePath = allyImages[random.nextInt(allyImages.length)];
+        }
+        
+        if (imagePath != null) {
+            button.setIcon(resizeImage(imagePath, BUTTON_SIZE, BUTTON_SIZE));
             button.setEnabled(true);
-            button.addActionListener(new CellClickListener(row + 1, col + 1));
-        } else if (chance == 2 && row > GRID_SIZE / 2) {
-            String allyImage = allyImages[random.nextInt(allyImages.length)];
-            button.setIcon(resizeImage(allyImage, BUTTON_SIZE, BUTTON_SIZE));
-            button.setEnabled(true);
-            button.addActionListener(new CellClickListener(row + 1, col + 1));
-        } else {
-            button.setIcon(null);
+            button.addActionListener(new CellClickListener());
         }
     }
 
     private ImageIcon resizeImage(String path, int width, int height) {
         ImageIcon icon = new ImageIcon(path);
-        Image img = icon.getImage();
-        Image resizedImg = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-        return new ImageIcon(resizedImg);
+        Image img = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        return new ImageIcon(img);
     }
 
-    
     private class CellClickListener implements ActionListener {
-        private int row, col;
-
-        public CellClickListener(int row, int col) {
-            this.row = row;
-            this.col = col;
-        }
-
         @Override
         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(frame, "Personaggio con coordinate: (" + row + ", " + col + ")", "Informazioni", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(frame, "Hai cliccato su un personaggio!", "Informazioni", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
