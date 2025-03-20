@@ -1,17 +1,13 @@
 package model.gameStatus;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import controller.StaticCombatManager;
+import java.util.*;
+
 import model.characters.*;
 import model.characters.Character;
 import model.point.Point;
-import view.CharactersMenu;
-import view.GraphicsMenu;
-import view.LevelMap;
-import view.LoadGameMenu;
-import view.TutorialMenu;
+
+import view.*;
+import controller.*;
 
 public class Game 
 {   
@@ -22,6 +18,8 @@ public class Game
     private List<Character> allAllies;            // Lista di tutti i personaggi giocabili
     private List<Character> selectedAllies;       // Lista dei personaggi con cui l'utente giocherà il livello
     
+    private GameStateManager manager;             // Gestore dello stato del gioco
+    
     private static final Random rand = new Random();
 	
     
@@ -30,6 +28,8 @@ public class Game
         this.levels              = new ArrayList<>();
         this.allAllies           = new ArrayList<>();
         this.selectedAllies      = new ArrayList<>();
+
+        this.manager = new GameStateManager();
 
         // Avvio il menù grafico
         GraphicsMenu.startMenu(this); 
@@ -119,7 +119,7 @@ public class Game
         for (int i = 1; i <= Game.NUM_LEVELS; i++) 
         {
             // Gioca il livello, playLevel ritorna true se il livello è stato completato
-            boolean levelCompleted = this.levels.get(i).playLevel();
+            boolean levelCompleted = this.levels.get(i).playLevel(manager, i);
 
             // Se il livello non è stato completato, esce dal ciclo
             if (!levelCompleted) 
@@ -130,6 +130,9 @@ public class Game
 
             this.checkAndReplaceDeadAllies();
             System.out.println("Passaggio al livello " + (i + 1));
+            
+
+
        } 
     }
 
@@ -149,17 +152,5 @@ public class Game
             // Aggiungi i nuovi alleati
             this.selectedAllies.addAll(newAllies);
         }
-    }
-
-
-
-    public void loadGame() 
-    {
-        // Carica il gioco
-        LoadGameMenu.startLoadGame();
-
-        // Logica per caricare il gioco
-    }
-
-    
+    }    
 }

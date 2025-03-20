@@ -1,9 +1,10 @@
 package model.characters;
+import java.io.Serializable;
 import java.util.Random;
 import model.equipment.potions.*;
 import model.equipment.weapons.Weapon;
 import model.point.Point;
-public abstract class AbstractCharacter implements Character{
+public abstract class AbstractCharacter implements Character, Serializable {
 	//TODO: implement exceptions/error messages
 	public static final int EXP_LEVELUP_THRESHOLD = 1000; //threshold at which you level up each time. placeholder value
 	private int maxHealth;
@@ -18,6 +19,7 @@ public abstract class AbstractCharacter implements Character{
 	private String image; //filepath
 	private boolean isAllied;
 	protected static final Random rand = new Random();
+	private static final long serialVersionUID = 1L;  // per salvare lo stato del gioco
 	
 	public AbstractCharacter(int health, int speed, int power, int defence, Point startingPosition, String image) {
 		this.maxHealth = health;

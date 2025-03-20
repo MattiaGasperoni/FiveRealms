@@ -6,24 +6,24 @@ import java.util.stream.Stream;
 
 import controller.StaticCombatManager;
 import model.characters.Character;
+import view.GraphicsMenu;
 import view.LevelMap;
 
 public class Level 
 {
     private final LevelMap LevelMap;              // Mappa del livello
-    private List<Character> enemiesList;  // Lista dei nemici del livello
-    private List<Character> alliesList;   // Lista dei personaggi giocabili
+    private List<Character> enemiesList;          // Lista dei nemici del livello
+    private List<Character> alliesList;           // Lista dei personaggi giocabili
+
     private boolean isDoorOpen;                   // Flag che indica se la porta per il prossimo livello è aperta
 
-    private int initialAlliesCount;              // Numero di alleati a inizio livello
 
     public Level(LevelMap map, List<Character> enemies, List<Character> allies) 
     {
         this.LevelMap     = map;
         this.enemiesList  = enemies;
         this.alliesList   = allies;
-        this.isDoorOpen   = false;
-        this.initialAlliesCount = allies.size();
+        this.isDoorOpen   = false;       
     }
 
     public List<Character> getEnemies() {
@@ -41,7 +41,7 @@ public class Level
     }
 
     //Metodo Pubblico per giocare il livello, restituisce true se il livello è stato completato, false altrimenti
-    public boolean playLevel() 
+    public boolean playLevel(GameStateManager manager, int levelNumber) 
     {
         // Metodo grafico per lo spawn dei nemici
         GraphicsMenu.spawnEnemies();
@@ -79,6 +79,9 @@ public class Level
             }
                              
             // FINE FASE DI ATTACCO
+
+            // Salva lo stato della partita
+            manager.saveStatus(this.alliesList, this.enemiesList, levelNumber);
 
             // Controlla se tutti gli alleati sono morti
             if (this.alliesList.isEmpty())
