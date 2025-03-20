@@ -1,6 +1,9 @@
 package view;
 
 import javax.swing.*;
+
+import model.gameStatus.Game;
+
 import java.awt.*;
 
 public class GraphicsMenu {
@@ -8,7 +11,7 @@ public class GraphicsMenu {
 	public static boolean newGame = false; // Variabile per tracciare la scelta
 	public static boolean loadGame = false; // Variabile per tracciare la scelta
 	
-    public static void startMenu() {
+    public static void startMenu(Game g) {
         JFrame frame = new JFrame("Graphics Menu");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 800);
@@ -21,13 +24,13 @@ public class GraphicsMenu {
         JButton startButton = createButton("New Game", e -> {
         	newGame = true;
             frame.dispose(); // Chiude il menu attuale
-            TutorialMenu.startTutorialMenu(); // Apre il menu tutorial
+            g.startGame();   // Avvia una nuova partita
         });
 
         JButton loadButton = createButton("Load Game", e -> {
         	loadGame = true;
             frame.dispose(); // Chiude il menu attuale
-            LoadGameMenu.startLoadGame(); 
+            g.loadGame();    // Carica una partita salvata
         });
 
         JButton exitButton = createButton("Exit", e -> System.exit(0));

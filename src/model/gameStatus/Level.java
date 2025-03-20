@@ -33,6 +33,12 @@ public class Level
     public List<Character> getAllies() {
         return this.alliesList;
     }
+    
+    public void playTutorial() 
+    {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'playTutorial'");
+    }
 
     //Metodo Pubblico per giocare il livello, restituisce true se il livello è stato completato, false altrimenti
     public boolean playLevel() 
@@ -103,4 +109,6 @@ public class Level
     
         return queue;
     }
+
+
 }
