@@ -4,11 +4,9 @@ import java.util.*;
 import java.util.stream.Stream;
 
 
-import controller.StaticCombatManager;
 import model.characters.Character;
-import view.CharacterMovementMenu;
-import view.GraphicsMenu;
-import view.LevelMap;
+import view.*;
+import controller.*;
 
 public class Level 
 {
@@ -42,12 +40,10 @@ public class Level
     }
 
     //Metodo Pubblico per giocare il livello, restituisce true se il livello è stato completato, false altrimenti
-    public boolean playLevel(GameStateManager manager, int levelNumber) 
+    public boolean playLevel(GameStateManager gameStateManager, int levelNumber) 
     {
-    	/*
-    	 * 
-    	 *  */
-        GraphicsMenu.spawnCharacters(List<Character> enemiesList, List<Character> alliesList);
+        // Inizializzazione della mappa del livello e spawn dei personaggi
+        GraphicsMenu.spawnCharacters(this.enemiesList, this.alliesList);
 
         // Il livello continua finche non muoiono tutti e tre i tuoi personaggi 
         while (!this.alliesList.isEmpty()) 
@@ -62,17 +58,24 @@ public class Level
             {
                 // Estrai il personaggio più veloce e lo rimuove dalla coda essedo il primo che attacca
                 Character attacker = attackTurnOrder.poll(); 
-
-                //Fase di movimento dei personaggi metodo movementFace di CharacterMovementMenu
-                CharacterMovementMenu.movementFace(attacker, this.alliesList, this.enemiesList); 
-
+                
                 // Se è morto, salta il turno e passa al prossimo
                 if (!attacker.isAlive()) continue; 
 
-                // Il personaggio attacca METODO TEMPORANEO DA SOSTITUIRE FINCHE NON SVILUPPIAMO LA SCELTA DEL TARGET
-                StaticCombatManager.fight(attacker, this.enemiesList.get(0), this.alliesList, this.enemiesList);
+                // Fase di spostamento del personaggio, se attacker e' un alleato chiede all'utente dove vuole spostarsi, 
+                // se e' un nemico l'A.I. decide dove spostarlo  CAMBIARE NOME METODO!!!!
+                CharacterMovementMenu.movementFace(attacker, this.alliesList, this.enemiesList); 
 
-                // Ricostruisci la coda senza i personaggi morti
+                // Fase di scelta de target da attaccare, se attacker e' un alleato chiede all'utente chi vuole attaccare,
+                // se e' un nemico l'A.I. decide chi attaccare
+                CharacterMovementMenu.chooseTarget(this.alliesList, this.enemiesList);
+                Character target = CharacterMovementMenu.getTarget();
+                
+                // Il personaggio attacca il target
+                StaticCombatManager.fight(attacker, target, this.alliesList, this.enemiesList);
+
+                // Ricostruisci la coda dell'ordine di attacco senza i personaggi morti
+                // Combat manager non flagga i personaggi morti, quindi devo controllare io dalle liste!!!!
                 attackTurnOrder = new PriorityQueue<>(attackTurnOrder.comparator());
                 attackTurnOrder.addAll(
                     Stream.concat(alliesList.stream(), enemiesList.stream())
@@ -84,7 +87,7 @@ public class Level
             // FINE FASE DI ATTACCO
 
             // Salva lo stato della partita
-            manager.saveStatus(this.alliesList, this.enemiesList, levelNumber);
+            gameStateManager.saveStatus(this.alliesList, this.enemiesList, levelNumber);
 
             // Controlla se tutti gli alleati sono morti
             if (this.alliesList.isEmpty())
@@ -115,6 +118,4 @@ public class Level
     
         return queue;
     }
-    
-    
 }
