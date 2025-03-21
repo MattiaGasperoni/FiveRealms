@@ -110,7 +110,13 @@ public class Game
         this.createAllies();
 
         // Scegli graficamente i 3 personaggi con cui giocare
-    	this.selectedAllies = CharactersMenu.selectedAllies(this.allAllies, NUM_ALLIES);
+        
+        /*this.transformList(CharactersMenu.nameCharacters);
+    	CharactersMenu.selectedAllies(this.allAllies,this.selectedAllies, NUM_ALLIES);
+        */
+        
+    	/*CharactersMenu c = new CharactersMenu();
+        c.startCharactersMenu();*/
       
         // Inizializzo le liste dei nemici e dei livelli
         this.initializeLevels();
@@ -132,11 +138,15 @@ public class Game
             System.out.println("Passaggio al livello " + (i + 1));
             
 
-
        } 
     }
 
-    // Metodo per sostituire gli alleati morti con nuovi alleati scelti dall'utente
+    private void transformList(List<String> nameCharacters) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	// Metodo per sostituire gli alleati morti con nuovi alleati scelti dall'utente
     private void checkAndReplaceDeadAllies() 
     {
         // Calcola quanti alleati mancano

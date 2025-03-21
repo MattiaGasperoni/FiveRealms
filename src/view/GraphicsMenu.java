@@ -30,7 +30,8 @@ public class GraphicsMenu {
         JButton loadButton = createButton("Load Game", e -> {
         	loadGame = true;
             frame.dispose(); // Chiude il menu attuale
-            g.loadGame();    // Carica una partita salvata
+            //g.loadGame();    // Carica una partita salvata
+            LoadGameMenu.startLoadGame();
         });
 
         JButton exitButton = createButton("Exit", e -> System.exit(0));
@@ -67,10 +68,6 @@ public class GraphicsMenu {
     private static boolean checkSavedGames() {
         // Qui puoi aggiungere la logica per verificare la presenza di salvataggi
         return true; // Modifica questo valore in base ai tuoi dati
-    }
-    
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(GraphicsMenu::startMenu);
     }
 
 }

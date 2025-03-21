@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 
 import controller.StaticCombatManager;
 import model.characters.Character;
+import view.CharacterMovementMenu;
 import view.GraphicsMenu;
 import view.LevelMap;
 
@@ -43,14 +44,13 @@ public class Level
     //Metodo Pubblico per giocare il livello, restituisce true se il livello è stato completato, false altrimenti
     public boolean playLevel(GameStateManager manager, int levelNumber) 
     {
-        // Metodo grafico per lo spawn dei nemici
-        GraphicsMenu.spawnEnemies();
-        
-        // Metodo grafico per lo spawn degli alleati
-        GraphicsMenu.spawnAllies();
+    	/*
+    	 * 
+    	 *  */
+        GraphicsMenu.spawnCharacters(List<Character> enemiesList, List<Character> alliesList);
 
         // Il livello continua finche non muoiono tutti e tre i tuoi personaggi 
-        while (this.alliesList.isEmpty()) 
+        while (!this.alliesList.isEmpty()) 
         {
             // INIZIO FASE DI ATTACCO
 
@@ -62,10 +62,13 @@ public class Level
             {
                 // Estrai il personaggio più veloce e lo rimuove dalla coda essedo il primo che attacca
                 Character attacker = attackTurnOrder.poll(); 
-                
+
+                //Fase di movimento dei personaggi metodo movementFace di CharacterMovementMenu
+                CharacterMovementMenu.movementFace(attacker, this.alliesList, this.enemiesList); 
+
                 // Se è morto, salta il turno e passa al prossimo
                 if (!attacker.isAlive()) continue; 
-                            
+
                 // Il personaggio attacca METODO TEMPORANEO DA SOSTITUIRE FINCHE NON SVILUPPIAMO LA SCELTA DEL TARGET
                 StaticCombatManager.fight(attacker, this.enemiesList.get(0), this.alliesList, this.enemiesList);
 
@@ -112,6 +115,6 @@ public class Level
     
         return queue;
     }
-
-
+    
+    
 }

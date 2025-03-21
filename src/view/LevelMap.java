@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Random;
 
+/* Qui modificare che quando seleziono i 3 personaggi, mi faccia vedere quelli li*/
+
 public class LevelMap {
     private static final int GRID_SIZE = 6;
     private static final int BUTTON_SIZE = 80;
@@ -16,29 +18,6 @@ public class LevelMap {
     private JLabel levelLabel;
     private JButton nextLevelButton;
     private int currentLevel = 1;
-
-    private final String[] enemyImages = {
-        "images/Character/Barbarian/barbarianBoss.png",
-        "images/Character/Juggernaut/juggernautBoss.png",
-        "images/Character/Knight/knightBoss.png",
-        "images/Character/Wizard/wizardBoss.png"
-    };
-    
-    private final String[] allyImages = {
-        "images/Character/barbarianHero.png",
-        "images/Character/juggernautHero.png",
-        "images/Character/knightHero.png",
-        "images/Character/mageHero.png",
-        "images/Character/mageHeroHealer.png"
-    };
-    
-    private final String[] backgrounds = {
-        "images/Background/background1.jpg",
-        "images/Background/background2.jpg",
-        "images/Background/background3.jpg",
-        "images/Background/background4.jpg",
-        "images/Background/background5.jpg"
-    };
 
     private final Random random = new Random();
 
@@ -143,6 +122,9 @@ public class LevelMap {
         for (int row = 0; row < GRID_SIZE; row++) {
             for (int col = 0; col < GRID_SIZE; col++) {
                 JButton button = new JButton();
+                
+                
+                
                 button.setContentAreaFilled(false);
                 button.setBorderPainted(false);
                 button.setPreferredSize(new Dimension(BUTTON_SIZE, BUTTON_SIZE));
@@ -186,7 +168,7 @@ public class LevelMap {
             JOptionPane.showMessageDialog(frame, "Hai cliccato su un personaggio!", "Informazioni", JOptionPane.INFORMATION_MESSAGE);
         }
     }
-
+    
     public static void main(String[] args) {
         SwingUtilities.invokeLater(LevelMap::new);
     }

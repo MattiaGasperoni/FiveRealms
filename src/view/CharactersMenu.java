@@ -1,5 +1,10 @@
 package view;
 import javax.swing.*;
+
+import model.characters.Barbarian;
+import model.characters.Character;
+import model.point.Point;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -11,8 +16,9 @@ public class CharactersMenu {
     private static final int MAX_SELECTION = 3;
     private final List<JPanel> selectedPanels = new ArrayList<>();
     private JButton nextButton;
-
-    public void startCharactersMenu() {
+    public static List<String> nameCharacters;       // Lista di stringhe die nomi die personaggi selezionati
+    
+    public void startCharactersMenu(List<Character> allAllies,List<Character> selectedAllies, int num_allies) {
         JFrame frame = new JFrame("Characters Menu");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 800);
@@ -36,7 +42,9 @@ public class CharactersMenu {
         nextButton = new JButton("Next");
         nextButton.setFont(new Font("Arial", Font.BOLD, 16));
         nextButton.setEnabled(false);
-        nextButton.addActionListener(e -> 
+        nextButton.addActionListener(e ->
+        	// Chiamare il metodo transformList qui
+        	
         	frame.dispose()
         );
 
@@ -57,6 +65,7 @@ public class CharactersMenu {
     }
 
     private void addCharacter(JLabel bgLabel, String name, String desc, String imgPath, int x, int y, GridBagConstraints gbc) {
+    	
         JPanel panel = new JPanel(new BorderLayout());
         panel.setOpaque(true);
         panel.setBackground(new Color(30, 30, 30, 200));
@@ -70,13 +79,16 @@ public class CharactersMenu {
         panel.add(imgLabel, BorderLayout.NORTH);
         panel.add(lbl, BorderLayout.SOUTH);
 
+        
         panel.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (selectedPanels.contains(panel)) {
-                    selectedPanels.remove(panel);
+                	selectedPanels.remove(panel);
+                	nameCharacters.remove(name);
                     panel.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
                 } else if (selectedPanels.size() < MAX_SELECTION) {
                     selectedPanels.add(panel);
+                	nameCharacters.add(name);
                     panel.setBorder(BorderFactory.createLineBorder(Color.GREEN, 3));
                 }
                 nextButton.setEnabled(selectedPanels.size() == MAX_SELECTION);
@@ -87,6 +99,7 @@ public class CharactersMenu {
         gbc.gridy = y;
         bgLabel.add(panel, gbc);
     }
+    
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new CharactersMenu().startCharactersMenu());
