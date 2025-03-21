@@ -37,11 +37,9 @@ public class TutorialMenu {
             System.out.println("No");
             tutorialSelected = false;
             
-            
         });
         
         System.out.println(tutorialSelected);
-        
         
         JButton exitButton = createButton("Exit", e -> System.exit(0));
 
@@ -68,7 +66,13 @@ public class TutorialMenu {
         return button;
     }
 
-    public static void main(String[] args) {
+    
+    public static boolean getTutorialSelected() {
+		return tutorialSelected;
+	}
+
+
+	public static void main(String[] args) {
         SwingUtilities.invokeLater(TutorialMenu::startTutorialMenu);
     }
     
