@@ -14,11 +14,12 @@ public interface Character {
 	public int getCurrentHealth();
 	public void reduceCurrentHealth(int value);
 	public void increaseCurrentHealth(double percentage);
-	boolean isAlive();
+	public boolean isAlive();
 	
 	public void usePotion();
 	public Potion getPotion();
-	boolean hasPotion();
+	public boolean hasPotion();
+	public void setPotion(Potion potion);
 		
 	public int getExperience();
 	public void gainExperience(int value);
@@ -31,7 +32,7 @@ public interface Character {
 	
 	public Weapon getWeapon();
 	public void spawnWeapon();	
-	void swapWeapon();
+	public void swapWeapon();
 	public int getRange();
 	
 	public boolean isAllied();

@@ -144,6 +144,12 @@ public abstract class AbstractCharacter implements Character, Serializable {
 	}
 	
 	@Override
+	public void setPotion(Potion potion) {
+		if(!this.hasPotion())
+			this.potion = potion;
+	}
+	
+	@Override
 	public Point getPosition() {
 		return this.position;
 	}
