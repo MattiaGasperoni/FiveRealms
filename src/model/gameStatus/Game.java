@@ -96,6 +96,8 @@ public class Game
     {       
         // Tutorial Menu 
     	TutorialMenu.startTutorialMenu(); 
+    	
+    	//while(TutorialMenu.getTutorialSelected() == true);
         
         // Scegli se saltare il tutorial o giocarlo 
     	if(!TutorialMenu.getTutorialSelected()) 
@@ -132,12 +134,13 @@ public class Game
             this.checkAndReplaceDeadAllies();
 
             System.out.println("Passaggio al livello " + (i + 1));
+        }
     }
 
     private void transformList(List<String> nameCharacters) 
     {
         this.selectedAllies = this.availableAllies.stream()
-            .filter(ally -> nameCharacters.contains(ally.getName()))
+            .filter(ally -> nameCharacters.contains(ally.getClass().getSimpleName()))
             .collect(Collectors.toList());
     }
 

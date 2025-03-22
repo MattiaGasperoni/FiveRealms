@@ -23,15 +23,14 @@ public class GraphicsMenu {
 
         JButton startButton = createButton("New Game", e -> {
         	newGame = true;
-            g.startNewGame();   // Avvia una nuova partita
             frame.dispose(); // Chiude il menu attuale
+            g.startNewGame();   // Avvia una nuova partita
         });
 
         JButton loadButton = createButton("Load Game", e -> {
         	loadGame = true;
-            LoadGameMenu.startLoadGame();
             frame.dispose(); // Chiude il menu attuale
-
+            LoadGameMenu.startLoadGame();
             //g.loadGame();    // Carica una partita salvata
         });
 
