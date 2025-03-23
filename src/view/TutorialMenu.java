@@ -2,59 +2,68 @@ package view;
 
 import javax.swing.*;
 import java.awt.*;
-import model.gameStatus.Level;
+import java.awt.event.*;
 
-public class TutorialMenu {
-	
-	public static boolean tutorialSelected = false;
+public class TutorialMenu
+{
+    private static boolean tutorialSelected = false;
 
-    public static void startTutorialMenu() {
-        JFrame frame = new JFrame("Tutorial Menu");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 800);
-        frame.setLocationRelativeTo(null);
-        frame.setResizable(true);
+    public static void startTutorialMenu(ActionListener callback) 
+    {
+        JFrame frame = createFrame();
 
-        JLabel backgroundLabel = new JLabel(new ImageIcon("images/Background/background4.jpg"));
-        backgroundLabel.setLayout(new GridBagLayout());
+        JLabel backgroundLabel = createBackgroundLabel();
+        GridBagConstraints gbc = createGridBagConstraints();
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-
-        JLabel infoLabel = new JLabel("Do you want to play Tutorial?", SwingConstants.CENTER);
-        infoLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        infoLabel.setForeground(Color.WHITE);
-        gbc.gridy = 0;
+        JLabel infoLabel = createInfoLabel();
         backgroundLabel.add(infoLabel, gbc);
 
-        JButton yesButton = createButton("Yes", e -> {
-            System.out.println("Yes");
-            tutorialSelected = true; 
-            
-        });
-        
-        JButton noButton = createButton("No", e -> {
-            System.out.println("No");
-            tutorialSelected = false;
-            
-        });
-        
-        System.out.println(tutorialSelected);
-        
+        JButton yesButton = createButton("Yes", e -> handleSelection(frame, true, callback, e));
+        JButton noButton = createButton("No", e -> handleSelection(frame, false, callback, e));
         JButton exitButton = createButton("Exit", e -> System.exit(0));
 
-        gbc.gridy = 1;
-        backgroundLabel.add(yesButton, gbc);
-        gbc.gridy = 2;
-        backgroundLabel.add(noButton, gbc);
-        gbc.gridy = 3;
-        backgroundLabel.add(exitButton, gbc);
-
+        addButtonsToBackground(backgroundLabel, yesButton, noButton, exitButton, gbc);
+        
         frame.add(backgroundLabel);
         frame.setVisible(true);
     }
 
-    private static JButton createButton(String text, java.awt.event.ActionListener action) {
+    private static JFrame createFrame() 
+    {
+        JFrame frame = new JFrame("Tutorial Menu");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setSize(800, 800);
+        frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
+        return frame;
+    }
+
+    private static JLabel createBackgroundLabel() 
+    {
+        JLabel backgroundLabel = new JLabel(new ImageIcon("images/Background/background4.jpg"));
+        backgroundLabel.setLayout(new GridBagLayout());
+        return backgroundLabel;
+    }
+
+    private static JLabel createInfoLabel() 
+    {
+        JLabel infoLabel = new JLabel("Do you want to play the Tutorial?", SwingConstants.CENTER);
+        System.out.println("Do you want to play the Tutorial?");
+        infoLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        infoLabel.setForeground(Color.WHITE);
+        return infoLabel;
+    }
+
+    private static GridBagConstraints createGridBagConstraints() 
+    {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.gridy = 0;
+        return gbc;
+    }
+
+    private static JButton createButton(String text, ActionListener action) 
+    {
         JButton button = new JButton(text);
         button.setFont(new Font("Arial", Font.BOLD, 18));
         button.setForeground(Color.WHITE);
@@ -66,14 +75,24 @@ public class TutorialMenu {
         return button;
     }
 
-    
-    public static boolean getTutorialSelected() {
-		return tutorialSelected;
-	}
-
-
-	public static void main(String[] args) {
-        SwingUtilities.invokeLater(TutorialMenu::startTutorialMenu);
+    private static void handleSelection(JFrame frame, boolean selection, ActionListener callback, ActionEvent e)
+    {
+        tutorialSelected = selection;
+        System.out.println(selection ? "Yes" : "No");
+        frame.dispose();
+        callback.actionPerformed(new ActionEvent(e.getSource(), ActionEvent.ACTION_PERFORMED, selection ? "Yes" : "No"));
     }
-    
+
+    private static void addButtonsToBackground(JLabel backgroundLabel, JButton yesButton, JButton noButton, JButton exitButton, GridBagConstraints gbc) {
+        gbc.gridy = 1;
+        backgroundLabel.add(yesButton, gbc);
+        gbc.gridy = 2;
+        backgroundLabel.add(noButton, gbc);
+        gbc.gridy = 3;
+        backgroundLabel.add(exitButton, gbc);
+    }
+
+    public static boolean isTutorialSelected() {
+        return tutorialSelected;
+    }
 }

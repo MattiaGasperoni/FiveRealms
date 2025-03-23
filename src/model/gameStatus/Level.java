@@ -35,8 +35,7 @@ public class Level
     
     public void playTutorial() 
     {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'playTutorial'");
+        System.out.println("Start Tutorial !!!");
     }
 
     //Metodo Pubblico per giocare il livello, restituisce true se il livello è stato completato, false altrimenti

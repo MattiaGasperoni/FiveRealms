@@ -85,6 +85,7 @@ public class Game
 
         // Agggiungo tutti i livelli alla lista dei 
         // PROBLEM :  se qualche personaggio mi muore poi nei livelli la lista viene aggiornata o tengono questa originale
+        // PROBLEM :  LevelMap non funziona e quando chiamo il metodo initializeGameLevels mi crea gia le istanze delle finestre
         this.gameLevels.add(new Level(new LevelMap(), level1Enemies, this.selectedAllies));
         this.gameLevels.add(new Level(new LevelMap(), level2Enemies, this.selectedAllies));
         this.gameLevels.add(new Level(new LevelMap(), level3Enemies, this.selectedAllies));
@@ -94,17 +95,21 @@ public class Game
 
     public void startNewGame() 
     {       
-        // Tutorial Menu 
-    	TutorialMenu.startTutorialMenu(); 
-    	
-    	//while(TutorialMenu.getTutorialSelected() == true);
-        
-        // Scegli se saltare il tutorial o giocarlo 
-    	if(!TutorialMenu.getTutorialSelected()) 
-        {
-            this.initializeTutorial();
-            this.gameLevels.get(0).playTutorial();
-    	}
+    	// Avvio del Tutorial Menu
+    	TutorialMenu.startTutorialMenu(e -> {
+    	    // Dopo che l'utente ha scelto, avvia il tutorial o il gioco
+    	    if (TutorialMenu.isTutorialSelected()) 
+    	    {
+    	    	System.out.println("Tutorial select, starting Tutorial...");
+    	        this.initializeTutorial();
+    	        this.gameLevels.get(0).playTutorial();
+    	    } 
+    	    else 
+    	    {
+    	        // Se l'utente non vuole il tutorial, continua il gioco normalmente
+    	        System.out.println("Tutorial skipped, starting game...");
+    	    }
+    	});
     	
     	// Inizio del gioco effettivo
 
@@ -118,23 +123,24 @@ public class Game
         */
       
         // Inizializzo le liste dei nemici e dei livelli
-        this.initializeGameLevels();
+        //this.initializeGameLevels();   PROBLEMATICO CON LEVELMAP
 
     	// Gioca i livelli
-        for (int i = 1; i <= Game.TOTAL_LEVEL; i++) 
-        {
+        //for (int i = 1; i <= Game.TOTAL_LEVEL; i++) 
+       // {
             // Gioca il livello, playLevel ritorna true se il livello è stato completato sennò interrompe dal ciclo
-            if (!this.gameLevels.get(i).playLevel(this.gameStateManager , i)) 
-            {
-                System.out.println("Il livello non è stato completato, uscita dal ciclo.");
-                break;
-            }
+           // if (!this.gameLevels.get(i).playLevel(this.gameStateManager , i)) 
+          //  {
+            //    System.out.println("Il livello non è stato completato, uscita dal ciclo.");
+            //    break;
+           // }
 
             // Sostituisci gli alleati morti con nuovi alleati
-            this.checkAndReplaceDeadAllies();
+           // this.checkAndReplaceDeadAllies();
 
-            System.out.println("Passaggio al livello " + (i + 1));
-        }
+          //  System.out.println("Passaggio al livello " + (i + 1));
+        //}
+        
     }
 
     private void transformList(List<String> nameCharacters) 
