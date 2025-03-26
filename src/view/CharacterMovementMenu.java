@@ -12,6 +12,16 @@ public class CharacterMovementMenu {
 		// TODO Auto-generated method stub
 		
 	}
+
+	public static void chooseTarget(List<Character> alliesList, List<Character> enemiesList) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public static Character getTarget() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 	/* Scegleire una struttura dati contenente tutti i blocchi dove il
 	personaggio attacker si può spostare, se ce gia un personaggio in uno dei bocchi dove si può

@@ -16,7 +16,7 @@ public class CharactersMenu {
     private static final int MAX_SELECTION = 3;
     private final List<JPanel> selectedPanels = new ArrayList<>();
     private JButton nextButton;
-    public static List<String> nameCharacters;       // Lista di stringhe die nomi die personaggi selezionati
+    public static List<String> nameCharacters = new ArrayList<>(); // Inizializzazione della lista
     
     public void startCharactersMenu(List<Character> allAllies,List<Character> selectedAllies, int num_allies) {
         JFrame frame = new JFrame("Characters Menu");
@@ -102,7 +102,12 @@ public class CharactersMenu {
     
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new CharactersMenu().startCharactersMenu());
-        
+        SwingUtilities.invokeLater(() -> {
+            List<Character> allAllies = new ArrayList<>(); // Lista di tutti i personaggi disponibili
+            List<Character> selectedAllies = new ArrayList<>(); // Lista dei personaggi selezionati
+            int num_allies = 3; // Numero massimo di alleati selezionabili
+
+            new CharactersMenu().startCharactersMenu(allAllies, selectedAllies, num_allies);
+        });
     }
 }

@@ -33,9 +33,10 @@ public class Level
         return this.alliesList;
     }
     
-    public void playTutorial() 
+    public boolean playTutorial() 
     {
         System.out.println("Start Tutorial !!!");
+		return true;
     }
 
     //Metodo Pubblico per giocare il livello, restituisce true se il livello è stato completato, false altrimenti
