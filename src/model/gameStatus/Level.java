@@ -6,47 +6,40 @@ import java.util.stream.Stream;
 
 import model.characters.Character;
 import view.*;
+import view.map.LevelMap;
 import controller.*;
 
 public class Level 
 {
-    private final LevelMap LevelMap;              // Mappa del livello
     private List<Character> enemiesList;          // Lista dei nemici del livello
-    private List<Character> alliesList;           // Lista dei personaggi giocabili
+    private List<Character> alliesList;           // Lista dei personaggi con cui giochiamo il livello
 
-    private boolean isDoorOpen;                   // Flag che indica se la porta per il prossimo livello è aperta
+    private boolean levelCompleted;               // Flag che indica se il livello e' completato
+        
     
+    private final LevelMap LevelMap;                        // Mappa del livello
+    private GraphicMovePhaseManager movementPhaseManager;   // Gestore grafico per i movimenti dei personaggi
 
 
     public Level(LevelMap map, List<Character> enemies, List<Character> allies) 
     {
-        this.LevelMap     = map;
-        this.enemiesList  = enemies;
-        this.alliesList   = allies;
-        this.isDoorOpen   = false;       
+       
+        this.enemiesList      = enemies;
+        this.alliesList       = allies;
+        this.levelCompleted   = false;     
+        
+        
+        // Inizializzazione Oggetti Grafici
+        this.LevelMap               = map;
+        this.movementPhaseManager   = new GraphicMovePhaseManager();
     }
 
-    public List<Character> getEnemies() {
-        return this.enemiesList;
-    }
-
-    public List<Character> getAllies() {
-        return this.alliesList;
-    }
     
-    public boolean playTutorial() 
-    {
-        System.out.println("Start Tutorial !!!");
-		return true;
-    }
-
     //Metodo Pubblico per giocare il livello, restituisce true se il livello è stato completato, false altrimenti
     public boolean playLevel(GameStateManager gameStateManager, int levelNumber) 
     {
-    	GraphicMovePhaseManager graphicMovePhaseManager = new GraphicMovePhaseManager();
-    	
         // Inizializzazione della mappa del livello e spawn dei personaggi
-        GraphicsMenu.spawnCharacters(this.enemiesList, this.alliesList);
+        // MainMenu.spawnCharacters(this.enemiesList, this.alliesList);
 
         // Il livello continua finche non muoiono tutti e tre i tuoi personaggi 
         while (!this.alliesList.isEmpty()) 
@@ -66,14 +59,13 @@ public class Level
                 if (!attacker.isAlive()) continue; 
 
                 // Fase di spostamento del personaggio, se attacker e' un alleato chiede all'utente dove vuole spostarsi, 
-                // se e' un nemico l'A.I. decide dove spostarlo  CAMBIARE NOME METODO!!!!
-                graphicMovePhaseManager.movementPhase(attacker, alliesList, enemiesList); 
+                // se e' un nemico l'A.I. decide dove spostarlo 
+                this.movementPhaseManager.movementPhase(attacker, alliesList, enemiesList); 
 
                 // Fase di scelta de target da attaccare, se attacker e' un alleato chiede all'utente chi vuole attaccare,
                 // se e' un nemico l'A.I. decide chi attaccare
-                graphicMovePhaseManager.chooseTarget(this.alliesList, this.enemiesList);
-                Character target = graphicMovePhaseManager.getTarget();
-                
+                Character target = this.movementPhaseManager.chooseTarget(this.enemiesList);
+                               
                 // Il personaggio attacca il target
                 StaticCombatManager.fight(attacker, target, this.alliesList, this.enemiesList);
 
@@ -96,19 +88,19 @@ public class Level
             if (this.alliesList.isEmpty())
             {
                 System.out.println("Tutti i tuoi personaggi sono morti. Game Over.");
-                return false;
+                return this.levelCompleted;
             }
 
             // Controlla se tutti i nemici sono stati sconfitti
             if (this.enemiesList.isEmpty()) 
             {
                 // Attiva la porta per il prossimo livello
-                this.isDoorOpen = true;
+                this.levelCompleted = true;
                 System.out.println("Hai sconfitto tutti i nemici. La porta per il prossimo livello e' aperta.");
-                GraphicsMenu.nextLevelDoorMenu();
+                //MainMenu.nextLevelDoorMenu();
             }
         }
-        return true;
+        return this.levelCompleted;
     }
 
     // Metodo per verificare l'ordine di attacco dei personaggi in un turno
@@ -120,5 +112,14 @@ public class Level
         queue.addAll(enemies);
     
         return queue;
+    }
+    
+
+    public List<Character> getEnemies() {
+        return this.enemiesList;
+    }
+
+    public List<Character> getAllies() {
+        return this.alliesList;
     }
 }

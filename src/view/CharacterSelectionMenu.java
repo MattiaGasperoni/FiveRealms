@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CharactersMenu {
+public class CharacterSelectionMenu {
 
     private static final int MAX_SELECTION = 3;
     private final List<JPanel> selectedPanels = new ArrayList<>();

@@ -8,6 +8,7 @@ import java.util.List;
 import javax.swing.JButton;
 import model.characters.Character;
 import model.point.Point;
+import view.map.LevelMap;
 
 public class GraphicMovePhaseManager {
 
@@ -89,10 +90,6 @@ public class GraphicMovePhaseManager {
             });
         }
 
-        return selectedTarget;
-    }
-
-    public Character getTarget() {
         return selectedTarget;
     }
 }

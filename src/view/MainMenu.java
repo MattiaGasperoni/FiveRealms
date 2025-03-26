@@ -6,13 +6,13 @@ import model.gameStatus.Game;
 
 import java.awt.*;
 
-public class GraphicsMenu 
+public class MainMenu 
 {
 
 	public boolean NewGameSelected ;   // Variabile per tracciare la scelta
 	public boolean LoadGameSelected;   // Variabile per tracciare la scelta
 		
-    public GraphicsMenu() 
+    public MainMenu() 
     {
 		this.NewGameSelected  = false;
 		this.LoadGameSelected = false;

@@ -8,6 +8,8 @@ import model.characters.Character;
 import model.point.Point;
 
 import view.*;
+import view.map.LevelMap;
+import view.map.TutorialMap;
 import controller.*;
 
 public class Game 
@@ -24,9 +26,10 @@ public class Game
     private static final Random rand = new Random();  // ci inizializza i valori dei personaggi
     
     //Oggetti Grafici 
-    private GraphicsMenu graphicsMenu;
+    private MainMenu graphicsMenu;
     private TutorialMenu tutorialMenu;
-	
+    private CharacterSelectionMenu characterSelectionMenu;  // Menu per la scelta dei personaggi
+
     
     public Game() 
     {
@@ -37,8 +40,9 @@ public class Game
 
         
         // Inizializzazione Oggetti Grafici
-        this.graphicsMenu = new GraphicsMenu();
+        this.graphicsMenu = new MainMenu();
         this.tutorialMenu = new TutorialMenu();
+        this.characterSelectionMenu = new CharacterSelectionMenu();
         
         // Avvio il menù principale
         this.graphicsMenu.start(this);    
@@ -52,7 +56,7 @@ public class Game
         //... Aggiungere altri personaggi
     }
 
-    private void initializeTutorial()
+    private boolean startTutorial()
     {
         // Il tutorial prevede un gameplay statico, sempre uguale percio' non permettiamo la scelta dei personaggi
 
@@ -61,12 +65,16 @@ public class Game
         tutorialEnemies.add(new Barbarian(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
         tutorialEnemies.add(new Archer(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
 
+        // Popolo la lista di personaggi con cui giocheremo il tutorial
         List<Character> tutorialAllies = new ArrayList<>();
         tutorialAllies.add(new Barbarian(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
         tutorialAllies.add(new Archer(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
 
-        // Aggiungo il tutorial alla lista dei livelli
-        this.gameLevels.add(new Level(new LevelMap(), tutorialEnemies, tutorialAllies));
+        // Creo e istanzio l'oggetto tutorial
+        Tutorial tutorial = new Tutorial(new TutorialMap(), tutorialEnemies, tutorialAllies);
+        
+        // Gioco il Tutorial
+        return tutorial.play();
     }
 
     private void initializeGameLevels() 
@@ -95,6 +103,7 @@ public class Game
         // Agggiungo tutti i livelli alla lista dei 
         // PROBLEM :  se qualche personaggio mi muore poi nei livelli la lista viene aggiornata o tengono questa originale
         // PROBLEM :  LevelMap non funziona e quando chiamo il metodo initializeGameLevels mi crea gia le istanze delle finestre
+        // per capire in che livello siamo a leveMap gli passo un numeroche lo rappresenta
         this.gameLevels.add(new Level(new LevelMap(), level1Enemies, this.selectedAllies));
         this.gameLevels.add(new Level(new LevelMap(), level2Enemies, this.selectedAllies));
         this.gameLevels.add(new Level(new LevelMap(), level3Enemies, this.selectedAllies));
@@ -113,10 +122,9 @@ public class Game
             {
             	// Ha scelto di giocare il livello
                 System.out.println("Tutorial selected, starting Tutorial...");
-                this.initializeTutorial();
-                
+
                 // Gioca il tutorial
-                if (this.gameLevels.get(0).playTutorial()) 
+                if (this.startTutorial()) 
                 {
                     System.out.println("Congratulations! You completed the tutorial, now starting the game...");
                 }
@@ -127,11 +135,11 @@ public class Game
             }
         });
                    	
-        // InizializzA la lista con tutti i personaggi giocabili
+        // Inizializza la lista con tutti i personaggi giocabili
 		this.createAllies(); 
 		
 		// Appare il menu per la selezione dei personaggi
-		// Trasforma la lista di char in selectedAllies
+		this.characterSelectionMenu.start(this.availableAllies, this.selectedAllies);
 		
 		// INIZIANO I LIVELLI
 		
@@ -173,7 +181,7 @@ public class Game
             System.out.println("Sostituzione di " + alliesToChange + " personaggi morti.");
     
             // Seleziona nuovi alleati
-            List<Character> newAllies = CharactersMenu.replaceDeadAlliesMenu(this.availableAllies , alliesToChange);
+            List<Character> newAllies = CharacterSelectionMenu.replaceDeadAlliesMenu(this.availableAllies , alliesToChange);
     
             // Aggiungi i nuovi alleati
             this.selectedAllies.addAll(newAllies);
