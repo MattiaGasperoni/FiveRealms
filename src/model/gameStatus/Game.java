@@ -19,9 +19,13 @@ public class Game
     private List<Character> availableAllies ;   // Lista di tutti i personaggi giocabili
     private List<Character> selectedAllies;     // Lista dei personaggi con cui l'utente giocherà il livello
     
-    private GameStateManager gameStateManager ; // Gestore dello stato del gioco
+    private GameStateManager gameStateManager ; // Oggetto che gestiste il caricamento di una partita 
     
-    private static final Random rand = new Random();  //??????
+    private static final Random rand = new Random();  // ci inizializza i valori dei personaggi
+    
+    //Oggetti Grafici 
+    private GraphicsMenu graphicsMenu;
+    private TutorialMenu tutorialMenu;
 	
     
     public Game() 
@@ -31,15 +35,20 @@ public class Game
         this.selectedAllies   = new ArrayList<>();
         this.gameStateManager = new GameStateManager();
 
-        // Avvio il menù grafico
-        GraphicsMenu.startMenu(this); 
+        
+        // Inizializzazione Oggetti Grafici
+        this.graphicsMenu = new GraphicsMenu();
+        this.tutorialMenu = new TutorialMenu();
+        
+        // Avvio il menù principale
+        this.graphicsMenu.start(this);    
     }
 
     private void createAllies()
     {
         // Popolo la lista di personaggi giocabili
-        this.availableAllies .add(new Barbarian(new Point(0,0),""));
-        this.availableAllies .add(new Archer(new Point(0,0),""));
+        this.availableAllies.add(new Barbarian(new Point(0,0),""));
+        this.availableAllies.add(new Archer(new Point(0,0),""));
         //... Aggiungere altri personaggi
     }
 
@@ -95,54 +104,57 @@ public class Game
 
     public void startNewGame() 
     {       
-    	// Avvio del Tutorial Menu
-    	TutorialMenu.startTutorialMenu(e -> {
-    	    // Dopo che l'utente ha scelto, avvia il tutorial o il gioco
-    	    if (TutorialMenu.isTutorialSelected()) 
-    	    {
-    	    	System.out.println("Tutorial select, starting Tutorial...");
-    	        this.initializeTutorial();
-    	        this.gameLevels.get(0).playTutorial();
-    	    } 
-    	    else 
-    	    {
-    	        // Se l'utente non vuole il tutorial, continua il gioco normalmente
-    	        System.out.println("Tutorial skipped, starting game...");
-    	    }
-    	});
-    	
-    	// Inizio del gioco effettivo
 
-        // Crea tutti i personaggi giocabili
-        this.createAllies();
-
-        // Scegli graficamente i 3 personaggi con cui giocare
-    	/*
-        CharactersMenu.startCharactersMenu();
-        this.selectedAllies = this.transformList(CharactersMenu.getNameCharacters());
-        */
-      
-        // Inizializzo le liste dei nemici e dei livelli
-        //this.initializeGameLevels();   PROBLEMATICO CON LEVELMAP
-
-    	// Gioca i livelli
-        //for (int i = 1; i <= Game.TOTAL_LEVEL; i++) 
-       // {
-            // Gioca il livello, playLevel ritorna true se il livello è stato completato sennò interrompe dal ciclo
-           // if (!this.gameLevels.get(i).playLevel(this.gameStateManager , i)) 
-          //  {
-            //    System.out.println("Il livello non è stato completato, uscita dal ciclo.");
-            //    break;
-           // }
-
-            // Sostituisci gli alleati morti con nuovi alleati
-           // this.checkAndReplaceDeadAllies();
-
-          //  System.out.println("Passaggio al livello " + (i + 1));
-        //}
-        
+    	// Avvio il Tutorial Menu
+    	this.tutorialMenu.start(e -> 
+    	{
+            // Il flusso del codice rimane in attesa finche l'utente non sceglie se giocare o saltare il tutorial
+            if (this.tutorialMenu.isTutorialSelected()) 
+            {
+            	// Ha scelto di giocare il livello
+                System.out.println("Tutorial selected, starting Tutorial...");
+                this.initializeTutorial();
+                
+                // Gioca il tutorial
+                if (this.gameLevels.get(0).playTutorial()) 
+                {
+                    System.out.println("Congratulations! You completed the tutorial, now starting the game...");
+                }
+            } 
+            else
+            {
+                System.out.println("Tutorial skipped, starting game...");
+            }
+        });
+                   	
+        // InizializzA la lista con tutti i personaggi giocabili
+		this.createAllies(); 
+		
+		// Appare il menu per la selezione dei personaggi
+		// Trasforma la lista di char in selectedAllies
+		
+		// INIZIANO I LIVELLI
+		
+		
+		// Inizializzo le liste dei nemici e dei livelli
+	    //this.initializeGameLevels();   PROBLEMATICO CON LEVELMAP
+		// Gioca i livelli
+	    //for (int i = 1; i <= Game.TOTAL_LEVEL; i++) 
+	    //{
+	        // Gioca il livello, playLevel ritorna true se il livello è stato completato sennò interrompe dal ciclo
+	        //if (!this.gameLevels.get(i).playLevel(this.gameStateManager , i)) 
+	        //{
+	        //    System.out.println("Il livello non è stato completato, uscita dal ciclo.");
+	        //    break;
+	        //}
+	
+	        //Sostituisci gli alleati morti con nuovi alleati
+	        //this.checkAndReplaceDeadAllies();
+	
+	        //System.out.println("Passaggio al livello " + (i + 1));
+	    //}
     }
-
+    
     private void transformList(List<String> nameCharacters) 
     {
         this.selectedAllies = this.availableAllies.stream()
@@ -161,7 +173,7 @@ public class Game
             System.out.println("Sostituzione di " + alliesToChange + " personaggi morti.");
     
             // Seleziona nuovi alleati
-            List<Character> newAllies = GraphicsMenu.replaceDeadAlliesMenu(this.availableAllies , alliesToChange);
+            List<Character> newAllies = CharacterMenu.replaceDeadAlliesMenu(this.availableAllies , alliesToChange);
     
             // Aggiungi i nuovi alleati
             this.selectedAllies.addAll(newAllies);

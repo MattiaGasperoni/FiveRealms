@@ -6,9 +6,16 @@ import java.awt.event.*;
 
 public class TutorialMenu
 {
-    private static boolean tutorialSelected = false;
+    private boolean tutorialSelecion;
+    
+    public TutorialMenu()
+    {
+    	this.tutorialSelecion = false;
+        System.out.println("Open Tuturial Menu Frame");
 
-    public static void startTutorialMenu(ActionListener callback) 
+    }
+
+    public void start(ActionListener callback) 
     {
         JFrame frame = createFrame();
 
@@ -28,7 +35,7 @@ public class TutorialMenu
         frame.setVisible(true);
     }
 
-    private static JFrame createFrame() 
+    private JFrame createFrame() 
     {
         JFrame frame = new JFrame("Tutorial Menu");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -38,23 +45,23 @@ public class TutorialMenu
         return frame;
     }
 
-    private static JLabel createBackgroundLabel() 
+    private JLabel createBackgroundLabel() 
     {
         JLabel backgroundLabel = new JLabel(new ImageIcon("images/Background/background4.jpg"));
         backgroundLabel.setLayout(new GridBagLayout());
         return backgroundLabel;
     }
 
-    private static JLabel createInfoLabel() 
+    private JLabel createInfoLabel() 
     {
         JLabel infoLabel = new JLabel("Do you want to play the Tutorial?", SwingConstants.CENTER);
-        System.out.println("Do you want to play the Tutorial?");
+        System.out.println("Do you want to play the Tutorial? ");
         infoLabel.setFont(new Font("Arial", Font.BOLD, 20));
         infoLabel.setForeground(Color.WHITE);
         return infoLabel;
     }
 
-    private static GridBagConstraints createGridBagConstraints() 
+    private GridBagConstraints createGridBagConstraints() 
     {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
@@ -62,7 +69,7 @@ public class TutorialMenu
         return gbc;
     }
 
-    private static JButton createButton(String text, ActionListener action) 
+    private JButton createButton(String text, ActionListener action) 
     {
         JButton button = new JButton(text);
         button.setFont(new Font("Arial", Font.BOLD, 18));
@@ -75,15 +82,15 @@ public class TutorialMenu
         return button;
     }
 
-    private static void handleSelection(JFrame frame, boolean selection, ActionListener callback, ActionEvent e)
+    private void handleSelection(JFrame frame, boolean selection, ActionListener callback, ActionEvent e)
     {
-        tutorialSelected = selection;
-        System.out.println(selection ? "Yes" : "No");
+    	tutorialSelecion = selection;
+        System.out.print(selection ? "Yes" : "No");
         frame.dispose();
         callback.actionPerformed(new ActionEvent(e.getSource(), ActionEvent.ACTION_PERFORMED, selection ? "Yes" : "No"));
     }
 
-    private static void addButtonsToBackground(JLabel backgroundLabel, JButton yesButton, JButton noButton, JButton exitButton, GridBagConstraints gbc) {
+    private void addButtonsToBackground(JLabel backgroundLabel, JButton yesButton, JButton noButton, JButton exitButton, GridBagConstraints gbc) {
         gbc.gridy = 1;
         backgroundLabel.add(yesButton, gbc);
         gbc.gridy = 2;
@@ -92,7 +99,7 @@ public class TutorialMenu
         backgroundLabel.add(exitButton, gbc);
     }
 
-    public static boolean isTutorialSelected() {
-        return tutorialSelected;
+    public boolean isTutorialSelected() {
+        return tutorialSelecion;
     }
 }

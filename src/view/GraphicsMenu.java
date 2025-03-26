@@ -6,12 +6,20 @@ import model.gameStatus.Game;
 
 import java.awt.*;
 
-public class GraphicsMenu {
+public class GraphicsMenu 
+{
 
-	public static boolean newGame = false; // Variabile per tracciare la scelta
-	public static boolean loadGame = false; // Variabile per tracciare la scelta
-	
-    public static void startMenu(Game g) {
+	public boolean NewGameSelected ;   // Variabile per tracciare la scelta
+	public boolean LoadGameSelected;   // Variabile per tracciare la scelta
+		
+    public GraphicsMenu() 
+    {
+		this.NewGameSelected  = false;
+		this.LoadGameSelected = false;
+		
+	}
+
+	public void start(Game g) {
         JFrame frame = new JFrame("Graphics Menu");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 800);
@@ -22,15 +30,17 @@ public class GraphicsMenu {
         backgroundLabel.setLayout(new GridBagLayout());
 
         JButton startButton = createButton("New Game", e -> {
-        	newGame = true;
+        	NewGameSelected = true;
             frame.dispose(); // Chiude il menu attuale
             g.startNewGame();   // Avvia una nuova partita
         });
 
         JButton loadButton = createButton("Load Game", e -> {
-        	loadGame = true;
+        	LoadGameSelected = true;
             frame.dispose(); // Chiude il menu attuale
-            LoadGameMenu.startLoadGame();
+            
+            // Logica per il caricamento di una partita
+            //LoadGameMenu.startLoadGame();
             //g.loadGame();    // Carica una partita salvata
         });
 
@@ -53,7 +63,7 @@ public class GraphicsMenu {
         frame.setVisible(true);
     }
 
-    private static JButton createButton(String text, java.awt.event.ActionListener action) {
+    private JButton createButton(String text, java.awt.event.ActionListener action) {
         JButton button = new JButton(text);
         button.setFont(new Font("Arial", Font.BOLD, 18));
         button.setForeground(Color.WHITE);
@@ -65,9 +75,19 @@ public class GraphicsMenu {
         return button;
     }
 
-    private static boolean checkSavedGames() {
+    private boolean checkSavedGames() {
         // Qui puoi aggiungere la logica per verificare la presenza di salvataggi
         return true; // Modifica questo valore in base ai tuoi dati
     }
+
+	public boolean isNewGameSelected() {
+		return this.NewGameSelected;
+	}
+
+	public boolean isLoadGameSelected() {
+		return this.LoadGameSelected;
+	}
+    
+    
 
 }
