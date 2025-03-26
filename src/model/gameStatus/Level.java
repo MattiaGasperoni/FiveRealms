@@ -15,6 +15,7 @@ public class Level
     private List<Character> alliesList;           // Lista dei personaggi giocabili
 
     private boolean isDoorOpen;                   // Flag che indica se la porta per il prossimo livello è aperta
+    
 
 
     public Level(LevelMap map, List<Character> enemies, List<Character> allies) 
@@ -42,6 +43,8 @@ public class Level
     //Metodo Pubblico per giocare il livello, restituisce true se il livello è stato completato, false altrimenti
     public boolean playLevel(GameStateManager gameStateManager, int levelNumber) 
     {
+    	GraphicMovePhaseManager graphicMovePhaseManager = new GraphicMovePhaseManager();
+    	
         // Inizializzazione della mappa del livello e spawn dei personaggi
         GraphicsMenu.spawnCharacters(this.enemiesList, this.alliesList);
 
@@ -64,12 +67,12 @@ public class Level
 
                 // Fase di spostamento del personaggio, se attacker e' un alleato chiede all'utente dove vuole spostarsi, 
                 // se e' un nemico l'A.I. decide dove spostarlo  CAMBIARE NOME METODO!!!!
-                CharacterMovementMenu.movementFace(attacker, this.alliesList, this.enemiesList); 
+                graphicMovePhaseManager.movementPhase(attacker, alliesList, enemiesList); 
 
                 // Fase di scelta de target da attaccare, se attacker e' un alleato chiede all'utente chi vuole attaccare,
                 // se e' un nemico l'A.I. decide chi attaccare
-                CharacterMovementMenu.chooseTarget(this.alliesList, this.enemiesList);
-                Character target = CharacterMovementMenu.getTarget();
+                graphicMovePhaseManager.chooseTarget(this.alliesList, this.enemiesList);
+                Character target = graphicMovePhaseManager.getTarget();
                 
                 // Il personaggio attacca il target
                 StaticCombatManager.fight(attacker, target, this.alliesList, this.enemiesList);

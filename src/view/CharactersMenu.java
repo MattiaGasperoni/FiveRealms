@@ -1,24 +1,22 @@
 package view;
+
 import javax.swing.*;
-
-import model.characters.Barbarian;
 import model.characters.Character;
-import model.point.Point;
-
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CharactersMenu {
 
     private static final int MAX_SELECTION = 3;
     private final List<JPanel> selectedPanels = new ArrayList<>();
     private JButton nextButton;
-    public static List<String> nameCharacters = new ArrayList<>(); // Inizializzazione della lista
+    public List<String> selectedCharacters = new ArrayList<>(); // Inizializzazione della lista
     
-    public void startCharactersMenu(List<Character> allAllies,List<Character> selectedAllies, int num_allies) {
+    public void start(List<Character> allAllies, List<Character> selectedAllies) {
         JFrame frame = new JFrame("Characters Menu");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 800);
@@ -42,11 +40,12 @@ public class CharactersMenu {
         nextButton = new JButton("Next");
         nextButton.setFont(new Font("Arial", Font.BOLD, 16));
         nextButton.setEnabled(false);
-        nextButton.addActionListener(e ->
-        	// Chiamare il metodo transformList qui
-        	
-        	frame.dispose()
-        );
+        nextButton.addActionListener(e -> {
+        	// Ritorna la lista dei personaggi selezionati e fare la trasformList
+        	selectedAllies.clear();
+        	selectedAllies.addAll(transformList(allAllies, selectedCharacters));
+        	frame.dispose();
+        });
 
         // Creazione e posizionamento dei personaggi
         addCharacter(bgLabel, "Archer", "A skilled archer, master of the bow.", "images/characters/archer/archerHero.png", 0, 1, gbc);
@@ -62,6 +61,12 @@ public class CharactersMenu {
 
         frame.add(bgLabel);
         frame.setVisible(true);
+    }
+    
+    private List<Character> transformList(List<Character> allAllies, List<String> selectedCharacters) {
+        return allAllies.stream()
+            .filter(ally -> selectedCharacters.contains(ally.getClass().getSimpleName()))
+            .collect(Collectors.toList());
     }
 
     private void addCharacter(JLabel bgLabel, String name, String desc, String imgPath, int x, int y, GridBagConstraints gbc) {
@@ -84,11 +89,11 @@ public class CharactersMenu {
             public void mouseClicked(MouseEvent e) {
                 if (selectedPanels.contains(panel)) {
                 	selectedPanels.remove(panel);
-                	nameCharacters.remove(name);
+                	selectedCharacters.remove(name);
                     panel.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
                 } else if (selectedPanels.size() < MAX_SELECTION) {
                     selectedPanels.add(panel);
-                	nameCharacters.add(name);
+                	selectedCharacters.add(name);
                     panel.setBorder(BorderFactory.createLineBorder(Color.GREEN, 3));
                 }
                 nextButton.setEnabled(selectedPanels.size() == MAX_SELECTION);
@@ -99,15 +104,5 @@ public class CharactersMenu {
         gbc.gridy = y;
         bgLabel.add(panel, gbc);
     }
-    
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            List<Character> allAllies = new ArrayList<>(); // Lista di tutti i personaggi disponibili
-            List<Character> selectedAllies = new ArrayList<>(); // Lista dei personaggi selezionati
-            int num_allies = 3; // Numero massimo di alleati selezionabili
-
-            new CharactersMenu().startCharactersMenu(allAllies, selectedAllies, num_allies);
-        });
-    }
+ 
 }

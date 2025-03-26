@@ -1,41 +1,98 @@
 package view;
 
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
-
+import javax.swing.JButton;
 import model.characters.Character;
+import model.point.Point;
 
 public class GraphicMovePhaseManager {
 
-	public void movementPhase(Character attacker, List<Character> alliesList, List<Character> enemiesList) {
-		// TODO Auto-generated method stub
-		/* Qui mostrare graficamente il movimento fattibile 
-		 * da parte del personaggio che deve attaccare,
-		 * 
-		 * Implementare una struttura dati contenente i blocchi dove posso spostarmi,
-		 * rendendo inacessibili i blocchi dove sono gia presenti alleati o nemici.
-		 * 
-		 * Usare la struttura dati con tutti i pulsanti del LevelMap, e fare una chiamata
-		 * al metodo showGrid() che fara vedere graficamente i blocchi grigi dove mi posso
-		 * spostare.
-		 * 
-		 * Quando clicchi su uno di questi blocchi grigi mi vado a spostare:
-		 * attacker.moveTo(bottoneCliccato.getPosition()).
-		 */
-	}
+    private LevelMap levelMap;
+    private Character selectedTarget = null;  // Variabile per il bersaglio selezionato
 
-	public Character chooseTarget(List<Character> alliesList, List<Character> enemiesList) {
-		// TODO Auto-generated method stub
-		/* Il taget è colui che è stato selezionato (premuto) 
-		 * 
-		 * Fa il fight su quel personaggio selezionato
-		 * 
-		 */
-		return null;
-	}
+    // Gestisce la fase di movimento
+    public void movementPhase(Character attacker, List<Character> alliesList, List<Character> enemiesList) {
+        // Ottieni tutte le posizioni dei bottoni
+        List<Point> availableMoves = getAvailableMoves(attacker, alliesList, enemiesList);
 
-	/*E metodo showGrid che evidenzia i blocchi in cui puoi spostarti*/ 
-	private void showGrid() {
-		
-	}
+        // Mostra i movimenti disponibili sulla griglia
+        showGrid(availableMoves, attacker);
+    }
 
+    // Ottiene le posizioni valide per i movimenti
+    private List<Point> getAvailableMoves(Character attacker, List<Character> alliesList, List<Character> enemiesList) {
+        List<Point> availableMoves = new ArrayList<>();
+        int moveRange = attacker.getSpeed() / 10;  // Determina la distanza di movimento
+        Point currentPosition = attacker.getPosition();
+
+        // Aggiungi le posizioni libere entro il raggio di movimento
+        for (int dx = -moveRange; dx <= moveRange; dx++) {
+            for (int dy = -moveRange; dy <= moveRange; dy++) {
+                int newX = currentPosition.getX() + dx;
+                int newY = currentPosition.getY() + dy;
+
+                if (isValidPosition(newX, newY) && !isOccupied(newX, newY, alliesList, enemiesList)) {
+                    availableMoves.add(new Point(newX, newY));
+                }
+            }
+        }
+        return availableMoves;
+    }
+
+    // Verifica se la posizione è valida (entro i limiti della griglia)
+    private boolean isValidPosition(int x, int y) {
+        return x >= 0 && x < LevelMap.GRID_SIZE && y >= 0 && y < LevelMap.GRID_SIZE;
+    }
+
+    // Verifica se una posizione è occupata da un alleato o nemico
+    private boolean isOccupied(int x, int y, List<Character> alliesList, List<Character> enemiesList) {
+        for (Character character : alliesList) {
+            if (character.getPosition().getX() == x && character.getPosition().getY() == y) {
+                return true;
+            }
+        }
+        for (Character character : enemiesList) {
+            if (character.getPosition().getX() == x && character.getPosition().getY() == y) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Mostra la griglia con i movimenti disponibili
+    private void showGrid(List<Point> availableMoves, Character attacker) {
+        for (Point point : availableMoves) {
+            JButton button = levelMap.getButtonAt(point.getX(), point.getY());
+            button.setBackground(Color.GRAY);
+            button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    attacker.moveTo(point);  // Muovi il personaggio alla nuova posizione
+                }
+            });
+        }
+    }
+
+    // Seleziona un bersaglio tra gli avversari
+    public Character chooseTarget(List<Character> enemiesList) {
+        for (Character enemy : enemiesList) {
+            Point position = enemy.getPosition();
+            JButton button = levelMap.getButtonAt(position.getX(), position.getY());
+
+            button.addActionListener(e -> {
+                selectedTarget = enemy;  // Assegna il bersaglio selezionato
+                System.out.println("Bersaglio selezionato: " + enemy.getClass().getSimpleName());
+            });
+        }
+
+        return selectedTarget;
+    }
+
+    public Character getTarget() {
+        return selectedTarget;
+    }
 }

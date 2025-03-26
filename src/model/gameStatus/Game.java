@@ -173,7 +173,7 @@ public class Game
             System.out.println("Sostituzione di " + alliesToChange + " personaggi morti.");
     
             // Seleziona nuovi alleati
-            List<Character> newAllies = CharacterMenu.replaceDeadAlliesMenu(this.availableAllies , alliesToChange);
+            List<Character> newAllies = CharactersMenu.replaceDeadAlliesMenu(this.availableAllies , alliesToChange);
     
             // Aggiungi i nuovi alleati
             this.selectedAllies.addAll(newAllies);
