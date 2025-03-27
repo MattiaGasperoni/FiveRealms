@@ -31,13 +31,24 @@ public class LevelMap {
         gridPanel.removeAll();
         for (int i = 0; i < GRID_SIZE; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
-                gridButtons[i][j] = new JButton();
+                final int row = i; // Salva la riga in una variabile finale
+                final int col = j; // Salva la colonna in una variabile finale
+                gridButtons[i][j] = new JButton(); // Crea il pulsante senza testo
                 gridButtons[i][j].setPreferredSize(new Dimension(BUTTON_SIZE, BUTTON_SIZE));
-                gridPanel.add(gridButtons[i][j]);
+                gridButtons[i][j].addActionListener(e -> {
+                    // Invoca il metodo per mostrare le coordinate
+                    showButtonCoordinates(row, col);
+                });
+                gridPanel.add(gridButtons[i][j]); // Aggiungi il pulsante alla griglia
             }
         }
         gridPanel.repaint();
         gridPanel.revalidate();
+    }
+
+    private void showButtonCoordinates(int row, int col) {
+        // Mostra un messaggio con le coordinate del pulsante cliccato
+        JOptionPane.showMessageDialog(frame, "Hai cliccato il pulsante in posizione: [" + row + ", " + col + "]");
     }
 
     public JButton getButtonAt(int x, int y) {
@@ -50,5 +61,4 @@ public class LevelMap {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(LevelMap::new);
     }
-
 }
