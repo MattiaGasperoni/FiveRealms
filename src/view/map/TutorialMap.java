@@ -2,64 +2,108 @@ package view.map;
 
 import javax.swing.*;
 import java.awt.*;
-import model.point.Point; // Import della tua classe Point
+import model.point.Point;
 
 public class TutorialMap extends LevelMap {
-
+    
     public TutorialMap() {
         super();
         startTutorial();
     }
 
     private void startTutorial() {
-        // Calcola il centro della griglia
-        Point centerPoint = new Point(GRID_SIZE / 2, GRID_SIZE / 2); // Posizione centrale
-        // Posizioni dei popup
-        showTutorialPopup("Benvenuto, soldato! Prepara le tue forze e ascolta bene.", centerPoint, true); // Primo popup al centro
-        showTutorialPopup("Attenzione! I nemici sono in agguato sopra di te. Sconfiggili!", new Point(0, 0), false); // Nemici in alto
-        showTutorialPopup("In basso troverai i tuoi alleati pronti a combattere!", new Point(5, 0), false); // Alleati in basso
-        showTutorialPopup("Usa le abilità speciali dei tuoi alleati per vincere!", new Point(2, 3), false); // Abilità speciali
-        showTutorialPopup("La missione è chiara: sconfiggi tutti i nemici e porta la vittoria a casa!", new Point(4, 1), false); // Obiettivo
-        showTutorialPopup("Buona fortuna soldato!", centerPoint, true); // Conclusione
+        Point centerPoint = new Point(GRID_SIZE / 2, GRID_SIZE / 2);
+        
+        // Sequenza del tutorial con illuminazione temporizzata
+        showTutorialPopup("Benvenuto, soldato! Ascolta bene.", centerPoint, true);
+        
+        // 1° Illuminazione: prime due righe in alto (nemici)
+        highlightRowsWithTimer(0, 1, Color.YELLOW, 1500, () -> {
+        	showTutorialPopup("I nemici sono sopra di te. Sconfiggili!", new Point(0, 0), false);
+            
+            // 2° Illuminazione: ultime due righe in basso (alleati)
+            highlightRowsWithTimer(4, 5, Color.YELLOW, 1500, () -> {
+                showTutorialPopup("Qui basso troverai i tuoi alleati!", new Point(5, 0), false);
+                
+                // Messaggi successivi senza illuminazione
+                showTutorialPopup("Usa le abilità dei tuoi alleati per vincere!", new Point(4, 2), false);
+                showTutorialPopup("La missione è sconfiggere tutti i nemici!", new Point(3, 2), false);
+                showTutorialPopup("Buona fortuna soldato!", centerPoint, true);
+            });
+        });
+    }
 
+    private void highlightRowsWithTimer(int startRow, int endRow, Color color, int duration, Runnable afterAction) {
+        // Applica l'illuminazione alle righe specificate
+        for (int i = startRow; i <= endRow; i++) {
+            for (int j = 0; j < GRID_SIZE; j++) {
+                gridButtons[i][j].setBackground(color);
+                gridButtons[i][j].setOpaque(true);
+                gridButtons[i][j].setBorderPainted(false);
+            }
+        }
+        
+        // Timer per rimuovere l'illuminazione dopo la durata specificata
+        Timer timer = new Timer(duration, e -> {
+            resetGridColors();
+            afterAction.run(); // Esegue l'azione successiva
+        });
+        timer.setRepeats(false);
+        timer.start();
     }
 
     private void showTutorialPopup(String message, Point gridPoint, boolean isCenter) {
         JDialog dialog = new JDialog();
-        dialog.setSize(350, 130); // Dimensione del popup
+        dialog.setSize(350, 130);
         dialog.setLayout(new BorderLayout());
-        dialog.setUndecorated(true); // Rimuove il bordo
+        dialog.setUndecorated(true);
         dialog.setModal(true);
 
-        dialog.add(new JLabel(message, SwingConstants.CENTER), BorderLayout.CENTER);
+        // Messaggio centrato con stile migliorato
+        JLabel messageLabel = new JLabel(message, SwingConstants.CENTER);
+        messageLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        messageLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        dialog.add(messageLabel, BorderLayout.CENTER);
 
+        // Pulsanti con stile
         JPanel buttonPanel = new JPanel();
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         JButton okButton = new JButton("OK");
         JButton exitButton = new JButton("Esci");
 
-        okButton.addActionListener(e -> dialog.dispose()); // Chiude solo il popup
-        exitButton.addActionListener(e -> System.exit(0)); // Chiude l'intera applicazione
+        okButton.addActionListener(e -> dialog.dispose());
+        exitButton.addActionListener(e -> System.exit(0));
 
         buttonPanel.add(okButton);
+        buttonPanel.add(Box.createHorizontalStrut(10));
         buttonPanel.add(exitButton);
         dialog.add(buttonPanel, BorderLayout.SOUTH);
 
-        // Posiziona il popup
+        // Posizionamento preciso
         if (isCenter) {
-            // Posiziona il primo popup al centro della finestra
-            dialog.setLocationRelativeTo(null); // Centro della finestra principale
+            dialog.setLocationRelativeTo(null);
         } else {
-            // Posiziona gli altri popup in base alle coordinate fornite
-            JButton targetButton = getButtonAt(gridPoint.getX(), gridPoint.getY());
+            JButton targetButton = gridButtons[gridPoint.getX()][gridPoint.getY()];
             if (targetButton != null) {
                 java.awt.Point buttonLocation = targetButton.getLocationOnScreen();
-                dialog.setLocation(buttonLocation.x, buttonLocation.y); // Usa direttamente la posizione del bottone
-            } else {
-                System.err.println("Coordinate della griglia non valide: " + gridPoint);
+                dialog.setLocation(
+                    buttonLocation.x + targetButton.getWidth()/2 - dialog.getWidth()/2,
+                    buttonLocation.y - dialog.getHeight() - 10
+                );
             }
         }
 
         dialog.setVisible(true);
+    }
+
+    private void resetGridColors() {
+        for (int i = 0; i < GRID_SIZE; i++) {
+            for (int j = 0; j < GRID_SIZE; j++) {
+                gridButtons[i][j].setBackground(null);
+                gridButtons[i][j].setOpaque(false);
+                gridButtons[i][j].setBorderPainted(true);
+            }
+        }
     }
 
     public static void main(String[] args) {
