@@ -8,9 +8,10 @@ import model.characters.Character;
 import model.point.Point;
 
 import view.*;
-import view.map.LevelMap;
-import view.map.TutorialMap;
+import view.map.*;
+
 import controller.*;
+
 
 public class Game 
 {   
@@ -163,13 +164,6 @@ public class Game
 	    //}
     }
     
-    private void transformList(List<String> nameCharacters) 
-    {
-        this.selectedAllies = this.availableAllies.stream()
-            .filter(ally -> nameCharacters.contains(ally.getClass().getSimpleName()))
-            .collect(Collectors.toList());
-    }
-
 	// Metodo per sostituire gli alleati morti con nuovi personaggi scelti dall'utente
     private void checkAndReplaceDeadAllies() 
     {
@@ -181,10 +175,10 @@ public class Game
             System.out.println("Sostituzione di " + alliesToChange + " personaggi morti.");
     
             // Seleziona nuovi alleati
-            List<Character> newAllies = CharacterSelectionMenu.replaceDeadAlliesMenu(this.availableAllies , alliesToChange);
+            //List<Character> newAllies = CharacterSelectionMenu.replaceDeadAlliesMenu(this.availableAllies , alliesToChange);
     
             // Aggiungi i nuovi alleati
-            this.selectedAllies.addAll(newAllies);
+            //this.selectedAllies.addAll(newAllies);
         }
     }    
 
