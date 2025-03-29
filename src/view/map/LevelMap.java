@@ -6,12 +6,13 @@ import model.characters.Character;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class LevelMap {
-    protected static final int GRID_SIZE = 6;
-    private static final int BUTTON_SIZE = 120;
+    public static final int GRID_SIZE = 6;
+    public static final int BUTTON_SIZE = 120;
 
     private JFrame frame;
     private JPanel gridPanel;
@@ -71,8 +72,22 @@ public class LevelMap {
         loadButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         exitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        saveButton.addActionListener(e -> saveGame());
-        loadButton.addActionListener(e -> loadGame());
+        saveButton.addActionListener(e -> {
+			try {
+				saveGame();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
+        loadButton.addActionListener(e -> {
+			try {
+				loadGame();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
         exitButton.addActionListener(e -> System.exit(0));
 
         controlPanel.add(Box.createVerticalStrut(10)); // Spazio prima dei pulsanti
@@ -84,7 +99,7 @@ public class LevelMap {
         
     }
 
-    private void saveGame() {
+    private void saveGame() throws IOException {
         List<Character> allies = new ArrayList<>();
         List<Character> enemies = new ArrayList<>();
         int level = 1;
@@ -93,7 +108,7 @@ public class LevelMap {
         JOptionPane.showMessageDialog(frame, "Gioco salvato con successo!");
     }
 
-    private void loadGame() {
+    private void loadGame() throws IOException {
         GameState gameState = gameStateManager.loadStatus();
         if (gameState != null) {
             JOptionPane.showMessageDialog(frame, "Gioco caricato con successo! Livello: " + gameState.getLevel());
@@ -106,7 +121,20 @@ public class LevelMap {
         JOptionPane.showMessageDialog(frame, "Posizione: [" + row + ", " + col + "]");
     }
 
+
+	
+	
     public static void main(String[] args) {
         SwingUtilities.invokeLater(LevelMap::new);
     }
+
+    public JButton getButtonAt(int x, int y) {
+        if (x >= 0 && x < GRID_SIZE && y >= 0 && y < GRID_SIZE) {
+            return gridButtons[x][y];
+        }
+        return null;
+    }
+
+
+	
 }

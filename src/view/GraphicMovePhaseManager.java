@@ -6,9 +6,12 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
+import javax.swing.SwingUtilities;
+
 import model.characters.Character;
 import model.point.Point;
 import view.map.LevelMap;
+import view.map.TutorialMap;
 
 public class GraphicMovePhaseManager {
 
@@ -92,4 +95,5 @@ public class GraphicMovePhaseManager {
 
         return selectedTarget;
     }
+    
 }

@@ -2,16 +2,20 @@ package view.map;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
+
+import model.characters.Character;
 import model.point.Point;
 
 public class TutorialMap extends LevelMap {
     
     public TutorialMap() {
         super();
-        startTutorial();
+        initializeMap();
     }
 
-    private void startTutorial() {
+    public void initializeMap() {
+    	
         Point centerPoint = new Point(GRID_SIZE / 2, GRID_SIZE / 2);
         
         // Sequenza del tutorial con illuminazione temporizzata
@@ -23,7 +27,7 @@ public class TutorialMap extends LevelMap {
             
             // 2° Illuminazione: ultime due righe in basso (alleati)
             highlightRowsWithTimer(4, 5, Color.YELLOW, 1500, () -> {
-                showTutorialPopup("Qui basso troverai i tuoi alleati!", new Point(5, 0), false);
+                showTutorialPopup("Qui in basso troverai i tuoi alleati!", new Point(5, 0), false);
                 
                 // Messaggi successivi senza illuminazione
                 showTutorialPopup("Usa le abilità dei tuoi alleati per vincere!", new Point(4, 2), false);
@@ -106,7 +110,14 @@ public class TutorialMap extends LevelMap {
         }
     }
 
-    public static void main(String[] args) {
+    
+
+	/*public void spawnCharacters(List<Character> allies, List<Character> enemies) {
+		// TODO Auto-generated method stub
+		
+	}*/
+	
+	public static void main(String[] args) {
         SwingUtilities.invokeLater(TutorialMap::new);
     }
 }

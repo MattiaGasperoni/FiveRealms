@@ -1,5 +1,6 @@
 package model.gameStatus;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -36,7 +37,7 @@ public class Level
 
     
     //Metodo Pubblico per giocare il livello, restituisce true se il livello è stato completato, false altrimenti
-    public boolean playLevel(GameStateManager gameStateManager, int levelNumber) 
+    public boolean playLevel(GameStateManager gameStateManager, int levelNumber) throws IOException 
     {
         // Inizializzazione della mappa del livello e spawn dei personaggi
         // MainMenu.spawnCharacters(this.enemiesList, this.alliesList);
