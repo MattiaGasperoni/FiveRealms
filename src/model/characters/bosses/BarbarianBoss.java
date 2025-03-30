@@ -5,7 +5,8 @@ import model.point.Point;
 public class BarbarianBoss extends Barbarian{
 
 	public BarbarianBoss(Point startingPosition) {
-		super(startingPosition, "images/characters/barbarian/barbarianBoss.png"); //Random
+		super(startingPosition); //Random
+		super.setImage("images/characters/barbarian/barbarianBoss.png");
 		this.increaseMaxHealth(1.0);
 		this.increasePower(0.3);
 		this.increaseDefence(0.2);

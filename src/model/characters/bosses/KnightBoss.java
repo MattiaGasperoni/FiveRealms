@@ -5,7 +5,8 @@ import model.point.Point;
 public class KnightBoss extends Knight{
 
 	public KnightBoss(Point startingPosition) {
-		super(startingPosition, "images/characters/knights/knightsBoss.png"); //Random
+		super(startingPosition); //Random
+		super.setImage("images/characters/knights/knightsBoss.png");
 		this.increaseMaxHealth(0.3);
 		this.increasePower(0.3);
 		this.increaseDefence(0.3);

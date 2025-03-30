@@ -26,7 +26,7 @@ public abstract class AbstractCharacter implements Character, Serializable {
 	protected static final Random rand = new Random();
 	private static final long serialVersionUID = 1L;  // per salvare lo stato del gioco
 	
-	public AbstractCharacter(int health, int speed, int power, int defence, Point startingPosition, String image) {
+	public AbstractCharacter(int health, int speed, int power, int defence, Point startingPosition) {
 		this.maxHealth = health;
 		this.currentHealth = this.maxHealth;
 		this.speed = speed;
@@ -36,7 +36,7 @@ public abstract class AbstractCharacter implements Character, Serializable {
 		this.potion = null;
 		this.position = startingPosition;
 		this.isAllied = false;
-		this.image = image;
+		this.generateDefaultImage();
 		this.availableWeapons = new ArrayList<>(2);
 	}
 	
@@ -118,7 +118,7 @@ public abstract class AbstractCharacter implements Character, Serializable {
 			this.increasePower(heroStatIncreasePercentage);
 			this.increaseDefence(heroStatIncreasePercentage);
 			this.increaseSpeed(heroStatIncreasePercentage);
-			this.image = "images/characters/" + getClass().getSimpleName().toLowerCase() + "/" + getClass().getSimpleName().toLowerCase() + "Hero.png"; //not sure this is correct, needs testing
+			this.setImage("images/characters/" + getClass().getSimpleName().toLowerCase() + "/" + getClass().getSimpleName().toLowerCase() + "Hero.png"); //not sure this is correct, needs testing
 		}
 	}
 	
@@ -158,6 +158,10 @@ public abstract class AbstractCharacter implements Character, Serializable {
 	public void setPotion(Potion potion) {
 		if(!this.hasPotion())
 			this.potion = potion;
+	}
+	
+	protected void generateDefaultImage() {
+		this.setImage("images/characters/" + getClass().getSimpleName().toLowerCase() + "/" + getClass().getSimpleName().toLowerCase() + rand.nextInt(1,4) + ".png"); //not sure this is correct, needs testing
 	}
 	
 	@Override
@@ -218,6 +222,10 @@ public abstract class AbstractCharacter implements Character, Serializable {
 	@Override
 	public String getImage() {
 		return image;
+	}
+	
+	public void setImage(String image) {
+		this.image = image;
 	}
 
 	@Override
