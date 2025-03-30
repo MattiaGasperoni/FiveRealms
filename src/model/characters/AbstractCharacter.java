@@ -1,7 +1,11 @@
 package model.characters;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Random;
 import model.equipment.potions.*;
+import model.equipment.weapons.Axe;
+import model.equipment.weapons.LongSword;
 import model.equipment.weapons.Weapon;
 import model.point.Point;
 public abstract class AbstractCharacter implements Character, Serializable {
@@ -18,6 +22,7 @@ public abstract class AbstractCharacter implements Character, Serializable {
 	private Point position; 
 	private String image; //filepath
 	private boolean isAllied;
+	protected ArrayList<Weapon> availableWeapons;
 	protected static final Random rand = new Random();
 	private static final long serialVersionUID = 1L;  // per salvare lo stato del gioco
 	
@@ -33,14 +38,16 @@ public abstract class AbstractCharacter implements Character, Serializable {
 		this.position = startingPosition;
 		this.isAllied = false;
 		this.image = image;
+		this.availableWeapons = new ArrayList<>(2);
 	}
 	
 	@Override
-	public void moveTo(Point point) {
+	public void moveTo(Point point) throws IllegalArgumentException {
 		int speedToMovementFactor = 10;
 		
-		if(this.getDistanceInSquares(point) <= this.speed / speedToMovementFactor) //movement per-turn depends on speed, the actual value is placeholder as of now
-			this.position = point;
+		if(this.getDistanceInSquares(point) > this.speed / speedToMovementFactor) //movement per-turn depends on speed, the actual value is placeholder as of now
+			throw new IllegalArgumentException("You tried to move farther than your movement speed allows!");
+		this.position = point;
 	}
 
 	//note that a diagonal spot is counted as two squares away, which is fine
@@ -133,11 +140,17 @@ public abstract class AbstractCharacter implements Character, Serializable {
 	}
 	
 	@Override
-	public abstract void spawnWeapon();
+	public void spawnWeapon() {
+		this.setWeapon(this.availableWeapons.get(rand.nextInt(0,2)));
+	}
 	
-	//the implementation is ugly but I see no better way to do it
 	@Override
-	public abstract void swapWeapon();
+	public void swapWeapon() {
+		if(this.availableWeapons.getFirst().equals(this.getWeapon()))
+			this.setWeapon(this.availableWeapons.getLast());
+		else
+			this.setWeapon(this.availableWeapons.getFirst());
+	}
 	
 	protected void setWeapon(Weapon weapon) {
 		this.weapon = weapon;
