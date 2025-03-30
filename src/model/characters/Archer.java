@@ -9,5 +9,6 @@ public class Archer extends AbstractCharacter{
 		super(rand.nextInt(60,80), rand.nextInt(50,70), rand.nextInt(40,60), rand.nextInt(20,40), startingPosition, image); //Random
 		this.availableWeapons.add(new ShortBow());
 		this.availableWeapons.add(new LongBow());
+		super.spawnWeapon();
 	}
 }

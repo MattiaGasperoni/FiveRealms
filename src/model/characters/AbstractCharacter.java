@@ -33,7 +33,6 @@ public abstract class AbstractCharacter implements Character, Serializable {
 		this.power = power;
 		this.defence = defence;
 		this.experience = 0;
-		this.spawnWeapon();
 		this.potion = null;
 		this.position = startingPosition;
 		this.isAllied = false;
@@ -139,8 +138,7 @@ public abstract class AbstractCharacter implements Character, Serializable {
 		this.speed += this.speed * percentage;
 	}
 	
-	@Override
-	public void spawnWeapon() {
+	protected void spawnWeapon() {
 		this.setWeapon(this.availableWeapons.get(rand.nextInt(0,2)));
 	}
 	

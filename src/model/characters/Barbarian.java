@@ -10,5 +10,6 @@ public class Barbarian extends AbstractCharacter{
 		super(rand.nextInt(120,140), rand.nextInt(20,40), rand.nextInt(70,90), rand.nextInt(10,30), startingPosition, image); //Random
 		this.availableWeapons.add(new Axe());
 		this.availableWeapons.add(new LongSword());
+		super.spawnWeapon();
 	}
 }

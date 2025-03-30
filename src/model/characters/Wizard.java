@@ -10,5 +10,6 @@ public class Wizard extends AbstractCharacter{
 		super(rand.nextInt(50,70), rand.nextInt(40,60), rand.nextInt(60,80), rand.nextInt(10,30), startingPosition, image); //Random
 		this.availableWeapons.add(new SingleShotWand());
 		this.availableWeapons.add(new ZoneShotWand());
+		super.spawnWeapon();
 	}
 }

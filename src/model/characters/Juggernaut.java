@@ -10,5 +10,6 @@ public class Juggernaut extends AbstractCharacter{
 		super(rand.nextInt(80,100), rand.nextInt(10,30), rand.nextInt(50,70), rand.nextInt(70,90), startingPosition, image); //Random
 		this.availableWeapons.add(new ShortSword());
 		this.availableWeapons.add(new Axe());
+		super.spawnWeapon();
 	}
 }

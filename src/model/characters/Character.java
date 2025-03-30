@@ -31,7 +31,6 @@ public interface Character {
 	public int getDefence();
 	
 	public Weapon getWeapon();
-	public void spawnWeapon();	
 	public void swapWeapon();
 	public int getRange();
 	
