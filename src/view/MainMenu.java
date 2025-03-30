@@ -3,8 +3,10 @@ package view;
 import javax.swing.*;
 
 import model.gameStatus.Game;
+import model.gameStatus.GameStateManager;
 
 import java.awt.*;
+import java.io.File;
 
 public class MainMenu 
 {
@@ -77,7 +79,7 @@ public class MainMenu
 
     private boolean checkSavedGames() {
         // Qui puoi aggiungere la logica per verificare la presenza di salvataggi
-        return true; // Modifica questo valore in base ai tuoi dati
+    	return new File("Saves/game_state_save.dat").exists();
     }
 
 	public boolean isNewGameSelected() {
