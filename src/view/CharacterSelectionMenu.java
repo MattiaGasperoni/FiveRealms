@@ -17,7 +17,8 @@ public class CharacterSelectionMenu {
     public List<String> selectedCharacters = new ArrayList<>(); // Inizializzazione della lista
     
     public void start(List<Character> allAllies, List<Character> selectedAllies) {
-        JFrame frame = new JFrame("Characters Menu");
+    	System.out.print("Open Characters Selection Menu Frame ->");
+        JFrame frame = new JFrame("Characters Selection Menu");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 800);
         frame.setLocationRelativeTo(null);
@@ -42,6 +43,7 @@ public class CharacterSelectionMenu {
         nextButton.setEnabled(false);
         nextButton.addActionListener(e -> {
         	// Ritorna la lista dei personaggi selezionati e fare la trasformList
+        	System.out.print(" End of character selection");
         	selectedAllies.clear();
         	selectedAllies.addAll(transformList(allAllies, selectedCharacters));
         	frame.dispose();

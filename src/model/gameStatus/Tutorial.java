@@ -28,7 +28,7 @@ public class Tutorial
 		this.tutorialMap.initializeMap(); 
 		
 		// Spawna i personaggi
-		this.tutorialMap.spawnCharacters(this.allies, this.enemies); 
+		//this.tutorialMap.spawnCharacters(this.allies, this.enemies); 
 		
 
 		// Logica combattimento semplificata per il tutorial
@@ -38,7 +38,9 @@ public class Tutorial
 			this.tutorialCompleted = true; 
 		}
 
-
+		this.tutorialCompleted = true;  //TEMP
+		this.tutorialMap.closeWindow(); //TEMP
+		
     	return this.tutorialCompleted;
     }
 

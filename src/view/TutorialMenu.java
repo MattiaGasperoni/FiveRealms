@@ -11,12 +11,13 @@ public class TutorialMenu
     public TutorialMenu()
     {
     	this.tutorialSelecion = false;
-        System.out.println("Open Tuturial Menu Frame");
 
     }
 
     public void start(ActionListener callback) 
-    {
+    {        
+    	System.out.print("Open Tuturial Menu Frame ->");
+
         JFrame frame = createFrame();
 
         JLabel backgroundLabel = createBackgroundLabel();
@@ -55,7 +56,7 @@ public class TutorialMenu
     private JLabel createInfoLabel() 
     {
         JLabel infoLabel = new JLabel("Do you want to play the Tutorial?", SwingConstants.CENTER);
-        System.out.println("Do you want to play the Tutorial? ");
+        System.out.print(" Do you want to play the Tutorial? ->");
         infoLabel.setFont(new Font("Arial", Font.BOLD, 20));
         infoLabel.setForeground(Color.WHITE);
         return infoLabel;
@@ -85,7 +86,7 @@ public class TutorialMenu
     private void handleSelection(JFrame frame, boolean selection, ActionListener callback, ActionEvent e)
     {
     	tutorialSelecion = selection;
-        System.out.print(selection ? "Yes" : "No");
+        System.out.print(selection ? " Yes ->" : " No ->");
         frame.dispose();
         callback.actionPerformed(new ActionEvent(e.getSource(), ActionEvent.ACTION_PERFORMED, selection ? "Yes" : "No"));
     }

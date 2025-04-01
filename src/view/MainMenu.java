@@ -22,7 +22,8 @@ public class MainMenu
 	}
 
 	public void start(Game g) {
-        JFrame frame = new JFrame("Graphics Menu");
+		System.out.print("Open Main Menu Frame ->");
+        JFrame frame = new JFrame("Main Menu");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 800);
         frame.setLocationRelativeTo(null);
@@ -34,11 +35,13 @@ public class MainMenu
         JButton startButton = createButton("New Game", e -> {
         	NewGameSelected = true;
             frame.dispose(); // Chiude il menu attuale
+            System.out.println(" You chose to start a new game");
             g.startNewGame();   // Avvia una nuova partita
         });
 
         JButton loadButton = createButton("Load Game", e -> {
         	LoadGameSelected = true;
+        	System.out.println(" You chose to load a game");
             frame.dispose(); // Chiude il menu attuale
             
             // Logica per il caricamento di una partita
@@ -46,7 +49,10 @@ public class MainMenu
             //g.loadGame();    // Carica una partita salvata
         });
 
-        JButton exitButton = createButton("Exit", e -> System.exit(0));
+        JButton exitButton = createButton("Exit", e -> {
+        	System.out.println(" You chose to close the game");
+        	System.exit(0);
+        	});
 
         // Disabilita il pulsante "Load Game" se non ci sono salvataggi (logica da implementare)
         boolean hasSaves = checkSavedGames();

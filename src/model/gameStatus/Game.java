@@ -52,8 +52,8 @@ public class Game
     private void createAllies()
     {
         // Popolo la lista di personaggi giocabili
-        this.availableAllies.add(new Barbarian(new Point(0,0),""));
-        this.availableAllies.add(new Archer(new Point(0,0),""));
+        this.availableAllies.add(new Barbarian(new Point(0,0)));
+        this.availableAllies.add(new Archer(new Point(0,0)));
         //... Aggiungere altri personaggi
     }
 
@@ -63,13 +63,13 @@ public class Game
 
         // Popolo la lista di nemici del tutorial
         List<Character> tutorialEnemies = new ArrayList<>();
-        tutorialEnemies.add(new Barbarian(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
-        tutorialEnemies.add(new Archer(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
+        tutorialEnemies.add(new Barbarian(new Point(rand.nextInt(0,6),rand.nextInt(0,3))));
+        tutorialEnemies.add(new Archer(new Point(rand.nextInt(0,6),rand.nextInt(0,3))));
 
         // Popolo la lista di personaggi con cui giocheremo il tutorial
         List<Character> tutorialAllies = new ArrayList<>();
-        tutorialAllies.add(new Barbarian(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
-        tutorialAllies.add(new Archer(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
+        tutorialAllies.add(new Barbarian(new Point(rand.nextInt(0,6),rand.nextInt(0,3))));
+        tutorialAllies.add(new Archer(new Point(rand.nextInt(0,6),rand.nextInt(0,3))));
 
         // Creo e istanzio l'oggetto tutorial
         Tutorial tutorial = new Tutorial(new TutorialMap(), tutorialEnemies, tutorialAllies);
@@ -82,24 +82,24 @@ public class Game
     {
         // Popolo le liste di nemici dei livelli principali 
         List<Character> level1Enemies = new ArrayList<>();
-        level1Enemies.add(new Barbarian(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
-        level1Enemies.add(new Archer(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
+        level1Enemies.add(new Barbarian(new Point(rand.nextInt(0,6),rand.nextInt(0,3))));
+        level1Enemies.add(new Archer(new Point(rand.nextInt(0,6),rand.nextInt(0,3))));
 
         List<Character> level2Enemies = new ArrayList<>();
-        level2Enemies.add(new Barbarian(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
-        level2Enemies.add(new Archer(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
+        level2Enemies.add(new Barbarian(new Point(rand.nextInt(0,6),rand.nextInt(0,3))));
+        level2Enemies.add(new Archer(new Point(rand.nextInt(0,6),rand.nextInt(0,3))));
 
         List<Character> level3Enemies = new ArrayList<>();
-        level3Enemies.add(new Barbarian(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
-        level3Enemies.add(new Archer(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
+        level3Enemies.add(new Barbarian(new Point(rand.nextInt(0,6),rand.nextInt(0,3))));
+        level3Enemies.add(new Archer(new Point(rand.nextInt(0,6),rand.nextInt(0,3))));
 
         List<Character> level4Enemies = new ArrayList<>();
-        level4Enemies.add(new Barbarian(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
-        level4Enemies.add(new Archer(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
+        level4Enemies.add(new Barbarian(new Point(rand.nextInt(0,6),rand.nextInt(0,3))));
+        level4Enemies.add(new Archer(new Point(rand.nextInt(0,6),rand.nextInt(0,3))));
 
         List<Character> level5Enemies = new ArrayList<>();
-        level5Enemies.add(new Barbarian(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
-        level5Enemies.add(new Archer(new Point(rand.nextInt(0,6),rand.nextInt(0,3)),""));
+        level5Enemies.add(new Barbarian(new Point(rand.nextInt(0,6),rand.nextInt(0,3))));
+        level5Enemies.add(new Archer(new Point(rand.nextInt(0,6),rand.nextInt(0,3))));
 
         // Agggiungo tutti i livelli alla lista dei 
         // PROBLEM :  se qualche personaggio mi muore poi nei livelli la lista viene aggiornata o tengono questa originale
@@ -122,25 +122,35 @@ public class Game
             if (this.tutorialMenu.isTutorialSelected()) 
             {
             	// Ha scelto di giocare il livello
-                System.out.println("Tutorial selected, starting Tutorial...");
+                System.out.print(" Starting Tutorial ->");
 
                 // Gioca il tutorial
                 if (this.startTutorial()) 
                 {
-                    System.out.println("Congratulations! You completed the tutorial, now starting the game...");
+                    System.out.println(" You completed the tutorial");
+                    // Inizializza la lista con tutti i personaggi giocabili
+    				this.createAllies(); 
+    					
+    				// Appare il menu per la selezione dei personaggi
+    				this.characterSelectionMenu.start(this.availableAllies, this.selectedAllies);                 
+                }
+                else
+                {
+                	System.out.println(" You failed the tutorial");
                 }
             } 
             else
             {
-                System.out.println("Tutorial skipped, starting game...");
+                System.out.println(" Tutorial skipped"); 
+                // Inizializza la lista con tutti i personaggi giocabili
+				this.createAllies(); 
+					
+				// Appare il menu per la selezione dei personaggi
+				this.characterSelectionMenu.start(this.availableAllies, this.selectedAllies);
             }
         });
                    	
-        // Inizializza la lista con tutti i personaggi giocabili
-		this.createAllies(); 
-		
-		// Appare il menu per la selezione dei personaggi
-		this.characterSelectionMenu.start(this.availableAllies, this.selectedAllies);
+
 		
 		// INIZIANO I LIVELLI
 		

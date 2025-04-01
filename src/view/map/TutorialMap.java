@@ -111,6 +111,7 @@ public class TutorialMap extends LevelMap {
     }
 
     
+   
 
 	/*public void spawnCharacters(List<Character> allies, List<Character> enemies) {
 		// TODO Auto-generated method stub

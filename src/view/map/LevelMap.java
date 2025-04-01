@@ -135,6 +135,15 @@ public class LevelMap {
         return null;
     }
 
+    
+    
+    //metodo per chiudere il frame manualmente
+    public void closeWindow() 
+    {
+        if (frame != null) {
+            frame.dispose();
+        }
+    }
 
 	
 }
