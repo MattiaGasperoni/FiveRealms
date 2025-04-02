@@ -9,9 +9,9 @@ import model.point.Point;
 
 public class TutorialMap extends LevelMap {
     
-    public TutorialMap() {
-        super();
-        initializeMap();
+    public TutorialMap(List<Character> enemiesList, List<Character> alliesList) {
+    	super(enemiesList, alliesList);
+    	initializeMap();
     }
 
     public void initializeMap() {
@@ -19,7 +19,7 @@ public class TutorialMap extends LevelMap {
         Point centerPoint = new Point(GRID_SIZE / 2, GRID_SIZE / 2);
         
         // Sequenza del tutorial con illuminazione temporizzata
-        showTutorialPopup("Benvenuto, soldato! Ascolta bene.", centerPoint, true);
+        showTutorialPopup("Benvenuto, soldato! Ascolta bene.dfvvfderdervfrvfdfdrv", centerPoint, true);
         
         // 1° Illuminazione: prime due righe in alto (nemici)
         highlightRowsWithTimer(0, 1, Color.YELLOW, 1500, () -> {
@@ -96,7 +96,7 @@ public class TutorialMap extends LevelMap {
                 );
             }
         }
-
+        dialog.pack();
         dialog.setVisible(true);
     }
 
@@ -110,15 +110,17 @@ public class TutorialMap extends LevelMap {
         }
     }
 
-    
-   
-
 	/*public void spawnCharacters(List<Character> allies, List<Character> enemies) {
 		// TODO Auto-generated method stub
 		
 	}*/
 	
-	public static void main(String[] args) {
-        SwingUtilities.invokeLater(TutorialMap::new);
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            List<Character> emptyEnemies = List.of();
+            List<Character> emptyAllies = List.of();
+            new TutorialMap(emptyEnemies, emptyAllies);
+        });
     }
+
 }

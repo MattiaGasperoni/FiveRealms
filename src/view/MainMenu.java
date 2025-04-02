@@ -21,7 +21,7 @@ public class MainMenu
 		
 	}
 
-	public void start(Game g) {
+	public void startMainMenu(Game g) {
 		System.out.print("Open Main Menu Frame ->");
         JFrame frame = new JFrame("Main Menu");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -42,7 +42,7 @@ public class MainMenu
         JButton loadButton = createButton("Load Game", e -> {
         	LoadGameSelected = true;
         	System.out.println(" You chose to load a game");
-            frame.dispose(); // Chiude il menu attuale
+        	frame.dispose(); // Chiude il menu attuale
             
             // Logica per il caricamento di una partita
             //LoadGameMenu.startLoadGame();
@@ -52,7 +52,7 @@ public class MainMenu
         JButton exitButton = createButton("Exit", e -> {
         	System.out.println(" You chose to close the game");
         	System.exit(0);
-        	});
+        });
 
         // Disabilita il pulsante "Load Game" se non ci sono salvataggi (logica da implementare)
         boolean hasSaves = checkSavedGames();
@@ -84,8 +84,7 @@ public class MainMenu
     }
 
     private boolean checkSavedGames() {
-        // Qui puoi aggiungere la logica per verificare la presenza di salvataggi
-    	return new File("Saves/game_state_save.dat").exists();
+        return new File("Saves/game_state_save.dat").exists();
     }
 
 	public boolean isNewGameSelected() {
@@ -96,6 +95,7 @@ public class MainMenu
 		return this.LoadGameSelected;
 	}
     
-    
+	
+
 
 }

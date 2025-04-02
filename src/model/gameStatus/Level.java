@@ -22,11 +22,11 @@ public class Level
     private GraphicMovePhaseManager movementPhaseManager;   // Gestore grafico per i movimenti dei personaggi
 
 
-    public Level(LevelMap map, List<Character> enemies, List<Character> allies) 
+    public Level(LevelMap map) 
     {
        
-        this.enemiesList      = enemies;
-        this.alliesList       = allies;
+        this.enemiesList      = map.getEnemiesList(); // MODIFICATO COSI CON I GETTER
+        this.alliesList       = map.getAlliesList();
         this.levelCompleted   = false;     
         
         
@@ -40,7 +40,7 @@ public class Level
     public boolean playLevel(GameStateManager gameStateManager, int levelNumber) throws IOException 
     {
         // Inizializzazione della mappa del livello e spawn dei personaggi
-        // MainMenu.spawnCharacters(this.enemiesList, this.alliesList);
+         //MainMenu.spawnCharacters(this.enemiesList, this.alliesList);
 
         // Il livello continua finche non muoiono tutti e tre i tuoi personaggi 
         while (!this.alliesList.isEmpty()) 

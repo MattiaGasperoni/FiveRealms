@@ -16,7 +16,7 @@ public class CharacterSelectionMenu {
     private JButton nextButton;
     public List<String> selectedCharacters = new ArrayList<>(); // Inizializzazione della lista
     
-    public void start(List<Character> allAllies, List<Character> selectedAllies) {
+    public void startCharacterSelectionMenu(List<Character> allAllies, List<Character> selectedAllies) {
     	System.out.print("Open Characters Selection Menu Frame ->");
         JFrame frame = new JFrame("Characters Selection Menu");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -106,5 +106,6 @@ public class CharacterSelectionMenu {
         gbc.gridy = y;
         bgLabel.add(panel, gbc);
     }
- 
+
+
 }

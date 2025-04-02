@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 
 import model.characters.Character;
@@ -30,7 +31,7 @@ public class GraphicMovePhaseManager {
     // Ottiene le posizioni valide per i movimenti
     private List<Point> getAvailableMoves(Character attacker, List<Character> alliesList, List<Character> enemiesList) {
         List<Point> availableMoves = new ArrayList<>();
-        int moveRange = attacker.getSpeed() / 10;  // Determina la distanza di movimento
+        int moveRange = attacker.getSpeed() / 10;  // Da cambiare utilizzando la costante in AbstractCharacter!!
         Point currentPosition = attacker.getPosition();
 
         // Aggiungi le posizioni libere entro il raggio di movimento
@@ -66,7 +67,7 @@ public class GraphicMovePhaseManager {
         }
         return false;
     }
-
+    
     // Mostra la griglia con i movimenti disponibili
     private void showGrid(List<Point> availableMoves, Character attacker) {
         for (Point point : availableMoves) {
@@ -75,7 +76,14 @@ public class GraphicMovePhaseManager {
             button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    attacker.moveTo(point);  // Muovi il personaggio alla nuova posizione
+                	try {
+                		attacker.moveTo(point);  // Muovi il personaggio alla nuova posizione
+                                        		
+                	}catch (Exception ex) {
+						// Aggiunta di jDialog con messaggio di e.getMessage()
+                		
+					}
+                    
                 }
             });
         }
@@ -92,7 +100,6 @@ public class GraphicMovePhaseManager {
                 System.out.println("Bersaglio selezionato: " + enemy.getClass().getSimpleName());
             });
         }
-
         return selectedTarget;
     }
     

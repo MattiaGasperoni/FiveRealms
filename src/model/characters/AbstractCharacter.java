@@ -45,7 +45,7 @@ public abstract class AbstractCharacter implements Character, Serializable {
 		int speedToMovementFactor = 10;
 		
 		if(this.getDistanceInSquares(point) > this.speed / speedToMovementFactor) //movement per-turn depends on speed, the actual value is placeholder as of now
-			throw new IllegalArgumentException("You tried to move farther than your movement speed allows!");
+			throw new IllegalArgumentException("You tried to move farther than your movement speed allows!"); 
 		this.position = point;
 	}
 

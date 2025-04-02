@@ -6,7 +6,7 @@ import model.point.Point;
 
 public interface Character {
 
-	public void moveTo(Point point);
+	public void moveTo(Point point) throws IllegalArgumentException;
 	public Point getPosition();
 	public int getDistanceInSquares(Point point);
 	

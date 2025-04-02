@@ -46,7 +46,7 @@ public class Game
         this.characterSelectionMenu = new CharacterSelectionMenu();
         
         // Avvio il menù principale
-        this.graphicsMenu.start(this);    
+        this.graphicsMenu.startMainMenu(this);    
     }
 
     private void createAllies()
@@ -72,7 +72,7 @@ public class Game
         tutorialAllies.add(new Archer(new Point(rand.nextInt(0,6),rand.nextInt(0,3))));
 
         // Creo e istanzio l'oggetto tutorial
-        Tutorial tutorial = new Tutorial(new TutorialMap(), tutorialEnemies, tutorialAllies);
+        Tutorial tutorial = new Tutorial(new TutorialMap(tutorialEnemies,tutorialAllies), tutorialEnemies, tutorialAllies);
         
         // Gioco il Tutorial
         return tutorial.play();
@@ -104,12 +104,20 @@ public class Game
         // Agggiungo tutti i livelli alla lista dei 
         // PROBLEM :  se qualche personaggio mi muore poi nei livelli la lista viene aggiornata o tengono questa originale
         // PROBLEM :  LevelMap non funziona e quando chiamo il metodo initializeGameLevels mi crea gia le istanze delle finestre
-        // per capire in che livello siamo a leveMap gli passo un numeroche lo rappresenta
-        this.gameLevels.add(new Level(new LevelMap(), level1Enemies, this.selectedAllies));
-        this.gameLevels.add(new Level(new LevelMap(), level2Enemies, this.selectedAllies));
-        this.gameLevels.add(new Level(new LevelMap(), level3Enemies, this.selectedAllies));
-        this.gameLevels.add(new Level(new LevelMap(), level4Enemies, this.selectedAllies));
-        this.gameLevels.add(new Level(new LevelMap(), level5Enemies, this.selectedAllies));
+        // per capire in che livello siamo a leveMap gli passo un numeroche lo rappresenta.
+        
+        // MODIFICA MARCHIO: > Prima era cosi:
+        //this.gameLevels.add(new Level(new LevelMap(), level2Enemies, this.selectedAllies));
+        
+        /* ORA è COSI come sotto, pk avendo messo la classe Astratta posso usare i get delle liste e di conseguenza eliminarli come parametri
+         * da Level 
+        */
+        
+        this.gameLevels.add(new Level(new LevelMap(level1Enemies, this.selectedAllies)));
+        this.gameLevels.add(new Level(new LevelMap(level2Enemies, this.selectedAllies)));
+        this.gameLevels.add(new Level(new LevelMap(level3Enemies, this.selectedAllies)));
+        this.gameLevels.add(new Level(new LevelMap(level4Enemies, this.selectedAllies)));
+        this.gameLevels.add(new Level(new LevelMap(level5Enemies, this.selectedAllies)));
     }
 
     public void startNewGame() 
@@ -124,15 +132,15 @@ public class Game
             	// Ha scelto di giocare il livello
                 System.out.print(" Starting Tutorial ->");
 
-                // Gioca il tutorial
+                // Gioca il tutorial, DEVE ESSERE BLOCCANTE (Quando lo eseguo mi fa partire anche questo)
                 if (this.startTutorial()) 
                 {
                     System.out.println(" You completed the tutorial");
                     // Inizializza la lista con tutti i personaggi giocabili
     				this.createAllies(); 
     					
-    				// Appare il menu per la selezione dei personaggi
-    				this.characterSelectionMenu.start(this.availableAllies, this.selectedAllies);                 
+    				// Appare il menu per la selezione dei personaggi, FORSE VA TOLTO!!
+    				this.characterSelectionMenu.startCharacterSelectionMenu(this.availableAllies, this.selectedAllies);                 
                 }
                 else
                 {
@@ -146,7 +154,7 @@ public class Game
 				this.createAllies(); 
 					
 				// Appare il menu per la selezione dei personaggi
-				this.characterSelectionMenu.start(this.availableAllies, this.selectedAllies);
+				this.characterSelectionMenu.startCharacterSelectionMenu(this.availableAllies, this.selectedAllies);
             }
         });
                    	
@@ -192,7 +200,7 @@ public class Game
         }
     }    
 
-    // Metodo per generare il filePath delle immagini dei personaggi
+    // Metodo per generare il filePath delle immagini dei personaggi, PUOI ANCHE TOGLIERLO PK CE GIA IN AbstractCharacters
     private void generateCharacterImageFilePath() 
     {
         
