@@ -9,50 +9,68 @@ import model.characters.Character;
 import model.gameStatus.GameState;
 import model.gameStatus.GameStateManager;
 
-public abstract class AbstractMap implements Map{
-	
-	public static final int GRID_SIZE = 6;
-    public static final int BUTTON_SIZE = 120;
+/**
+ * Abstract class representing a map in the game.
+ * It includes a grid of buttons and a control panel with game management options.
+ */
+public abstract class AbstractMap implements Map {
+    
+	/**
+     * Attributes
+     */
+    public static final int GRID_SIZE = 6; // Size of the grid
+    public static final int BUTTON_SIZE = 120; // Button dimensions
 
     protected JFrame frame;
     protected JPanel gridPanel;
-    protected JPanel controlPanel; // Nuovo pannello per i pulsanti
+    protected JPanel controlPanel; // Panel for control buttons
     protected JButton[][] gridButtons = new JButton[GRID_SIZE][GRID_SIZE];
     private GameStateManager gameStateManager;
 
-	private List<Character> enemiesList;          // Lista dei nemici del livello
-    private List<Character> alliesList;           // Lista dei personaggi con cui giochiamo il livello
-	
-    
+    private List<Character> enemiesList; // List of enemies
+    private List<Character> alliesList;  // List of allies
+
+    /**
+     * Constructor
+     * @param enemiesList List of enemy characters in the current level.
+     * @param alliesList  List of allied characters.
+     */
     public AbstractMap(List<Character> enemiesList, List<Character> alliesList) {
-		this.enemiesList = enemiesList;
-		this.alliesList = alliesList;
-		this.gameStateManager = new GameStateManager();
+        this.enemiesList = enemiesList;
+        this.alliesList = alliesList;
+        this.gameStateManager = new GameStateManager();
+
         initializeFrame();
         initializeGrid();
-        initializeControlPanel(); // Inizializza il pannello dei pulsanti
-
+        initializeControlPanel(); // Initializes the button panel
+        
         frame.setVisible(true);
-	}
+    }
     
+    /**
+     * Initializes the main frame and layout.
+     */
     private void initializeFrame() {
         frame = new JFrame("Saga dei 5 Regni");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1000, 800); // Aumento larghezza per ospitare il pannello a destra
+        frame.setSize(1000, 800); // Increased width to accommodate control panel
         frame.setLocationRelativeTo(null);
         frame.setLayout(new BorderLayout());
 
-        JPanel mainPanel = new JPanel(new BorderLayout()); // Pannello principale per organizzare griglia e pulsanti
+        JPanel mainPanel = new JPanel(new BorderLayout()); // Main panel to organize layout
         frame.add(mainPanel, BorderLayout.CENTER);
 
         gridPanel = new JPanel(new GridLayout(GRID_SIZE, GRID_SIZE));
-        mainPanel.add(gridPanel, BorderLayout.WEST); // Metti la griglia a sinistra
+        mainPanel.add(gridPanel, BorderLayout.WEST); // Grid on the left
 
         controlPanel = new JPanel();
-        controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS)); // Pulsanti in verticale
-        mainPanel.add(controlPanel, BorderLayout.EAST); // Metti i pulsanti a destra
+        controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS)); // Vertical buttons
+        mainPanel.add(controlPanel, BorderLayout.EAST); // Buttons on the right
     }
 
+    /**
+     * Initializes the grid panel with buttons.
+     */
     private void initializeGrid() {
         gridPanel.removeAll();
         for (int i = 0; i < GRID_SIZE; i++) {
@@ -69,6 +87,9 @@ public abstract class AbstractMap implements Map{
         gridPanel.revalidate();
     }
 
+    /**
+     * Initializes the control panel with buttons for game actions.
+     */
     private void initializeControlPanel() {
         JButton saveButton = new JButton("Save Game");
         JButton loadButton = new JButton("Load Game");
@@ -79,32 +100,33 @@ public abstract class AbstractMap implements Map{
         exitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         saveButton.addActionListener(e -> {
-			try {
-				saveGame();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		});
+            try {
+                saveGame();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        });
         loadButton.addActionListener(e -> {
-			try {
-				loadGame();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		});
+            try {
+                loadGame();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        });
         exitButton.addActionListener(e -> System.exit(0));
 
-        controlPanel.add(Box.createVerticalStrut(10)); // Spazio prima dei pulsanti
+        controlPanel.add(Box.createVerticalStrut(10)); // Space before buttons
         controlPanel.add(saveButton);
-        controlPanel.add(Box.createVerticalStrut(10)); // Spazio tra i pulsanti
+        controlPanel.add(Box.createVerticalStrut(10));
         controlPanel.add(loadButton);
-        controlPanel.add(Box.createVerticalStrut(10)); // Spazio tra i pulsanti
+        controlPanel.add(Box.createVerticalStrut(10));
         controlPanel.add(exitButton);
-        
     }
 
+    /**
+     * Saves the current game state.
+     * @throws IOException if an error occurs during saving.
+     */
     private void saveGame() throws IOException {
         List<Character> allies = new ArrayList<>();
         List<Character> enemies = new ArrayList<>();
@@ -114,26 +136,42 @@ public abstract class AbstractMap implements Map{
         JOptionPane.showMessageDialog(frame, "Gioco salvato con successo!");
     }
 
+    /**
+     * Loads a previously saved game state.
+     * @throws IOException if an error occurs during loading.
+     */
     private void loadGame() throws IOException {
         GameState gameState = gameStateManager.loadStatus();
         if (gameState != null) {
-            JOptionPane.showMessageDialog(frame, "Gioco caricato con successo! Livello: " + gameState.getLevel());
+            JOptionPane.showMessageDialog(frame, "Game loaded successfully! Level: " + gameState.getLevel());
         } else {
-            JOptionPane.showMessageDialog(frame, "Nessun salvataggio trovato.");
+            JOptionPane.showMessageDialog(frame, "No saves found.");
         }
     }
 
+    /**
+     * Displays the coordinates of the clicked grid button.
+     * @param row The row index of the button.
+     * @param col The column index of the button.
+     */
     private void showButtonCoordinates(int row, int col) {
-        JOptionPane.showMessageDialog(frame, "Posizione: [" + row + ", " + col + "]");
+        JOptionPane.showMessageDialog(frame, "Position: [" + row + ", " + col + "]");
     }
 
-	public List<Character> getEnemiesList() {
-		return enemiesList;
-	}
+    /**
+     * Gets the list of enemies in the current level.
+     * @return List of enemy characters.
+     */
+    public List<Character> getEnemiesList() {
+        return enemiesList;
+    }
 
-	public List<Character> getAlliesList() {
-		return alliesList;
-	}
+    /**
+     * Gets the list of allies characters.
+     * @return List of allies.
+     */
+    public List<Character> getAlliesList() {
+        return alliesList;
+    }
     
-
 }

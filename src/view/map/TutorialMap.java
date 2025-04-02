@@ -3,42 +3,55 @@ package view.map;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
-
 import model.characters.Character;
 import model.point.Point;
 
+/**
+ * Represents the tutorial in the game.
+ * Provides guided steps to introduce players to the game mechanics.
+ */
 public class TutorialMap extends LevelMap {
     
+    /**
+     * Constructor
+     * @param enemiesList List of enemy characters.
+     * @param alliesList List of allied characters.
+     */
     public TutorialMap(List<Character> enemiesList, List<Character> alliesList) {
-    	super(enemiesList, alliesList);
-    	initializeMap();
+        super(enemiesList, alliesList);
+        initializeMap();
     }
 
+    /**
+     * Initializes the tutorial map and guides the player with instructions.
+     */
     public void initializeMap() {
-    	
         Point centerPoint = new Point(GRID_SIZE / 2, GRID_SIZE / 2);
         
-        // Sequenza del tutorial con illuminazione temporizzata
-        showTutorialPopup("Benvenuto, soldato! Ascolta bene.dfvvfderdervfrvfdfdrv", centerPoint, true);
+        showTutorialPopup("Welcome, soldier! Listen carefully.", centerPoint, true);
         
-        // 1° Illuminazione: prime due righe in alto (nemici)
-        highlightRowsWithTimer(0, 1, Color.YELLOW, 1500, () -> {
-        	showTutorialPopup("I nemici sono sopra di te. Sconfiggili!", new Point(0, 0), false);
+        highlightRowsWithTimer(0, 1, Color.RED, 1500, () -> {
+            showTutorialPopup("Enemies are above you. Defeat them!", new Point(1, 2), false);
             
-            // 2° Illuminazione: ultime due righe in basso (alleati)
-            highlightRowsWithTimer(4, 5, Color.YELLOW, 1500, () -> {
-                showTutorialPopup("Qui in basso troverai i tuoi alleati!", new Point(5, 0), false);
-                
-                // Messaggi successivi senza illuminazione
-                showTutorialPopup("Usa le abilità dei tuoi alleati per vincere!", new Point(4, 2), false);
-                showTutorialPopup("La missione è sconfiggere tutti i nemici!", new Point(3, 2), false);
-                showTutorialPopup("Buona fortuna soldato!", centerPoint, true);
+            highlightRowsWithTimer(4, 5, Color.BLUE, 1500, () -> {
+                showTutorialPopup("Your allies are positioned below!", new Point(5, 2), false);
+                showTutorialPopup("Use your allies' abilities to win!", new Point(4, 2), false);
+                showTutorialPopup("Your mission is to defeat all enemies!", new Point(3, 2), false);
+                showTutorialPopup("Good luck, soldier!", centerPoint, true);
             });
         });
     }
 
+    /**
+     * Highlights specified rows in the grid for a limited duration.
+     *
+     * @param startRow The starting row index.
+     * @param endRow The ending row index.
+     * @param color The highlight color.
+     * @param duration The duration of the highlight in milliseconds.
+     * @param afterAction The action to perform after the highlight.
+     */
     private void highlightRowsWithTimer(int startRow, int endRow, Color color, int duration, Runnable afterAction) {
-        // Applica l'illuminazione alle righe specificate
         for (int i = startRow; i <= endRow; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
                 gridButtons[i][j].setBackground(color);
@@ -47,15 +60,21 @@ public class TutorialMap extends LevelMap {
             }
         }
         
-        // Timer per rimuovere l'illuminazione dopo la durata specificata
         Timer timer = new Timer(duration, e -> {
             resetGridColors();
-            afterAction.run(); // Esegue l'azione successiva
+            afterAction.run(); // Executes the next action
         });
         timer.setRepeats(false);
         timer.start();
     }
 
+    /**
+     * Displays a tutorial popup message 
+     *
+     * @param message The message to display.
+     * @param gridPoint The point in the grid where the message is associated.
+     * @param isCenter If true, the popup is centered on the screen.
+     */
     private void showTutorialPopup(String message, Point gridPoint, boolean isCenter) {
         JDialog dialog = new JDialog();
         dialog.setSize(350, 130);
@@ -63,17 +82,15 @@ public class TutorialMap extends LevelMap {
         dialog.setUndecorated(true);
         dialog.setModal(true);
 
-        // Messaggio centrato con stile migliorato
         JLabel messageLabel = new JLabel(message, SwingConstants.CENTER);
         messageLabel.setFont(new Font("Arial", Font.BOLD, 14));
         messageLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         dialog.add(messageLabel, BorderLayout.CENTER);
 
-        // Pulsanti con stile
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         JButton okButton = new JButton("OK");
-        JButton exitButton = new JButton("Esci");
+        JButton exitButton = new JButton("Exit");
 
         okButton.addActionListener(e -> dialog.dispose());
         exitButton.addActionListener(e -> System.exit(0));
@@ -83,7 +100,6 @@ public class TutorialMap extends LevelMap {
         buttonPanel.add(exitButton);
         dialog.add(buttonPanel, BorderLayout.SOUTH);
 
-        // Posizionamento preciso
         if (isCenter) {
             dialog.setLocationRelativeTo(null);
         } else {
@@ -100,6 +116,9 @@ public class TutorialMap extends LevelMap {
         dialog.setVisible(true);
     }
 
+    /**
+     * Resets all grid button colors to their default state.
+     */
     private void resetGridColors() {
         for (int i = 0; i < GRID_SIZE; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
@@ -109,12 +128,10 @@ public class TutorialMap extends LevelMap {
             }
         }
     }
-
-	/*public void spawnCharacters(List<Character> allies, List<Character> enemies) {
-		// TODO Auto-generated method stub
-		
-	}*/
-	
+    
+    /**
+     * Entry point for testing the tutorial map independently.
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             List<Character> emptyEnemies = List.of();
@@ -122,5 +139,4 @@ public class TutorialMap extends LevelMap {
             new TutorialMap(emptyEnemies, emptyAllies);
         });
     }
-
 }

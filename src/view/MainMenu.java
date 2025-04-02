@@ -41,6 +41,8 @@ public class MainMenu
 
         JButton loadButton = createButton("Load Game", e -> {
         	LoadGameSelected = true;
+        	LoadGameMenu loadgame = new LoadGameMenu();
+        	loadgame.startLoadGame();
         	System.out.println(" You chose to load a game");
         	frame.dispose(); // Chiude il menu attuale
             
@@ -82,8 +84,9 @@ public class MainMenu
         button.addActionListener(action);
         return button;
     }
-
-    private boolean checkSavedGames() {
+    
+    // Used also in LoadGameMenu
+    public boolean checkSavedGames() {
         return new File("Saves/game_state_save.dat").exists();
     }
 

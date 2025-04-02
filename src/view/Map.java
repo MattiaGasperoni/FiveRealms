@@ -2,10 +2,23 @@ package view;
 
 import javax.swing.JButton;
 
+/**
+ * Interface representing a generic map in the game.
+ * Defines the essential methods that any map implementation must provide.
+ */
 public interface Map {
 
-	public JButton getButtonAt(int x, int y);
+    /**
+     * Retrieves the button located at the specified coordinates.
+     *
+     * @param x The x-coordinate of the button.
+     * @param y The y-coordinate of the button.
+     * @return The JButton at the specified position.
+     */
+    public JButton getButtonAt(int x, int y);
 
-	public void closeWindow(); 
-
+    /**
+     * Closes the current map window.
+     */
+    public void closeWindow();
 }

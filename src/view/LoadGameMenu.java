@@ -2,6 +2,8 @@ package view;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import model.gameStatus.*;
 
 public class LoadGameMenu {
 	
@@ -19,7 +21,7 @@ public class LoadGameMenu {
         JLabel backgroundLabel = new JLabel(new ImageIcon("images/Background/background4.jpg"));
         backgroundLabel.setLayout(new GridBagLayout());
 
-        JButton level1Button = createButton("Save 1", e -> {
+        JButton level1Button = createButton(GameStateManager.FILE_NAME, e -> {
             System.out.println("Load first save ");
             frame.dispose();
         });
@@ -30,13 +32,15 @@ public class LoadGameMenu {
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.gridy = 0;
         backgroundLabel.add(level1Button, gbc);
+        gbc.gridy = 1;
         backgroundLabel.add(exitButton, gbc);
-
+        gbc.gridy = 2;
+        
         frame.add(backgroundLabel);
         frame.setVisible(true);
     }
 
-    private JButton createButton(String text, java.awt.event.ActionListener action) {
+    private JButton createButton(String text, ActionListener action) {
         JButton button = new JButton(text);
         button.setFont(new Font("Arial", Font.BOLD, 18));
         button.setForeground(Color.WHITE);

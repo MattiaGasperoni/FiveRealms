@@ -11,7 +11,7 @@ import java.util.List;
 public class GameStateManager 
 {
     private static final String DIRECTORY_NAME = "Saves";
-    private static final String FILE_NAME = "game_state_save.dat";
+    public static final String FILE_NAME = "game_state_save.dat";
 
     // Creates the Saves folder if it does not exist
     private File getSaveFile() 
