@@ -1,4 +1,4 @@
-package view;
+package view.map;
 
 import java.awt.*;
 import java.io.IOException;
@@ -13,17 +13,20 @@ import model.gameStatus.GameStateManager;
  * Abstract class representing a map in the game.
  * It includes a grid of buttons and a control panel with game management options.
  */
-public abstract class AbstractMap implements Map {
+public abstract class AbstractMap implements Map 
+{
     
 	/**
      * Attributes
      */
-    public static final int GRID_SIZE = 6; // Size of the grid
+    public static final int GRID_SIZE = 10; // Size of the grid
     public static final int BUTTON_SIZE = 120; // Button dimensions
 
     protected JFrame frame;
     protected JPanel gridPanel;
     protected JPanel controlPanel; // Panel for control buttons
+    protected JButton hiddenMenuButton; // Il pulsante per aprire/chiudere il menu
+
     protected JButton[][] gridButtons = new JButton[GRID_SIZE][GRID_SIZE];
     private GameStateManager gameStateManager;
 
@@ -50,7 +53,8 @@ public abstract class AbstractMap implements Map {
     /**
      * Initializes the main frame and layout.
      */
-    private void initializeFrame() {
+    private void initializeFrame() 
+    {
         frame = new JFrame("Saga dei 5 Regni");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1000, 800); // Increased width to accommodate control panel
@@ -66,8 +70,10 @@ public abstract class AbstractMap implements Map {
         controlPanel = new JPanel();
         controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS)); // Vertical buttons
         mainPanel.add(controlPanel, BorderLayout.EAST); // Buttons on the right
+       
     }
-
+    
+    
     /**
      * Initializes the grid panel with buttons.
      */

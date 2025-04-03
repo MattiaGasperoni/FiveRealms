@@ -43,7 +43,7 @@ public class CharacterSelectionMenu {
         nextButton.setEnabled(false);
         nextButton.addActionListener(e -> {
         	// Ritorna la lista dei personaggi selezionati e fare la trasformList
-        	System.out.print(" End of character selection");
+            System.out.println(" End of character selection: " + String.join(", ", selectedCharacters));
         	selectedAllies.clear();
         	selectedAllies.addAll(transformList(allAllies, selectedCharacters));
         	frame.dispose();

@@ -28,7 +28,7 @@ public class TutorialMap extends LevelMap {
     public void initializeMap() {
         Point centerPoint = new Point(GRID_SIZE / 2, GRID_SIZE / 2);
         
-        showTutorialPopup("Welcome, soldier! Listen carefully.", centerPoint, true);
+        /*showTutorialPopup("Welcome, soldier! Listen carefully.", centerPoint, true);
         
         highlightRowsWithTimer(0, 1, Color.RED, 1500, () -> {
             showTutorialPopup("Enemies are above you. Defeat them!", new Point(1, 2), false);
@@ -39,7 +39,7 @@ public class TutorialMap extends LevelMap {
                 showTutorialPopup("Your mission is to defeat all enemies!", new Point(3, 2), false);
                 showTutorialPopup("Good luck, soldier!", centerPoint, true);
             });
-        });
+        });*/
     }
 
     /**

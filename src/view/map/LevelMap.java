@@ -1,6 +1,5 @@
 package view.map;
 
-import view.AbstractMap;
 import model.characters.Character;
 import javax.swing.*;
 import java.util.List;

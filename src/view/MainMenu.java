@@ -7,6 +7,7 @@ import model.gameStatus.GameStateManager;
 
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 
 public class MainMenu 
 {
@@ -36,7 +37,12 @@ public class MainMenu
         	NewGameSelected = true;
             frame.dispose(); // Chiude il menu attuale
             System.out.println(" You chose to start a new game");
-            g.startNewGame();   // Avvia una nuova partita
+            try {
+				g.startNewGame();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}   // Avvia una nuova partita
         });
 
         JButton loadButton = createButton("Load Game", e -> {

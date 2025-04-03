@@ -1,5 +1,6 @@
 package model.gameStatus;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -105,14 +106,7 @@ public class Game
         // PROBLEM :  se qualche personaggio mi muore poi nei livelli la lista viene aggiornata o tengono questa originale
         // PROBLEM :  LevelMap non funziona e quando chiamo il metodo initializeGameLevels mi crea gia le istanze delle finestre
         // per capire in che livello siamo a leveMap gli passo un numeroche lo rappresenta.
-        
-        // MODIFICA MARCHIO: > Prima era cosi:
-        //this.gameLevels.add(new Level(new LevelMap(), level2Enemies, this.selectedAllies));
-        
-        /* ORA è COSI come sotto, pk avendo messo la classe Astratta posso usare i get delle liste e di conseguenza eliminarli come parametri
-         * da Level 
-        */
-        
+                
         this.gameLevels.add(new Level(new LevelMap(level1Enemies, this.selectedAllies)));
         this.gameLevels.add(new Level(new LevelMap(level2Enemies, this.selectedAllies)));
         this.gameLevels.add(new Level(new LevelMap(level3Enemies, this.selectedAllies)));
@@ -120,67 +114,77 @@ public class Game
         this.gameLevels.add(new Level(new LevelMap(level5Enemies, this.selectedAllies)));
     }
 
-    public void startNewGame() 
+    public void startNewGame() throws IOException 
     {       
 
     	// Avvio il Tutorial Menu
-    	this.tutorialMenu.start(e -> 
-    	{
+        this.tutorialMenu.start(event -> 
+        {
             // Il flusso del codice rimane in attesa finche l'utente non sceglie se giocare o saltare il tutorial
             if (this.tutorialMenu.isTutorialSelected()) 
             {
             	// Ha scelto di giocare il livello
                 System.out.print(" Starting Tutorial ->");
 
-                // Gioca il tutorial, DEVE ESSERE BLOCCANTE (Quando lo eseguo mi fa partire anche questo)
+                // Gioca il tutorial, In maniera temoranea ritorna true!!!
                 if (this.startTutorial()) 
                 {
                     System.out.println(" You completed the tutorial");
-                    // Inizializza la lista con tutti i personaggi giocabili
-    				this.createAllies(); 
-    					
-    				// Appare il menu per la selezione dei personaggi, FORSE VA TOLTO!!
-    				this.characterSelectionMenu.startCharacterSelectionMenu(this.availableAllies, this.selectedAllies);                 
+                    // Voglio un PopUp a schermo che dice "Tutorial completato, inizia il gioco"
+                    this.startSelectionCharacterAndLevels();
                 }
                 else
                 {
                 	System.out.println(" You failed the tutorial");
+                    // Voglio un PopUp a schermo che dice "Tutorial fallito, e mi chiede se voglio riprovare o uscire"
                 }
             } 
             else
             {
                 System.out.println(" Tutorial skipped"); 
-                // Inizializza la lista con tutti i personaggi giocabili
-				this.createAllies(); 
-					
-				// Appare il menu per la selezione dei personaggi
-				this.characterSelectionMenu.startCharacterSelectionMenu(this.availableAllies, this.selectedAllies);
+                this.startSelectionCharacterAndLevels();
             }
         });
-                   	
-
-		
-		// INIZIANO I LIVELLI
-		
-		
-		// Inizializzo le liste dei nemici e dei livelli
-	    //this.initializeGameLevels();   PROBLEMATICO CON LEVELMAP
-		// Gioca i livelli
-	    //for (int i = 1; i <= Game.TOTAL_LEVEL; i++) 
-	    //{
-	        // Gioca il livello, playLevel ritorna true se il livello è stato completato sennò interrompe dal ciclo
-	        //if (!this.gameLevels.get(i).playLevel(this.gameStateManager , i)) 
-	        //{
-	        //    System.out.println("Il livello non è stato completato, uscita dal ciclo.");
-	        //    break;
-	        //}
-	
-	        //Sostituisci gli alleati morti con nuovi alleati
-	        //this.checkAndReplaceDeadAllies();
-	
-	        //System.out.println("Passaggio al livello " + (i + 1));
-	    //}
     }
+    
+    private void startSelectionCharacterAndLevels()
+    {
+        // Inizializza la lista con tutti i personaggi giocabili
+        this.createAllies(); 
+    					
+        // Appare il menu per la selezione dei personaggi, FORSE VA TOLTO!!
+        this.characterSelectionMenu.startCharacterSelectionMenu(this.availableAllies, this.selectedAllies); 
+        
+        
+        
+        // Inizializzo le liste dei nemici e dei livelli
+        /*this.initializeGameLevels(); //problemi spawana un frame
+        // Gioca i livelli
+        for (int i = 1; i <= Game.TOTAL_LEVEL; i++) 
+        {
+            // Gioca il livello, playLevel ritorna true se il livello è stato completato sennò interrompe dal ciclo
+            try 
+            {
+                if (!this.gameLevels.get(i).playLevel(this.gameStateManager , i)) 
+                {
+                    System.out.println("Il livello non è stato completato, uscita dal ciclo.");
+                    break;
+                }
+            } 
+            catch (IOException e) 
+            {
+                System.err.println("Errore durante l'esecuzione del livello " + i + ": " + e.getMessage());
+                e.printStackTrace();
+                break;
+            }
+    
+            // Sostituisci gli alleati morti con nuovi alleati
+            this.checkAndReplaceDeadAllies();
+    
+            System.out.println("Passaggio al livello " + (i + 1));
+        }*/
+    }
+
     
 	// Metodo per sostituire gli alleati morti con nuovi personaggi scelti dall'utente
     private void checkAndReplaceDeadAllies() 
@@ -199,10 +203,4 @@ public class Game
             //this.selectedAllies.addAll(newAllies);
         }
     }    
-
-    // Metodo per generare il filePath delle immagini dei personaggi, PUOI ANCHE TOGLIERLO PK CE GIA IN AbstractCharacters
-    private void generateCharacterImageFilePath() 
-    {
-        
-    }
 }
