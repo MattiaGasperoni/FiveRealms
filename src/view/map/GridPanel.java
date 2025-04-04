@@ -1,38 +1,47 @@
 package view.map;
 
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import model.characters.Character;
 
 
 public class GridPanel extends JPanel{
 	
     private List<Character> enemiesList; // List of enemies
     private List<Character> alliesList;  // List of allies
-    private JButton[][] gridButtons = new JButton[AbstractMap.GRID_SIZE][AbstractMap.GRID_SIZE];
+    private JButton[][] gridButtons;
     private JFrame frame;
     
     
 	public GridPanel(JFrame frame, List<Character> enemiesList, List<Character> alliesList) {
-		super();
+        super(new GridLayout(AbstractMap.GRID_SIZE, AbstractMap.GRID_SIZE)); // Imposta il layout corretto
 		this.frame = frame;
 		this.enemiesList = enemiesList;
 		this.alliesList = alliesList;
+        this.gridButtons = new JButton[AbstractMap.GRID_SIZE][AbstractMap.GRID_SIZE];
+        
+        //initializeGrid();
+        
 	}
 
 	// Da mettere dentro initializeGrid() nel for
     private void spawnCharacters(JButton button) { //DA FINIRE
     	boolean isPosition = alliesList.stream().filter(character -> character.getPosition().equals(new Position(row,col)).count()) > 0);
+    	//boolean isPosition = alliesList.stream().anyMatch(character -> character.getPosition().equals(new Position(row, col)));
     	if(isPosition) {
-    		button.setIcon(character.get); //GetImage
+    		button.setIcon(character -> character.getImage()); //GetImage
 		} else {
  			//bottone invisible
+			button.setVisible(false);
 		}
     }
+    
     
     /**
      * Initializes the grid panel with buttons.

@@ -66,7 +66,7 @@ public abstract class AbstractMap implements Map
         JPanel mainPanel = new JPanel(new BorderLayout()); // Main panel to organize layout
         frame.add(mainPanel, BorderLayout.CENTER);
 
-        //gridPanel = new GridPanel(new GridLayout(GRID_SIZE, GRID_SIZE));
+        gridPanel = new GridPanel(frame, enemiesList, alliesList);
         mainPanel.add(gridPanel, BorderLayout.WEST); // Grid on the left
 
         controlPanel = new JPanel();
