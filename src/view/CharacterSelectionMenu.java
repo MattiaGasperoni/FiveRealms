@@ -3,6 +3,8 @@ package view;
 import javax.swing.*;
 import model.characters.Character;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -16,7 +18,7 @@ public class CharacterSelectionMenu {
     private JButton nextButton;
     public List<String> selectedCharacters = new ArrayList<>(); // Inizializzazione della lista
     
-    public void startCharacterSelectionMenu(List<Character> allAllies, List<Character> selectedAllies) {
+    public void start(List<Character> allAllies, List<Character> selectedAllies, ActionListener callback) {
     	System.out.print("Open Characters Selection Menu Frame ->");
         JFrame frame = new JFrame("Characters Selection Menu");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -47,6 +49,8 @@ public class CharacterSelectionMenu {
         	selectedAllies.clear();
         	selectedAllies.addAll(transformList(allAllies, selectedCharacters));
         	frame.dispose();
+        	callback.actionPerformed(new ActionEvent(e.getSource(), ActionEvent.ACTION_PERFORMED, "Next"));
+            
         });
 
         // Creazione e posizionamento dei personaggi

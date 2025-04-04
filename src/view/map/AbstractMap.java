@@ -23,11 +23,10 @@ public abstract class AbstractMap implements Map
     public static final int BUTTON_SIZE = 120; // Button dimensions
 
     protected JFrame frame;
-    protected JPanel gridPanel;
+    protected GridPanel gridPanel; // Fare una classe a parte chiamata gridPanel che estende
     protected JPanel controlPanel; // Panel for control buttons
-    protected JButton hiddenMenuButton; // Il pulsante per aprire/chiudere il menu
+    protected JButton hiddenMenuButton; // Il pulsante per aprire/chiudere il menu, SE LO PREMO MI APPAIONO I 3 PULSANTI in un JDialog nel mezzo dello schermo nero
 
-    protected JButton[][] gridButtons = new JButton[GRID_SIZE][GRID_SIZE];
     private GameStateManager gameStateManager;
 
     private List<Character> enemiesList; // List of enemies
@@ -43,12 +42,15 @@ public abstract class AbstractMap implements Map
         this.alliesList = alliesList;
         this.gameStateManager = new GameStateManager();
 
-        initializeFrame();
-        initializeGrid();
+    }
+    
+    public void start() {
+    	initializeFrame();
         initializeControlPanel(); // Initializes the button panel
-        
         frame.setVisible(true);
     }
+    
+    
     
     /**
      * Initializes the main frame and layout.
@@ -64,7 +66,7 @@ public abstract class AbstractMap implements Map
         JPanel mainPanel = new JPanel(new BorderLayout()); // Main panel to organize layout
         frame.add(mainPanel, BorderLayout.CENTER);
 
-        gridPanel = new JPanel(new GridLayout(GRID_SIZE, GRID_SIZE));
+        //gridPanel = new GridPanel(new GridLayout(GRID_SIZE, GRID_SIZE));
         mainPanel.add(gridPanel, BorderLayout.WEST); // Grid on the left
 
         controlPanel = new JPanel();
@@ -74,24 +76,6 @@ public abstract class AbstractMap implements Map
     }
     
     
-    /**
-     * Initializes the grid panel with buttons.
-     */
-    private void initializeGrid() {
-        gridPanel.removeAll();
-        for (int i = 0; i < GRID_SIZE; i++) {
-            for (int j = 0; j < GRID_SIZE; j++) {
-                final int row = i;
-                final int col = j;
-                gridButtons[i][j] = new JButton();
-                gridButtons[i][j].setPreferredSize(new Dimension(BUTTON_SIZE, BUTTON_SIZE));
-                gridButtons[i][j].addActionListener(e -> showButtonCoordinates(row, col));
-                gridPanel.add(gridButtons[i][j]);
-            }
-        }
-        gridPanel.repaint();
-        gridPanel.revalidate();
-    }
 
     /**
      * Initializes the control panel with buttons for game actions.
@@ -155,14 +139,7 @@ public abstract class AbstractMap implements Map
         }
     }
 
-    /**
-     * Displays the coordinates of the clicked grid button.
-     * @param row The row index of the button.
-     * @param col The column index of the button.
-     */
-    private void showButtonCoordinates(int row, int col) {
-        JOptionPane.showMessageDialog(frame, "Position: [" + row + ", " + col + "]");
-    }
+    
 
     /**
      * Gets the list of enemies in the current level.

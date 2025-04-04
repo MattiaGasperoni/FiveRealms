@@ -41,7 +41,7 @@ public class Level
         this.levelMap.start();
 
         // Spawn dei personaggi
-        this.levelMap.spawnCharacters();
+        //this.levelMap.spawnCharacters();
 
         // Il livello continua finche non muoiono tutti e tre i tuoi personaggi 
         while (!this.alliesList.isEmpty()) 

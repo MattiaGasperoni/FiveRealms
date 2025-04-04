@@ -24,8 +24,10 @@ public class Tutorial
 	//Metodo Pubblico per giocare il tutorial, restituisce true se il livello è stato completato, false altrimenti
     public boolean play() 
     {
+    	
+    	this.tutorialMap.start();
 		// Inizializza la mappa del tutorial
-		this.tutorialMap.initializeMap(); 
+		//this.tutorialMap.initializeMap(); 
 		
 		// Spawna i personaggi
 		//this.tutorialMap.spawnCharacters(this.allies, this.enemies); 

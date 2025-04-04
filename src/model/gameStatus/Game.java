@@ -152,37 +152,39 @@ public class Game
         // Inizializza la lista con tutti i personaggi giocabili
         this.createAllies(); 
     					
+        // NON è BLOCCANTE!!
         // Appare il menu per la selezione dei personaggi
-        this.characterSelectionMenu.startCharacterSelectionMenu(this.availableAllies, this.selectedAllies); 
         
-        
-        
-        // Inizializzo le liste dei nemici e dei livelli
-        /*this.initializeGameLevels(); //problemi spawana un frame
-        // Gioca i livelli
-        for (int i = 1; i <= Game.TOTAL_LEVEL; i++) 
-        {
-            // Gioca il livello, playLevel ritorna true se il livello è stato completato sennò interrompe dal ciclo
-            try 
+        this.characterSelectionMenu.start(this.availableAllies, this.selectedAllies, event ->{
+        	// Inizializzo le liste dei nemici e dei livelli
+            this.initializeGameLevels(); //problemi spawana un frame
+            // Gioca i livelli
+            for (int i = 1; i <= Game.TOTAL_LEVEL; i++) 
             {
-                if (!this.gameLevels.get(i).playLevel(this.gameStateManager , i)) 
+                // Gioca il livello, playLevel ritorna true se il livello è stato completato sennò interrompe dal ciclo
+                try 
                 {
-                    System.out.println("Il livello non è stato completato, uscita dal ciclo.");
+                    if (!this.gameLevels.get(i).playLevel(this.gameStateManager , i)) 
+                    {
+                        System.out.println("Il livello non è stato completato, uscita dal ciclo.");
+                        break;
+                    }
+                } 
+                catch (IOException e) 
+                {
+                    System.err.println("Errore durante l'esecuzione del livello " + i + ": " + e.getMessage());
+                    e.printStackTrace();
                     break;
                 }
-            } 
-            catch (IOException e) 
-            {
-                System.err.println("Errore durante l'esecuzione del livello " + i + ": " + e.getMessage());
-                e.printStackTrace();
-                break;
+        
+                // Sostituisci gli alleati morti con nuovi alleati
+                this.checkAndReplaceDeadAllies();
+        
+                System.out.println("Passaggio al livello " + (i + 1));
             }
-    
-            // Sostituisci gli alleati morti con nuovi alleati
-            this.checkAndReplaceDeadAllies();
-    
-            System.out.println("Passaggio al livello " + (i + 1));
-        }*/
+        }); 
+        
+        
     }
 
     
