@@ -14,7 +14,7 @@ public class LevelMap extends AbstractMap{
 	@Override
     public JButton getButtonAt(int x, int y) {
         if (x >= 0 && x < GRID_SIZE && y >= 0 && y < GRID_SIZE) {
-            return gridButtons[x][y];
+            return gridPanel.getGridButtons()[x][y];
         }
         return null;
     }

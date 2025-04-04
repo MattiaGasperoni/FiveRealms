@@ -55,7 +55,6 @@ public class TutorialMap extends LevelMap {
         for (int i = startRow; i <= endRow; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
                 gridButtons[i][j].setBackground(color);
-                
                 gridButtons[i][j].setOpaque(true);
                 gridButtons[i][j].setBorderPainted(false);
             }

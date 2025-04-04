@@ -26,14 +26,14 @@ public class GridPanel extends JPanel{
 		this.alliesList = alliesList;
         this.gridButtons = new JButton[AbstractMap.GRID_SIZE][AbstractMap.GRID_SIZE];
         
-        //initializeGrid();
+        initializeGrid();
         
 	}
 
 	// Da mettere dentro initializeGrid() nel for
     private void spawnCharacters(JButton button) { //DA FINIRE
     	boolean isPosition = alliesList.stream().filter(character -> character.getPosition().equals(new Position(row,col)).count()) > 0);
-    	//boolean isPosition = alliesList.stream().anyMatch(character -> character.getPosition().equals(new Position(row, col)));
+    	//Suggerimento?: 	boolean isPosition = alliesList.stream().anyMatch(character -> character.getPosition().equals(new Position(row, col)));
     	if(isPosition) {
     		button.setIcon(character -> character.getImage()); //GetImage
 		} else {
@@ -41,8 +41,7 @@ public class GridPanel extends JPanel{
 			button.setVisible(false);
 		}
     }
-    
-    
+       
     /**
      * Initializes the grid panel with buttons.
      */
