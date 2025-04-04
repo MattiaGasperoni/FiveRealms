@@ -17,30 +17,31 @@ public class Level
 
     private boolean levelCompleted;               // Flag che indica se il livello e' completato
         
-    
-    private final LevelMap LevelMap;                        // Mappa del livello
-    private GraphicMovePhaseManager movementPhaseManager;   // Gestore grafico per i movimenti dei personaggi
-
+    private final LevelMap levelMap;                            // Mappa del livello
+    private final GraphicMovePhaseManager movementPhaseManager; // Oggetto che gestisce la fase di movimento dei personaggi
 
     public Level(LevelMap map) 
     {
-       
-        this.enemiesList      = map.getEnemiesList(); // MODIFICATO COSI CON I GETTER
-        this.alliesList       = map.getAlliesList();
-        this.levelCompleted   = false;     
-        
-        
         // Inizializzazione Oggetti Grafici
-        this.LevelMap               = map;
-        this.movementPhaseManager   = new GraphicMovePhaseManager();
+        this.levelMap = map;
+        this.movementPhaseManager = new GraphicMovePhaseManager();
+
+        // Inizializzazione delle liste di personaggi
+        this.enemiesList      = this.levelMap.getEnemiesList();
+        this.alliesList       = this.levelMap.getAlliesList();
+        
+        this.levelCompleted   = false;     
     }
 
     
     //Metodo Pubblico per giocare il livello, restituisce true se il livello è stato completato, false altrimenti
     public boolean playLevel(GameStateManager gameStateManager, int levelNumber) throws IOException 
     {
-        // Inizializzazione della mappa del livello e spawn dei personaggi
-         //MainMenu.spawnCharacters(this.enemiesList, this.alliesList);
+        // Faccio comparire la mappa del livello
+        this.levelMap.start();
+
+        // Spawn dei personaggi
+        this.levelMap.spawnCharacters();
 
         // Il livello continua finche non muoiono tutti e tre i tuoi personaggi 
         while (!this.alliesList.isEmpty()) 
@@ -53,6 +54,8 @@ public class Level
             // La fase di attacco, continua finche la coda del turno non è vuota
             while (!attackTurnOrder.isEmpty()) 
             {
+                // INIZIO TURNO
+
                 // Estrai il personaggio più veloce e lo rimuove dalla coda essedo il primo che attacca
                 Character attacker = attackTurnOrder.poll(); 
                 
@@ -78,28 +81,32 @@ public class Level
                           .filter(Character::isAlive)
                           .toList()
                 );
+
+                // FINE FASE DI ATTACCO
+
+                // Salva lo stato della partita
+                gameStateManager.saveStatus(this.alliesList, this.enemiesList, levelNumber);
+
+                // Controlla se tutti gli alleati sono morti
+                if (this.alliesList.isEmpty())
+                {
+                    System.out.println("Tutti i tuoi personaggi sono morti. Game Over.");
+                    return this.levelCompleted;
+                }
+
+                // Controlla se tutti i nemici sono stati sconfitti
+                if (this.enemiesList.isEmpty()) 
+                {
+                    // Attiva la porta per il prossimo livello
+                    this.levelCompleted = true;
+                    System.out.println("Hai sconfitto tutti i nemici. La porta per il prossimo livello e' aperta.");
+                    //MainMenu.nextLevelDoorMenu();
+                }
+                
+                // FINE TURNO    
             }
                              
-            // FINE FASE DI ATTACCO
 
-            // Salva lo stato della partita
-            gameStateManager.saveStatus(this.alliesList, this.enemiesList, levelNumber);
-
-            // Controlla se tutti gli alleati sono morti
-            if (this.alliesList.isEmpty())
-            {
-                System.out.println("Tutti i tuoi personaggi sono morti. Game Over.");
-                return this.levelCompleted;
-            }
-
-            // Controlla se tutti i nemici sono stati sconfitti
-            if (this.enemiesList.isEmpty()) 
-            {
-                // Attiva la porta per il prossimo livello
-                this.levelCompleted = true;
-                System.out.println("Hai sconfitto tutti i nemici. La porta per il prossimo livello e' aperta.");
-                //MainMenu.nextLevelDoorMenu();
-            }
         }
         return this.levelCompleted;
     }

@@ -103,7 +103,7 @@ public class Game
         level5Enemies.add(new Archer(new Point(rand.nextInt(0,6),rand.nextInt(0,3))));
 
         // Agggiungo tutti i livelli alla lista dei 
-        // PROBLEM :  se qualche personaggio mi muore poi nei livelli la lista viene aggiornata o tengono questa originale
+        // PROBLEM :  se qualche personaggio mi muore poi nei livelli prima poi la lista dei selectedAllies viene aggiornata o tengono quella fornita originalmente
         // PROBLEM :  LevelMap non funziona e quando chiamo il metodo initializeGameLevels mi crea gia le istanze delle finestre
         // per capire in che livello siamo a leveMap gli passo un numeroche lo rappresenta.
                 
@@ -126,7 +126,7 @@ public class Game
             	// Ha scelto di giocare il livello
                 System.out.print(" Starting Tutorial ->");
 
-                // Gioca il tutorial, In maniera temoranea ritorna true!!!
+                // Gioca il tutorial, In maniera temporanea ritorna true!!!
                 if (this.startTutorial()) 
                 {
                     System.out.println(" You completed the tutorial");
@@ -152,7 +152,7 @@ public class Game
         // Inizializza la lista con tutti i personaggi giocabili
         this.createAllies(); 
     					
-        // Appare il menu per la selezione dei personaggi, FORSE VA TOLTO!!
+        // Appare il menu per la selezione dei personaggi
         this.characterSelectionMenu.startCharacterSelectionMenu(this.availableAllies, this.selectedAllies); 
         
         
