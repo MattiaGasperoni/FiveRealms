@@ -8,6 +8,7 @@ public class LevelMap extends AbstractMap{
 	
 	public LevelMap(List<Character> enemiesList, List<Character> alliesList) {
 		super(enemiesList, alliesList);
+
 	}
     
 	@Override

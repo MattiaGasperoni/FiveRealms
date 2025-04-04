@@ -39,12 +39,14 @@ public class Level
     {
         // Faccio comparire la mappa del livello
         this.levelMap.start();
+       
+    	System.out.print(" Start level ->");
 
         // Spawn dei personaggi
         //this.levelMap.spawnCharacters();
 
         // Il livello continua finche non muoiono tutti e tre i tuoi personaggi 
-        while (!this.alliesList.isEmpty()) 
+    	while (!areAllAlliesDefeated())
         {
             // INIZIO FASE DI ATTACCO
 
@@ -52,7 +54,7 @@ public class Level
             PriorityQueue<Character> attackTurnOrder = this.getTurnOrder(this.alliesList, this.enemiesList);
 
             // La fase di attacco, continua finche la coda del turno non è vuota
-            while (!attackTurnOrder.isEmpty()) 
+            while (hasRemainingAttackers(attackTurnOrder)) 
             {
                 // INIZIO TURNO
 
@@ -101,13 +103,18 @@ public class Level
                     this.levelCompleted = true;
                     System.out.println("Hai sconfitto tutti i nemici. La porta per il prossimo livello e' aperta.");
                     //MainMenu.nextLevelDoorMenu();
+                    return this.levelCompleted;
                 }
                 
-                // FINE TURNO    
+                // FINE TURNO
+        
             }
                              
 
         }
+        
+    	System.out.println(" End Level");
+    	this.levelMap.closeWindow();
         return this.levelCompleted;
     }
 
@@ -130,4 +137,16 @@ public class Level
     public List<Character> getAllies() {
         return this.alliesList;
     }
+    
+    // Metodi privati per migliorare la leggibilita del codice
+    
+    private boolean areAllAlliesDefeated() {
+        return this.alliesList.isEmpty();
+    }
+    
+    private boolean hasRemainingAttackers(PriorityQueue<Character> turnOrder) {
+        return !turnOrder.isEmpty();
+    }
+
+
 }

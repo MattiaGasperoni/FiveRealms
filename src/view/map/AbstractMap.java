@@ -44,7 +44,9 @@ public abstract class AbstractMap implements Map
 
     }
     
-    public void start() {
+    public void start() 
+    {
+    	System.out.print("Open Level Frame ->");
     	initializeFrame();
         initializeControlPanel(); // Initializes the button panel
         frame.setVisible(true);

@@ -49,15 +49,40 @@ public class Game
         // Avvio il menù principale
         this.graphicsMenu.startMainMenu(this);    
     }
+ 
+    public void startNewGame() throws IOException 
+    {       
 
-    private void createAllies()
-    {
-        // Popolo la lista di personaggi giocabili
-        this.availableAllies.add(new Barbarian(new Point(0,0)));
-        this.availableAllies.add(new Archer(new Point(0,0)));
-        //... Aggiungere altri personaggi
+    	// Avvio il Tutorial Menu
+        this.tutorialMenu.start(event -> 
+        {
+            // Il flusso del codice rimane in attesa finche l'utente non sceglie se giocare o saltare il tutorial
+            if (this.tutorialMenu.isTutorialSelected()) 
+            {
+            	// Ha scelto di giocare il livello
+                System.out.print(" Starting Tutorial ->");
+
+                // Gioca il tutorial, In maniera temporanea ritorna true!!!
+                if (this.startTutorial()) 
+                {
+                    System.out.println(" You completed the tutorial");
+                    // Voglio un PopUp a schermo che dice "Tutorial completato, inizia il gioco"
+                    this.startSelectionCharacterAndLevels();
+                }
+                else
+                {
+                	System.out.println(" You failed the tutorial");
+                    // Voglio un PopUp a schermo che dice "Tutorial fallito, e mi chiede se voglio riprovare o uscire"
+                }
+            } 
+            else
+            {
+                System.out.println(" Tutorial skipped"); 
+                this.startSelectionCharacterAndLevels();
+            }
+        });
     }
-
+    
     private boolean startTutorial()
     {
         // Il tutorial prevede un gameplay statico, sempre uguale percio' non permettiamo la scelta dei personaggi
@@ -77,6 +102,52 @@ public class Game
         
         // Gioco il Tutorial
         return tutorial.play();
+    }
+    
+    private void startSelectionCharacterAndLevels()
+    {
+        // Inizializza la lista con tutti i personaggi giocabili
+        this.createAllies(); 
+    					
+        // Appare il menu per la selezione dei personaggi
+        this.characterSelectionMenu.start(this.availableAllies, this.selectedAllies, event ->
+        {
+        	// Inizializzo le liste dei nemici e dei livelli
+            this.initializeGameLevels();
+            
+            // Gioca i livelli
+            for (int i = 1; i <= Game.TOTAL_LEVEL; i++) 
+            {
+                // Gioca il livello, playLevel ritorna true se il livello è stato completato sennò interrompe dal ciclo
+                try 
+                {
+                    if (!this.gameLevels.get(i).playLevel(this.gameStateManager , i)) 
+                    {
+                        System.out.println("Il livello non è stato completato, uscita dal ciclo.");
+                        break;
+                    }
+                } 
+                catch (IOException e) 
+                {
+                    System.err.println("Errore durante l'esecuzione del livello " + i + ": " + e.getMessage());
+                    e.printStackTrace();
+                    break;
+                }
+        
+                // Sostituisci gli alleati morti con nuovi alleati
+                this.checkAndReplaceDeadAllies();
+        
+                System.out.println("Passaggio al livello " + (i + 1));
+            }
+        });         
+    }
+    
+    private void createAllies()
+    {
+        // Popolo la lista di personaggi giocabili
+        this.availableAllies.add(new Barbarian(new Point(0,0)));
+        this.availableAllies.add(new Archer(new Point(0,0)));
+        //... Aggiungere altri personaggi
     }
 
     private void initializeGameLevels() 
@@ -114,80 +185,6 @@ public class Game
         this.gameLevels.add(new Level(new LevelMap(level5Enemies, this.selectedAllies)));
     }
 
-    public void startNewGame() throws IOException 
-    {       
-
-    	// Avvio il Tutorial Menu
-        this.tutorialMenu.start(event -> 
-        {
-            // Il flusso del codice rimane in attesa finche l'utente non sceglie se giocare o saltare il tutorial
-            if (this.tutorialMenu.isTutorialSelected()) 
-            {
-            	// Ha scelto di giocare il livello
-                System.out.print(" Starting Tutorial ->");
-
-                // Gioca il tutorial, In maniera temporanea ritorna true!!!
-                if (this.startTutorial()) 
-                {
-                    System.out.println(" You completed the tutorial");
-                    // Voglio un PopUp a schermo che dice "Tutorial completato, inizia il gioco"
-                    this.startSelectionCharacterAndLevels();
-                }
-                else
-                {
-                	System.out.println(" You failed the tutorial");
-                    // Voglio un PopUp a schermo che dice "Tutorial fallito, e mi chiede se voglio riprovare o uscire"
-                }
-            } 
-            else
-            {
-                System.out.println(" Tutorial skipped"); 
-                this.startSelectionCharacterAndLevels();
-            }
-        });
-    }
-    
-    private void startSelectionCharacterAndLevels()
-    {
-        // Inizializza la lista con tutti i personaggi giocabili
-        this.createAllies(); 
-    					
-        // NON è BLOCCANTE!!
-        // Appare il menu per la selezione dei personaggi
-        
-        this.characterSelectionMenu.start(this.availableAllies, this.selectedAllies, event ->{
-        	// Inizializzo le liste dei nemici e dei livelli
-            this.initializeGameLevels(); //problemi spawana un frame
-            // Gioca i livelli
-            for (int i = 1; i <= Game.TOTAL_LEVEL; i++) 
-            {
-                // Gioca il livello, playLevel ritorna true se il livello è stato completato sennò interrompe dal ciclo
-                try 
-                {
-                    if (!this.gameLevels.get(i).playLevel(this.gameStateManager , i)) 
-                    {
-                        System.out.println("Il livello non è stato completato, uscita dal ciclo.");
-                        break;
-                    }
-                } 
-                catch (IOException e) 
-                {
-                    System.err.println("Errore durante l'esecuzione del livello " + i + ": " + e.getMessage());
-                    e.printStackTrace();
-                    break;
-                }
-        
-                // Sostituisci gli alleati morti con nuovi alleati
-                this.checkAndReplaceDeadAllies();
-        
-                System.out.println("Passaggio al livello " + (i + 1));
-            }
-        }); 
-        
-        
-    }
-
-    
 	// Metodo per sostituire gli alleati morti con nuovi personaggi scelti dall'utente
     private void checkAndReplaceDeadAllies() 
     {
