@@ -4,12 +4,13 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import model.characters.Character;
-
+import model.point.Point;
 
 public class GridPanel extends JPanel{
 	
@@ -31,11 +32,16 @@ public class GridPanel extends JPanel{
 	}
 
 	// Da mettere dentro initializeGrid() nel for
-    private void spawnCharacters(JButton button) { //DA FINIRE
-    	boolean isPosition = alliesList.stream().filter(character -> character.getPosition().equals(new Position(row,col)).count()) > 0);
-    	//Suggerimento?: 	boolean isPosition = alliesList.stream().anyMatch(character -> character.getPosition().equals(new Position(row, col)));
-    	if(isPosition) {
-    		button.setIcon(character -> character.getImage()); //GetImage
+    private void spawnCharacter(JButton button, int row, int col) { //possibly unoptimized and ugly
+    	Point relevantPosition = new Point(row,col);
+    	Character characterInPosition;
+
+    	characterInPosition = alliesList.stream().filter(character -> character.getPosition().equals(relevantPosition)).findFirst().orElse(null);
+    	if(characterInPosition == null)
+    		characterInPosition = enemiesList.stream().filter(character -> character.getPosition().equals(relevantPosition)).findFirst().orElse(null);
+    		
+    	if(characterInPosition != null) {
+    		button.setIcon(new ImageIcon(characterInPosition.getImage())); //GetImage
 		} else {
  			//bottone invisible
 			button.setVisible(false);
@@ -54,7 +60,7 @@ public class GridPanel extends JPanel{
                 gridButtons[i][j] = new JButton();
                 gridButtons[i][j].setPreferredSize(new Dimension(AbstractMap.BUTTON_SIZE, AbstractMap.BUTTON_SIZE));
                 gridButtons[i][j].addActionListener(e -> showButtonCoordinates(frame, row, col));
-                spawnCharacters(gridButtons[i][j]);
+                this.spawnCharacter(gridButtons[i][j], row, col);
                 this.add(gridButtons[i][j]);
             }
         }

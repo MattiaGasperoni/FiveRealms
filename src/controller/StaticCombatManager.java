@@ -23,7 +23,7 @@ public class StaticCombatManager {
 			}
 
 			relevantList.stream()
-			.filter(charact -> charact.getDistanceInSquares(attackedCharacter.getPosition()) <= 2) //need to find a better way to get the radius of AOE
+			.filter(charact -> charact.getDistanceInSquares(attackedCharacter.getPosition()) <= ZoneShotWand.BLAST_ATTACK_RADIUS)
 			.forEach(charact -> charact.reduceCurrentHealth(attackingCharacter.getPower())); //AOE victims can't counterattack
 		} else {
 			attackedCharacter.reduceCurrentHealth(attackingCharacter.getPower() - attackedCharacter.getDefence()); // start of combat
