@@ -136,7 +136,7 @@ public class Game
         
                 // Sostituisci gli alleati morti con nuovi alleati
                 this.checkAndReplaceDeadAllies();
-        
+                
                 System.out.println("Passaggio al livello " + (i + 1));
             }
         });         

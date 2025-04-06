@@ -41,7 +41,8 @@ public class GameStateManager
      * @param level   the current game level to save
      * @throws IOException 
      */
-    public void saveStatus(List<Character> allies, List<Character> enemies, int level) throws IOException {
+    public void saveStatus(List<Character> allies, List<Character> enemies, int level) throws IOException 
+    {
         GameState gameState = new GameState(level, allies, enemies);
         File saveFile = getSaveFile();
         

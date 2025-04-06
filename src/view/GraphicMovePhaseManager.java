@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
+
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
@@ -14,12 +16,22 @@ import model.point.Point;
 import view.map.LevelMap;
 import view.map.TutorialMap;
 
-public class GraphicMovePhaseManager {
+public class GraphicMovePhaseManager 
+{
 
     private LevelMap levelMap;
-    private Character selectedTarget = null;  // Variabile per il bersaglio selezionato
+    private Character selectedTarget;  // Variabile per il bersaglio selezionato
 
-    // Gestisce la fase di movimento
+    
+    
+    
+    public GraphicMovePhaseManager(LevelMap map) 
+    {
+		this.levelMap       = map;
+		this.selectedTarget = null;
+	}
+
+	// Gestisce la fase di movimento
     public void movementPhase(Character attacker, List<Character> alliesList, List<Character> enemiesList) {
         // Ottieni tutte le posizioni dei bottoni
         List<Point> availableMoves = getAvailableMoves(attacker, alliesList, enemiesList);
@@ -71,7 +83,7 @@ public class GraphicMovePhaseManager {
     // Mostra la griglia con i movimenti disponibili
     private void showGrid(List<Point> availableMoves, Character attacker) {
         for (Point point : availableMoves) {
-            JButton button = levelMap.getButtonAt(point.getX(), point.getY());
+            JButton button = this.levelMap.getButtonAt(point.getX(), point.getY());
             button.setBackground(Color.GRAY);
             button.addActionListener(new ActionListener() {
                 @Override
@@ -89,18 +101,52 @@ public class GraphicMovePhaseManager {
         }
     }
 
-    // Seleziona un bersaglio tra gli avversari
-    public Character chooseTarget(List<Character> enemiesList) {
-        for (Character enemy : enemiesList) {
+    // Seleziona un bersaglio tra gli avversari, IL metodo non funziona non aspetta che lutente clicchi il bersaglio
+    /*public Character chooseTarget(List<Character> enemiesList) 
+    {
+        for (Character enemy : enemiesList) 
+        {
             Point position = enemy.getPosition();
-            JButton button = levelMap.getButtonAt(position.getX(), position.getY());
+            JButton button = this.levelMap.getButtonAt(position.getX(), position.getY());
 
             button.addActionListener(e -> {
                 selectedTarget = enemy;  // Assegna il bersaglio selezionato
                 System.out.println("Bersaglio selezionato: " + enemy.getClass().getSimpleName());
             });
         }
-        return selectedTarget;
+        return this.selectedTarget;
+    }*/
+    
+
+    
+    public void chooseTarget(List<Character> enemiesList, Consumer<Character> onTargetSelected) {
+        List<JButton> enemyButtons = new ArrayList<>();
+
+        for (Character enemy : enemiesList) {
+            Point position = enemy.getPosition();
+            JButton button = this.levelMap.getButtonAt(position.getX(), position.getY());
+            enemyButtons.add(button);
+
+            ActionListener actionListener = new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // Disabilita tutti i bottoni e rimuove i listener
+                    for (JButton b : enemyButtons) {
+                        for (ActionListener al : b.getActionListeners()) {
+                            b.removeActionListener(al);
+                        }
+                        b.setEnabled(false);
+                    }
+
+                    System.out.println("Bersaglio selezionato: " + enemy.getClass().getName());
+                    onTargetSelected.accept(enemy); // Esegui la lambda
+                }
+            };
+
+            button.addActionListener(actionListener);
+            button.setEnabled(true);
+        }
     }
+
     
 }

@@ -1,6 +1,10 @@
 package model.equipment.weapons;
 
-public abstract class AbstractWeapon implements Weapon{
+import java.io.Serializable;
+
+public abstract class AbstractWeapon implements Weapon , Serializable{
+
+    private static final long serialVersionUID = 1L;
 
 	private int speed;
 	private int power;
