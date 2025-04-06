@@ -17,10 +17,15 @@ public class TutorialMap extends LevelMap {
      * @param enemiesList List of enemy characters.
      * @param alliesList List of allied characters.
      */
-    public TutorialMap(List<Character> enemiesList, List<Character> alliesList) {
-        super(enemiesList, alliesList);
-        initializeMap();
-    }
+	public TutorialMap(List<Character> enemiesList, List<Character> alliesList) {
+	    super(enemiesList, alliesList); 
+	}
+
+	@Override
+	public void start() {
+	    super.start();        
+	    initializeMap();      
+	}
 
     /**
      * Initializes the tutorial map and guides the player with instructions.
@@ -54,9 +59,9 @@ public class TutorialMap extends LevelMap {
     private void highlightRowsWithTimer(int startRow, int endRow, Color color, int duration, Runnable afterAction) {
         for (int i = startRow; i <= endRow; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
-                gridButtons[i][j].setBackground(color);
-                gridButtons[i][j].setOpaque(true);
-                gridButtons[i][j].setBorderPainted(false);
+                gridPanel.getGridButtons()[i][j].setBackground(color);
+                gridPanel.getGridButtons()[i][j].setOpaque(true);
+                gridPanel.getGridButtons()[i][j].setBorderPainted(false);
             }
         }
         
@@ -103,7 +108,8 @@ public class TutorialMap extends LevelMap {
         if (isCenter) {
             dialog.setLocationRelativeTo(null);
         } else {
-            JButton targetButton = gridButtons[gridPoint.getX()][gridPoint.getY()];
+        	
+        	JButton targetButton = gridPanel.getGridButtons()[gridPoint.getX()][gridPoint.getY()];
             if (targetButton != null) {
                 java.awt.Point buttonLocation = targetButton.getLocationOnScreen();
                 dialog.setLocation(
@@ -122,9 +128,9 @@ public class TutorialMap extends LevelMap {
     private void resetGridColors() {
         for (int i = 0; i < GRID_SIZE; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
-                gridButtons[i][j].setBackground(null);
-                gridButtons[i][j].setOpaque(false);
-                gridButtons[i][j].setBorderPainted(true);
+            	gridPanel.getGridButtons()[i][j].setBackground(null);
+                gridPanel.getGridButtons()[i][j].setOpaque(true);
+                gridPanel.getGridButtons()[i][j].setBorderPainted(true);
             }
         }
     }
@@ -136,7 +142,9 @@ public class TutorialMap extends LevelMap {
         SwingUtilities.invokeLater(() -> {
             List<Character> emptyEnemies = List.of();
             List<Character> emptyAllies = List.of();
-            new TutorialMap(emptyEnemies, emptyAllies);
+            TutorialMap tutorialMap = new TutorialMap(emptyEnemies, emptyAllies);
+            tutorialMap.start(); // <-- fondamentale!
         });
     }
+
 }
