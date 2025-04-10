@@ -18,7 +18,7 @@ public class TutorialMap extends LevelMap {
      * @param alliesList List of allied characters.
      */
 	public TutorialMap(List<Character> enemiesList, List<Character> alliesList) {
-	    super(enemiesList, alliesList); 
+	    super(enemiesList, alliesList, 0); 
 	}
 
 	@Override

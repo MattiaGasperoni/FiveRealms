@@ -6,10 +6,11 @@ import java.util.List;
 
 public class LevelMap extends AbstractMap{
 	
-	public LevelMap(List<Character> enemiesList, List<Character> alliesList) {
-		super(enemiesList, alliesList);
-
+	public LevelMap(List<Character> enemiesList, List<Character> alliesList, int numLevel) {
+		super(enemiesList, alliesList, numLevel);
+		super.start();
 	}
+	
     
 	@Override
     public JButton getButtonAt(int x, int y) {
@@ -28,7 +29,17 @@ public class LevelMap extends AbstractMap{
         }
     }
 
-	
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            // Liste vuote di nemici e alleati
+            List<Character> emptyEnemies = List.of();
+            List<Character> emptyAllies = List.of();
+
+            // Inizializza la mappa con le liste vuote
+            LevelMap emptyMap = new LevelMap(emptyEnemies, emptyAllies, 5);
+        });
+    }
+
 
     
     

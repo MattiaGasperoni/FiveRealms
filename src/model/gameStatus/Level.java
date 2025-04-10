@@ -89,7 +89,7 @@ public class Level
                           .filter(Character::isAlive)
                           .toList()
                 );
-
+                
                 // FINE FASE DI ATTACCO
                 System.out.print(" End attack phase ->");
 
