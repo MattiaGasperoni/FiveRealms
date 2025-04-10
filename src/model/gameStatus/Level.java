@@ -41,10 +41,9 @@ public class Level
         this.levelMap.start();
        
     	System.out.print(" Start level ->");
-
-        // Spawn dei personaggi
-        //this.levelMap.spawnCharacters();
-
+       
+    	
+    	/*
         // Il livello continua finche non muoiono tutti e tre i tuoi personaggi 
     	while (!areAllAlliesDefeated())
         {
@@ -121,11 +120,11 @@ public class Level
             }
                              
 
-        }
+        }*/
         
     	System.out.println(" End Level");
     	this.levelMap.closeWindow();
-        return this.levelCompleted;
+        return true;
     }
 
     // Metodo per verificare l'ordine di attacco dei personaggi in un turno

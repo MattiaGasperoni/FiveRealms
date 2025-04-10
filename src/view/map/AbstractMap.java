@@ -16,42 +16,45 @@ import model.gameStatus.GameStateManager;
 public abstract class AbstractMap implements Map 
 {
     
-	/**
-     * Attributes
-     */
-    public static final int GRID_SIZE = 10; // Size of the grid
-    public static final int BUTTON_SIZE = 120; // Button dimensions
+    public static final int GRID_SIZE   = 20;  // Dimensione della griglia
+    public static final int BUTTON_SIZE = 200; // Dimensione dei bottoni 120
 
     protected JFrame frame;
-    protected GridPanel gridPanel; // Fare una classe a parte chiamata gridPanel che estende
-    protected JPanel controlPanel; // Panel for control buttons
-    protected JButton hiddenMenuButton; // Il pulsante per aprire/chiudere il menu, SE LO PREMO MI APPAIONO I 3 PULSANTI in un JDialog nel mezzo dello schermo nero
+    protected GridPanel gridPanel;       // Rappresenta il pannello della griglia di gioco
+    private JLayeredPane layeredPanel;
+    //protected JPanel controlPanel;       // Pannello per i pulsanti di controllo
+    //protected JButton hiddenMenuButton;  // Pulsante per aprire/chiudere il menu
 
-    private GameStateManager gameStateManager;
+    private List<Character> enemiesList; // Lista dei nemici
+    private List<Character> alliesList;  // Lista degli alleati
+    private final int numLevel;          // Numero del livello
+	
 
-    private List<Character> enemiesList; // List of enemies
-    private List<Character> alliesList;  // List of allies
-    private final int numLevel;			 // Num level				
+    //private GameStateManager gameStateManager;
 
     /**
-     * Constructor
-     * @param enemiesList List of enemy characters in the current level.
-     * @param alliesList  List of allied characters.
+     * Costruttore
+     * @param enemiesList Lista dei nemici nel livello corrente.
+     * @param alliesList Lista degli alleati nel livello corrente.
+     * @param numLevel Numero del livello corrente.
      */
-    public AbstractMap(List<Character> enemiesList, List<Character> alliesList, int numLevel) {
-        this.enemiesList = enemiesList;
-        this.alliesList = alliesList;
-        this.gameStateManager = new GameStateManager();
-        this.numLevel = numLevel;
+    public AbstractMap(List<Character> enemiesList, List<Character> alliesList, int numLevel) 
+    {
+        this.enemiesList      = enemiesList;
+        this.alliesList       = alliesList;
+        this.numLevel         = numLevel;
+       // this.gameStateManager = new GameStateManager();
     }
+    
     
     public void start() 
     {
-    	System.out.print("Open Level Frame ->");
+    	System.out.print("Open Level "+this.numLevel+" Frame ->");
+    	
     	initializeFrame();
-        initializeControlPanel(); // Initializes the button panel
-        setBackgroundMap();
-        this.gridPanel = new GridPanel(frame, enemiesList, alliesList);
+        
+        //initializeControlPanel(); 
+
         frame.setVisible(true);
     }
     
@@ -60,24 +63,43 @@ public abstract class AbstractMap implements Map
     /**
      * Initializes the main frame and layout.
      */
-    private void initializeFrame() {
-        frame = new JFrame("Saga dei 5 Regni");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1200, 800); // Più spazio per i pulsanti
-        frame.setLocationRelativeTo(null);
-        frame.setLayout(new BorderLayout());
+    private void initializeFrame()
+    {
+        this.frame = new JFrame("Five Realms");                      //Creo la finestra
+        this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);   //Quando la finestra viene chiusa, il programma termina
+        this.frame.setLocationRelativeTo(null);                      //Quando inizia il gioco posiziona la finestra al centro dello schermo 
 
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        frame.add(mainPanel, BorderLayout.CENTER);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); // Ottego le dimensioni dello schermo
+	    int width  = (int) (screenSize.getWidth() * 0.6);                   // 60% della larghezza dello schermo
+	    int height = (int) (width * 3.0 / 4.0);                             // Rapporto 4:3
+	    this.frame.setSize(width, height);                                  // Imposta le dimensioni della finestra
+	         
+        this.frame.setLayout(new BorderLayout());
 
-        gridPanel = new GridPanel(frame, enemiesList, alliesList);
-        mainPanel.add(gridPanel, BorderLayout.CENTER); // Grid centrale
+        // Crea il JLayeredPane che gestisce i vari layer
+        this.layeredPanel = new JLayeredPane();
+        this.frame.setContentPane(this.layeredPanel);
+		
+        // 1. Griglia di bottoni
+        this.initializeGridMap();
+        
+		// 2. Background 
+        this.initializeBackgroundMap();
+        
+        // 3. Personaggi         
+        
 
-        controlPanel = new JPanel();
+        /*
+        this.characterPanel = new JPanel();
+        characterPanel.setBounds(0, 0, frame.getWidth(), frame.getHeight());
+        layeredPane.add(characterPanel, Integer.valueOf(2));  // Livello 2 (Personaggi sopra la griglia)*/
+
+
+        /*controlPanel = new JPanel();
         controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
         controlPanel.setBackground(Color.LIGHT_GRAY); // Sfondo visibile
         controlPanel.setBorder(BorderFactory.createEmptyBorder(10, 50, 50, 50)); // Margine interno
-        mainPanel.add(controlPanel, BorderLayout.EAST); // Pannello sulla destra
+        mainPanel.add(controlPanel, BorderLayout.EAST); // Pannello sulla destra*/
     }
 
     
@@ -86,7 +108,7 @@ public abstract class AbstractMap implements Map
     /**
      * Initializes the control panel with buttons for game actions.
      */
-    private void initializeControlPanel() {
+    /*private void initializeControlPanel() {
         JButton saveButton = new JButton("Save Game");
         JButton loadButton = new JButton("Load Game");
         JButton exitButton = new JButton("Exit");
@@ -117,34 +139,89 @@ public abstract class AbstractMap implements Map
         controlPanel.add(loadButton);
         controlPanel.add(Box.createVerticalStrut(10));
         controlPanel.add(exitButton);
-    }
+    }*/
 
+    private void initializeBackgroundMap() 
+    {
+        // Ottieni l'immagine associata al livello corrente
+        String backgroundFile = "images/background/background" + numLevel + ".jpg";
+
+        // Carica l'immagine dal file
+        ImageIcon backgroundImage = new ImageIcon(backgroundFile);
+
+        // Controlla che l'immagine sia valida
+        if (backgroundImage.getIconWidth() > 0 && backgroundImage.getIconHeight() > 0) 
+        {
+        	// Ridimensiona l'immagine per adattarla al frame
+            Image image = backgroundImage.getImage();
+            Image resizedImage = image.getScaledInstance(frame.getWidth(), frame.getHeight(), Image.SCALE_SMOOTH);
+            backgroundImage = new ImageIcon(resizedImage);
+        	
+            // Crea un JLabel per contenere l'immagine di sfondo
+            JLabel backgroundLabel = new JLabel(backgroundImage);
+            backgroundLabel.setBounds(0, 0, frame.getWidth(), frame.getHeight()); // Configura le dimensioni
+
+            // Usa il JLayeredPane esistente del frame
+            JLayeredPane layeredPane = frame.getLayeredPane();
+
+            // Aggiungi il background al livello inferiore 0
+            layeredPane.add(backgroundLabel, Integer.valueOf(1)); 
+        } 
+        else {
+            System.err.println("Errore: immagine di background non trovata per il livello " + numLevel);
+        }
+    }
+    
+    
+    private void initializeGridMap() 
+    {
+        // Crea e inizializza il GridPanel se non esiste già
+        if (this.gridPanel == null) 
+        {
+            this.gridPanel = new GridPanel(this.layeredPanel, enemiesList, alliesList);
+        }      
+        
+        // Imposta le dimensioni del gridPanel uguali a quelle del frame
+        this. gridPanel.setBounds(0, 0, frame.getWidth(), frame.getHeight()); // Stesse dimensioni del frame
+
+        // Rendi la griglia trasparente per non coprire lo sfondo
+        this.gridPanel.setOpaque(false);
+
+        // Aggiungi gridPanel al JLayeredPane nel livello superiore (livello 1)
+        this.layeredPanel.add(this.gridPanel, Integer.valueOf(0));
+
+        // Rendi visibile il layout dopo aver aggiunto il componente
+        this.layeredPanel.revalidate();
+        this.layeredPanel.repaint();
+    }
+    
+    
     /**
      * Saves the current game state.
      * @throws IOException if an error occurs during saving.
      */
-    private void saveGame() throws IOException {
+    /*private void saveGame() throws IOException {
         List<Character> allies = new ArrayList<>();
         List<Character> enemies = new ArrayList<>();
         int level = 1;
 
         gameStateManager.saveStatus(allies, enemies, level);
         JOptionPane.showMessageDialog(frame, "Gioco salvato con successo!");
-    }
+    }*/
 
     /**
      * Loads a previously saved game state.
      * @throws IOException if an error occurs during loading.
      */
-    private void loadGame() throws IOException {
+    /*private void loadGame() throws IOException {
         GameState gameState = gameStateManager.loadStatus();
         if (gameState != null) {
             JOptionPane.showMessageDialog(frame, "Game loaded successfully! Level: " + gameState.getLevel());
         } else {
             JOptionPane.showMessageDialog(frame, "No saves found.");
         }
-    }
-
+    }*/
+    
     
 
     /**
@@ -163,38 +240,7 @@ public abstract class AbstractMap implements Map
         return alliesList;
     }
     
-    private void setBackgroundMap() {
-        // Percorso della cartella contenente i background
-        String backgroundsFolder = "images/background/";
 
-        // Determina il file associato al livello corrente
-        String backgroundFile = backgroundsFolder + "background" + numLevel + ".jpg";
-
-        // Carica l'immagine dal file
-        ImageIcon backgroundImage = new ImageIcon(backgroundFile);
-
-        // Controlla che l'immagine sia valida
-        if (backgroundImage.getIconWidth() > 0 && backgroundImage.getIconHeight() > 0) {
-            // Crea un JLabel per contenere l'immagine di sfondo
-            JLabel backgroundLabel = new JLabel(backgroundImage);
-            backgroundLabel.setBounds(0, 0, frame.getWidth(), frame.getHeight()); // Configura dimensioni
-
-            // Configura il pannello principale come un JLayeredPane
-            JLayeredPane layeredPane = new JLayeredPane();
-            layeredPane.setLayout(null); // Usa null layout per la sovrapposizione
-            frame.setContentPane(layeredPane);
-
-            // Aggiungi il background al livello inferiore
-            layeredPane.add(backgroundLabel, Integer.valueOf(0)); // Livello inferiore (background)
-
-            // Aggiungi la griglia al livello superiore
-            gridPanel.setBounds(0, 0, frame.getWidth(), frame.getHeight()); // Stesse dimensioni del frame
-            gridPanel.setOpaque(false); // Rendi la griglia trasparente per mostrare lo sfondo
-            layeredPane.add(gridPanel, Integer.valueOf(1)); // Livello superiore (griglia)
-        } else {
-            System.err.println("Errore: immagine di background non trovata per il livello " + numLevel);
-        }
-    }
 
 
 
