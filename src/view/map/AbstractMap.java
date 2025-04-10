@@ -67,13 +67,15 @@ public abstract class AbstractMap implements Map
     {
         this.frame = new JFrame("Five Realms");                      //Creo la finestra
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);   //Quando la finestra viene chiusa, il programma termina
-        this.frame.setLocationRelativeTo(null);                      //Quando inizia il gioco posiziona la finestra al centro dello schermo 
+//        this.frame.setLocationRelativeTo(null);                      //Quando inizia il gioco posiziona la finestra al centro dello schermo 
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); // Ottego le dimensioni dello schermo
 	    int width  = (int) (screenSize.getWidth() * 0.6);                   // 60% della larghezza dello schermo
 	    int height = (int) (width * 3.0 / 4.0);                             // Rapporto 4:3
 	    this.frame.setSize(width, height);                                  // Imposta le dimensioni della finestra
 	         
+        this.frame.setLocationRelativeTo(null);                      //Quando inizia il gioco posiziona la finestra al centro dello schermo 
+
         this.frame.setLayout(new BorderLayout());
 
         // Crea il JLayeredPane che gestisce i vari layer

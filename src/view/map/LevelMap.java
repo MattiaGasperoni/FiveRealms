@@ -55,8 +55,4 @@ public class LevelMap extends AbstractMap{
         });
     }
 
-
-    
-    
-	
 }
