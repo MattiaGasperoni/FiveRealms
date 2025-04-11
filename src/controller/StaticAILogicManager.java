@@ -6,6 +6,8 @@ import java.util.List;
 import model.characters.Character;
 
 public class StaticAILogicManager {
+	
+	
 	public static void whatToDo(Character character, List<Character> alliedList, List<Character> enemyList) {
 		//pick target
 		Character victim = alliedList.stream()

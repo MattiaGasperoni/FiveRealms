@@ -42,8 +42,8 @@ public class Level
        
     	System.out.print(" Start level ->");
        
-    	
-    	/*
+    	// Per  provare scommentare
+    	/* 
         // Il livello continua finche non muoiono tutti e tre i tuoi personaggi 
     	while (!areAllAlliesDefeated())
         {

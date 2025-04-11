@@ -17,14 +17,7 @@ public class LevelMap extends AbstractMap{
 		super(enemiesList, alliesList, numLevel);
 	}
 	
-    
-	@Override
-    public JButton getButtonAt(int x, int y) {
-        if (x >= 0 && x < GRID_SIZE && y >= 0 && y < GRID_SIZE) {
-            return gridPanel.getGridButtons()[x][y];
-        }
-        return null;
-    }
+
 
     public static void main(String[] args) 
     {

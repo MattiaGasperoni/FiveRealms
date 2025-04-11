@@ -108,4 +108,13 @@ public class GridPanel extends JPanel
         revalidate();
         repaint();
     }
+
+
+    // Metodo che scorre tutti i pulsanti e se hanno un immagine allora li mette in una lista
+	public List<JButton> getImageButtonList() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+    
+    
 }

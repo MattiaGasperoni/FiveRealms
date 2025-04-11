@@ -4,10 +4,11 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
+
 import javax.swing.*;
 import model.characters.Character;
-import model.gameStatus.GameState;
-import model.gameStatus.GameStateManager;
+import model.point.Point;
 
 /**
  * Abstract class representing a map in the game.
@@ -28,7 +29,7 @@ public abstract class AbstractMap implements Map
     private List<Character> enemiesList; // Lista dei nemici
     private List<Character> alliesList;  // Lista degli alleati
     private final int numLevel;          // Numero del livello
-	
+	private TreeMap<Character,Point> characterMap;
 
     //private GameStateManager gameStateManager;
 
@@ -43,6 +44,7 @@ public abstract class AbstractMap implements Map
         this.enemiesList      = enemiesList;
         this.alliesList       = alliesList;
         this.numLevel         = numLevel;
+        this.characterMap	  = new TreeMap<>();
        // this.gameStateManager = new GameStateManager();
     }
     
@@ -51,11 +53,39 @@ public abstract class AbstractMap implements Map
     {
     	System.out.print("Open Level "+this.numLevel+" Frame ->");
     	
+    	Timer timer = new Timer(16, e->{
+    		JButton[][] button = this.gridPanel.getGridButtons();
+    		List<JButton> imageButtonList = this.gridPanel.getImageButtonList();
+        	//Logica, controllare tutti i pulsanti
+    		System.out.println("Test");
+    		
+    		//Stream qui (con entrySet)!!
+    		
+    		
+    		/* Scorre la lista con i bottoni con immagine e vede se i bottoni
+                	con immagine combacia con la posizione dei personaggi*/
+                	
+                	/* Caso 1: Un bottone ha un immagine ma il personaggio non si trova li,  
+                	 * Scorriamo la lista dei bottoni con immagine (metodo public di GridPanel), andiamo a verificare 
+                	 * presi i e j se ce una combinazione con la nostra mappa, se ce apposto, se non ce rimuoviamo quella immagine
+                	*/
+                	
+                	
+                	/* Caso 2): Il personaggio si trova in un bottone senza immagine, 
+                	 * Dobbiamo verificare se ce un personaggio con quella posizione senza immagine,
+                	 * stavolta prendiamo sempre la lista e dobbiamo settargli l'immagine a quel bottone.  
+                	 * 
+                	*/
+               
+    		
+    	});
+    	
     	initializeFrame();
         
         //initializeControlPanel(); 
 
         frame.setVisible(true);
+        timer.start();
     }
     
     
@@ -250,4 +280,90 @@ public abstract class AbstractMap implements Map
             this.frame.dispose();
         
     }
+    
+    /**
+     * Spawns a character on the given button based on its position on the grid.
+     * If a character is present at the specified grid position, the button will display the character's image.
+     * If no character is present, the button will become transparent.
+     *
+     * @param button The button on the grid where the character will be spawned.
+     * @param row The row index of the button on the grid.
+     * @param col The column index of the button on the grid.
+     * @param allies The list of allied characters.
+     * @param enemies The list of enemy characters.
+     */
+	public static void spawnCharacter(List<Character> spwanList) 
+	{
+		// Fare controllo se ci sono nella lista alleati o nemici
+		if(spwanList.get(0).isAllied()) {
+			// Lista di alleati e spawnare in basso
+			spwanList.get(0).moveTo(new Point(17, 3));
+			spwanList.get(1).moveTo(new Point(19, 10));
+			spwanList.get(2).moveTo(new Point(17, 16));
+			
+		}else {
+			// LIsta di nemici, spawnare in alto
+			spwanList.get(0).moveTo(new Point(2, 3));
+			spwanList.get(1).moveTo(new Point(8, 5));
+			spwanList.get(2).moveTo(new Point(5, 14));
+			
+		}
+		
+	}
+			
+	
+	/* Il metodo rimuove l'immagine dove si trova il personaggio e aggiunge l'immagine del personaggio nel  bottone targhet
+	 * moveCharacter usa moveTo e aggiornamento grafico
+	*/
+	public void moveCharacter(Character character, Point target) {
+		
+	}
+	
+    // Dato  x e y restituisce il bottone in quella posizione
+	@Override
+    public JButton getButtonAt(int x, int y) {
+        if (x >= 0 && x < GRID_SIZE && y >= 0 && y < GRID_SIZE) {
+            return gridPanel.getGridButtons()[x][y];
+        }
+        return null;
+    }
+    
+    
+	/*Point relevantPosition = new Point(row, col);
+    Character characterInPosition;
+
+    // Trova il personaggio nella posizione data
+    characterInPosition = allies.stream()
+            .filter(character -> character.getPosition().equals(relevantPosition))
+            .findFirst()
+            .orElse(null);
+
+    if (characterInPosition == null) {
+        System.out.println("Nessun personaggio trovato per la posizione: " + relevantPosition);
+
+        characterInPosition = enemies.stream()
+                .filter(character -> character.getPosition().equals(relevantPosition))
+                .findFirst()
+                .orElse(null);
+    }
+
+    System.out.println("Spawning character at position: " + relevantPosition); // Debug: stampa la posizione del personaggio
+
+    // Se esiste un personaggio, aggiungilo al JLayeredPane come componente visibile
+    if (characterInPosition != null) {
+        // Crea un'etichetta con l'immagine del personaggio
+        JLabel characterLabel = new JLabel(new ImageIcon(characterInPosition.getImage()));
+        
+        // Imposta la posizione della label nel JLayeredPane
+        characterLabel.setBounds(col * AbstractMap.BUTTON_SIZE, row * AbstractMap.BUTTON_SIZE, AbstractMap.BUTTON_SIZE, AbstractMap.BUTTON_SIZE);
+
+        // Aggiungi il personaggio al livello 2 (sopra la griglia, ma sotto altri elementi)
+        layeredPane.add(characterLabel, Integer.valueOf(2)); // Livello 2 per i personaggi
+    }
+    
+    layeredPane.revalidate();
+    layeredPane.repaint();*/
+
+	
+	
 }
