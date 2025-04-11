@@ -46,25 +46,37 @@ public class GridPanel extends JPanel
      */
     private void initializeGrid() {
         this.removeAll(); // Clear all components
+
         for (int i = 0; i < AbstractMap.GRID_SIZE; i++) {
             for (int j = 0; j < AbstractMap.GRID_SIZE; j++) {
                 final int row = i;
                 final int col = j;
-                gridButtons[i][j] = new JButton(); // Create button
-                gridButtons[i][j].setPreferredSize(new Dimension(AbstractMap.BUTTON_SIZE, AbstractMap.BUTTON_SIZE)); // Set size
-                gridButtons[i][j].setBorder(BorderFactory.createLineBorder(Color.BLACK)); // Add border for debugging
+                
+                JButton button = new JButton(); // Create button
+                button.setPreferredSize(new Dimension(AbstractMap.BUTTON_SIZE, AbstractMap.BUTTON_SIZE));
 
-                gridButtons[i][j].addActionListener(e -> showButtonCoordinates(row, col));
-
-                // Use a method to spawn characters (e.g., allies or enemies) onto the grid buttons
-                CharacterSpawner.spawnCharacter(this.layeredPane, alliesList, enemiesList, row, col);
-
-                this.add(gridButtons[i][j]);
+                // Rendi il bottone invisibile ma cliccabile
+                button.setContentAreaFilled(false);
+                button.setBorderPainted(false);
+                button.setFocusPainted(false);
+                button.setOpaque(false);
+                button.setText("");
+                button.setIcon(null);
+                
+                button.addActionListener(e -> showButtonCoordinates(row, col));
+                gridButtons[i][j] = button;
+                
+                this.add(button);
             }
         }
+
         this.revalidate(); 
-        this.repaint(); 
+        this.repaint();
+
+        // SOLO DOPO AVER INIZIALIZZATO TUTTA LA GRIGLIA, fai lo spawn
+       // CharacterSpawner.spawnCharacters(this.layeredPane, alliesList, enemiesList, gridButtons);
     }
+
 
     /**
      * Displays a dialog with the button's coordinates when clicked.

@@ -67,28 +67,29 @@ public abstract class AbstractMap implements Map
     {
         this.frame = new JFrame("Five Realms");                      //Creo la finestra
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);   //Quando la finestra viene chiusa, il programma termina
-//        this.frame.setLocationRelativeTo(null);                      //Quando inizia il gioco posiziona la finestra al centro dello schermo 
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); // Ottego le dimensioni dello schermo
 	    int width  = (int) (screenSize.getWidth() * 0.6);                   // 60% della larghezza dello schermo
 	    int height = (int) (width * 3.0 / 4.0);                             // Rapporto 4:3
 	    this.frame.setSize(width, height);                                  // Imposta le dimensioni della finestra
 	         
-        this.frame.setLocationRelativeTo(null);                      //Quando inizia il gioco posiziona la finestra al centro dello schermo 
+        this.frame.setLocationRelativeTo(null);   //Quando inizia il gioco posiziona la finestra al centro dello schermo 
 
         this.frame.setLayout(new BorderLayout());
 
-        // Crea il JLayeredPane che gestisce i vari layer
+        // Crea il JLayeredPanel che gestisce i vari layer
         this.layeredPanel = new JLayeredPane();
         this.frame.setContentPane(this.layeredPanel);
-		
-        // 1. Griglia di bottoni
-        this.initializeGridMap();
-        
-		// 2. Background 
+   
+		// 0. Background 
         this.initializeBackgroundMap();
         
-        // 3. Personaggi         
+        // 1. Griglia di bottoni trasparente
+        this.initializeGridMap();
+        
+        // 3. Personaggi     
+        
+        
         
 
         /*
@@ -167,7 +168,7 @@ public abstract class AbstractMap implements Map
             JLayeredPane layeredPane = frame.getLayeredPane();
 
             // Aggiungi il background al livello inferiore 0
-            layeredPane.add(backgroundLabel, Integer.valueOf(1)); 
+            layeredPane.add(backgroundLabel, Integer.valueOf(0)); 
         } 
         else {
             System.err.println("Errore: immagine di background non trovata per il livello " + numLevel);
@@ -190,7 +191,7 @@ public abstract class AbstractMap implements Map
         this.gridPanel.setOpaque(false);
 
         // Aggiungi gridPanel al JLayeredPane nel livello superiore (livello 1)
-        this.layeredPanel.add(this.gridPanel, Integer.valueOf(0));
+        this.layeredPanel.add(this.gridPanel, Integer.valueOf(1));
 
         // Rendi visibile il layout dopo aver aggiunto il componente
         this.layeredPanel.revalidate();
@@ -242,8 +243,11 @@ public abstract class AbstractMap implements Map
         return alliesList;
     }
     
-
-
-
-
+    //metodo per chiudere il frame manualmente
+    public void closeWindow() 
+    {
+        if (this.frame != null) 
+            this.frame.dispose();
+        
+    }
 }

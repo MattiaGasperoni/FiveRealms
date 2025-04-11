@@ -26,15 +26,6 @@ public class LevelMap extends AbstractMap{
         return null;
     }
 
-    //metodo per chiudere il frame manualmente
-    @Override
-    public void closeWindow() 
-    {
-        if (frame != null) {
-            frame.dispose();
-        }
-    }
-
     public static void main(String[] args) 
     {
         SwingUtilities.invokeLater(() -> 
