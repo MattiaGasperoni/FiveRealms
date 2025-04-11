@@ -1,11 +1,9 @@
 package view.map;
 
 import java.awt.*;
-import java.io.IOException;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.TreeMap;
-
+import java.util.Map;
 import javax.swing.*;
 import model.characters.Character;
 import model.point.Point;
@@ -14,7 +12,7 @@ import model.point.Point;
  * Abstract class representing a map in the game.
  * It includes a grid of buttons and a control panel with game management options.
  */
-public abstract class AbstractMap implements Map 
+public abstract class AbstractMap 
 {
     
     public static final int GRID_SIZE   = 20;  // Dimensione della griglia
@@ -29,7 +27,7 @@ public abstract class AbstractMap implements Map
     private List<Character> enemiesList; // Lista dei nemici
     private List<Character> alliesList;  // Lista degli alleati
     private final int numLevel;          // Numero del livello
-	private TreeMap<Character,Point> characterMap;
+    private Map<Character, Point> characterMap;
 
     //private GameStateManager gameStateManager;
 
@@ -44,7 +42,17 @@ public abstract class AbstractMap implements Map
         this.enemiesList      = enemiesList;
         this.alliesList       = alliesList;
         this.numLevel         = numLevel;
-        this.characterMap	  = new TreeMap<>();
+        this.characterMap = new HashMap<>();
+
+        // Popola la mappa con tutti i personaggi
+        for (Character enemy : enemiesList) {
+            characterMap.put(enemy, enemy.getPosition());
+        }
+
+        for (Character ally : alliesList) {
+            characterMap.put(ally, ally.getPosition());
+        }
+        
        // this.gameStateManager = new GameStateManager();
     }
     
@@ -53,32 +61,54 @@ public abstract class AbstractMap implements Map
     {
     	System.out.print("Open Level "+this.numLevel+" Frame ->");
     	
-    	Timer timer = new Timer(16, e->{
-    		JButton[][] button = this.gridPanel.getGridButtons();
-    		List<JButton> imageButtonList = this.gridPanel.getImageButtonList();
-        	//Logica, controllare tutti i pulsanti
-    		System.out.println("Test");
-    		
-    		//Stream qui (con entrySet)!!
-    		
-    		
-    		/* Scorre la lista con i bottoni con immagine e vede se i bottoni
-                	con immagine combacia con la posizione dei personaggi*/
-                	
-                	/* Caso 1: Un bottone ha un immagine ma il personaggio non si trova li,  
-                	 * Scorriamo la lista dei bottoni con immagine (metodo public di GridPanel), andiamo a verificare 
-                	 * presi i e j se ce una combinazione con la nostra mappa, se ce apposto, se non ce rimuoviamo quella immagine
-                	*/
-                	
-                	
-                	/* Caso 2): Il personaggio si trova in un bottone senza immagine, 
-                	 * Dobbiamo verificare se ce un personaggio con quella posizione senza immagine,
-                	 * stavolta prendiamo sempre la lista e dobbiamo settargli l'immagine a quel bottone.  
-                	 * 
-                	*/
-               
-    		
+    	Timer timer = new Timer(16, e -> {
+    	    Map<JButton, Point> imageButtonList = this.gridPanel.getImageButtonList();
+
+    	    // CASO 1: Un bottone ha immagine ma NESSUN personaggio si trova in quella posizione
+    	    for (Map.Entry<JButton, Point> entry : imageButtonList.entrySet()) 
+    	    {
+    	        JButton button = entry.getKey();
+    	        Point buttonPos = entry.getValue();
+    	        boolean personFound = false;
+
+    	        // Stampa di debug per capire se un bottone ha un'immagine
+    	        if (button.getIcon() != null) {
+    	            System.out.println("Bottone con immagine trovato nella posizione " + buttonPos);
+    	        }
+
+    	        // Controlla se un personaggio è presente nella stessa posizione
+    	        for (Point characterPos : characterMap.values()) {
+    	            if (characterPos.equals(buttonPos)) {
+    	                personFound = true;
+    	                break;
+    	            }
+    	        }
+
+    	        // Se non ci sono personaggi nella posizione del bottone, rimuovi l'immagine
+    	        if (!personFound && button.getIcon() != null) {
+    	            System.out.println("Nessun personaggio trovato in " + buttonPos + ", rimuovo immagine");
+    	            button.setIcon(null); // Rimuovi immagine
+    	        }
+    	    }
+
+    	    // CASO 2: Un personaggio si trova su una posizione dove il bottone NON ha immagine
+    	    for (Map.Entry<Character, Point> entry : characterMap.entrySet()) {
+    	        Character character = entry.getKey();
+    	        Point characterPos = entry.getValue();
+    	        JButton button = this.gridPanel.getGridButtons()[characterPos.getY()][characterPos.getX()];
+
+    	        // Stampa di debug per capire se il personaggio ha un'immagine
+    	        System.out.println("Controllando personaggio " + character + " nella posizione " + characterPos);
+
+    	        if (button.getIcon() == null) {
+    	            System.out.println("Nessuna immagine nel bottone alla posizione " + characterPos + ", aggiungo immagine del personaggio");
+    	            ImageIcon originalIcon = new ImageIcon(character.getImage());
+    	            Image scaledImage = originalIcon.getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH); // adatta la misura
+    	            button.setIcon(new ImageIcon(scaledImage));
+    	        }
+    	    }
     	});
+
     	
     	initializeFrame();
         
@@ -138,41 +168,7 @@ public abstract class AbstractMap implements Map
     
     
 
-    /**
-     * Initializes the control panel with buttons for game actions.
-     */
-    /*private void initializeControlPanel() {
-        JButton saveButton = new JButton("Save Game");
-        JButton loadButton = new JButton("Load Game");
-        JButton exitButton = new JButton("Exit");
 
-        saveButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        loadButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        exitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        saveButton.addActionListener(e -> {
-            try {
-                saveGame();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-        });
-        loadButton.addActionListener(e -> {
-            try {
-                loadGame();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-        });
-        exitButton.addActionListener(e -> System.exit(0));
-
-        controlPanel.add(Box.createVerticalStrut(10)); // Space before buttons
-        controlPanel.add(saveButton);
-        controlPanel.add(Box.createVerticalStrut(10));
-        controlPanel.add(loadButton);
-        controlPanel.add(Box.createVerticalStrut(10));
-        controlPanel.add(exitButton);
-    }*/
 
     private void initializeBackgroundMap() 
     {
@@ -227,6 +223,42 @@ public abstract class AbstractMap implements Map
         this.layeredPanel.revalidate();
         this.layeredPanel.repaint();
     }
+    
+    /**
+     * Initializes the control panel with buttons for game actions.
+     */
+    /*private void initializeControlPanel() {
+        JButton saveButton = new JButton("Save Game");
+        JButton loadButton = new JButton("Load Game");
+        JButton exitButton = new JButton("Exit");
+
+        saveButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        loadButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        exitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        saveButton.addActionListener(e -> {
+            try {
+                saveGame();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        });
+        loadButton.addActionListener(e -> {
+            try {
+                loadGame();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        });
+        exitButton.addActionListener(e -> System.exit(0));
+
+        controlPanel.add(Box.createVerticalStrut(10)); // Space before buttons
+        controlPanel.add(saveButton);
+        controlPanel.add(Box.createVerticalStrut(10));
+        controlPanel.add(loadButton);
+        controlPanel.add(Box.createVerticalStrut(10));
+        controlPanel.add(exitButton);
+    }*/
     
     
     /**
@@ -292,23 +324,28 @@ public abstract class AbstractMap implements Map
      * @param allies The list of allied characters.
      * @param enemies The list of enemy characters.
      */
-	public static void spawnCharacter(List<Character> spwanList) 
+	public void spawnCharacter(List<Character> spawnList) 
 	{
 		// Fare controllo se ci sono nella lista alleati o nemici
-		if(spwanList.get(0).isAllied()) {
+		if(spawnList.get(0).isAllied()) {
 			// Lista di alleati e spawnare in basso
-			spwanList.get(0).moveTo(new Point(17, 3));
-			spwanList.get(1).moveTo(new Point(19, 10));
-			spwanList.get(2).moveTo(new Point(17, 16));
+			spawnList.get(0).moveTo(new Point(17, 3));			
+			/*ImageIcon originalIcon = new ImageIcon(spawnList.get(0).getImage());
+            JButton button = this.gridPanel.getGridButtons()[17][3];
+            Image scaledImage = originalIcon.getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH); // adatta la misura
+            button.setIcon(new ImageIcon(scaledImage));*/
+			
+			
+			spawnList.get(1).moveTo(new Point(19, 10));
+			spawnList.get(2).moveTo(new Point(17, 16));
 			
 		}else {
-			// LIsta di nemici, spawnare in alto
-			spwanList.get(0).moveTo(new Point(2, 3));
-			spwanList.get(1).moveTo(new Point(8, 5));
-			spwanList.get(2).moveTo(new Point(5, 14));
+			// Lista di nemici, spawnare in alto
+			spawnList.get(0).moveTo(new Point(2, 3));
+			spawnList.get(1).moveTo(new Point(8, 5));
+			spawnList.get(2).moveTo(new Point(5, 14));
 			
 		}
-		
 	}
 			
 	
@@ -319,51 +356,16 @@ public abstract class AbstractMap implements Map
 		
 	}
 	
+	//rimuova dalla mappe il personaggio 
+	public void removeCharacter(Character character, Point target) {
+		
+	}
+	
     // Dato  x e y restituisce il bottone in quella posizione
-	@Override
-    public JButton getButtonAt(int x, int y) {
+	public JButton getButtonAt(int x, int y) {
         if (x >= 0 && x < GRID_SIZE && y >= 0 && y < GRID_SIZE) {
             return gridPanel.getGridButtons()[x][y];
         }
         return null;
     }
-    
-    
-	/*Point relevantPosition = new Point(row, col);
-    Character characterInPosition;
-
-    // Trova il personaggio nella posizione data
-    characterInPosition = allies.stream()
-            .filter(character -> character.getPosition().equals(relevantPosition))
-            .findFirst()
-            .orElse(null);
-
-    if (characterInPosition == null) {
-        System.out.println("Nessun personaggio trovato per la posizione: " + relevantPosition);
-
-        characterInPosition = enemies.stream()
-                .filter(character -> character.getPosition().equals(relevantPosition))
-                .findFirst()
-                .orElse(null);
-    }
-
-    System.out.println("Spawning character at position: " + relevantPosition); // Debug: stampa la posizione del personaggio
-
-    // Se esiste un personaggio, aggiungilo al JLayeredPane come componente visibile
-    if (characterInPosition != null) {
-        // Crea un'etichetta con l'immagine del personaggio
-        JLabel characterLabel = new JLabel(new ImageIcon(characterInPosition.getImage()));
-        
-        // Imposta la posizione della label nel JLayeredPane
-        characterLabel.setBounds(col * AbstractMap.BUTTON_SIZE, row * AbstractMap.BUTTON_SIZE, AbstractMap.BUTTON_SIZE, AbstractMap.BUTTON_SIZE);
-
-        // Aggiungi il personaggio al livello 2 (sopra la griglia, ma sotto altri elementi)
-        layeredPane.add(characterLabel, Integer.valueOf(2)); // Livello 2 per i personaggi
-    }
-    
-    layeredPane.revalidate();
-    layeredPane.repaint();*/
-
-	
-	
 }

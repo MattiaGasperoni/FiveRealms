@@ -3,7 +3,9 @@ package view.map;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -110,11 +112,23 @@ public class GridPanel extends JPanel
     }
 
 
-    // Metodo che scorre tutti i pulsanti e se hanno un immagine allora li mette in una lista
-	public List<JButton> getImageButtonList() {
-		// TODO Auto-generated method stub
-		return null;
+    // Metodo che scorre tutti i pulsanti e se hanno un immagine allora li mette in una Mappa
+	public Map<JButton, Point>  getImageButtonList() 
+	{
+		Map<JButton, Point> buttonsWithImage = new HashMap<>();
+		
+		for (int y = 0; y < gridButtons.length; y++) 
+		{
+		    for (int x = 0; x < gridButtons[y].length; x++) 
+		    {
+		        JButton button = gridButtons[y][x];
+
+		        if (button.getIcon() != null)
+		        {
+		        	buttonsWithImage.put(button, new Point(x, y));
+		        }
+		    }
+		}
+        return buttonsWithImage;
 	}
-    
-    
 }

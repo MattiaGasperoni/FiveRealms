@@ -27,10 +27,14 @@ public class LevelMap extends AbstractMap{
     	   List<Character> emptyEnemies = new ArrayList<>();
     	   emptyEnemies.add(new Barbarian(new Point(rand.nextInt(0,6),rand.nextInt(0,3))));
     	   emptyEnemies.add(new Archer(new Point(rand.nextInt(0,6),rand.nextInt(0,3))));
+    	   emptyEnemies.add(new Barbarian(new Point(rand.nextInt(0,6),rand.nextInt(0,3))));
+
 
     	   List<Character> emptyAllies = new ArrayList<>();
     	   emptyAllies.add(new Barbarian(new Point(rand.nextInt(0,6),rand.nextInt(0,3))));
     	   emptyAllies.add(new Archer(new Point(rand.nextInt(0,6),rand.nextInt(0,3))));
+    	   emptyAllies.add(new Barbarian(new Point(rand.nextInt(0,6),rand.nextInt(0,3))));
+
 
 
             // Inizializza la mappa con le liste vuote
