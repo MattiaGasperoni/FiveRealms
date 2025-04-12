@@ -10,8 +10,8 @@ import java.util.List;
  */
 public class GameStateManager 
 {
-    private static final String DIRECTORY_NAME = "Saves";
-    public static final String FILE_NAME = "game_state_save.dat";
+    private static final String DIRECTORY_NAME = "saves";
+    public static final String FILE_NAME = "game_state_save.txt";  // Costante per il nome del file
 
     // Creates the Saves folder if it does not exist
     private File getSaveFile() 
@@ -62,32 +62,82 @@ public class GameStateManager
         }
     }
     
-    
-        /**
-         * Loads the game state from the save file.
-         * 
-         * @return the loaded GameState object, or null if the file does not exist,
-         *         is not readable, or an error occurs during loading.
-         *         If the file is corrupted or the class definition has changed, 
-         *         an error message will be printed, and null will be returned.
-         * @throws IOException 
-         */
-        public GameState loadStatus() throws IOException 
+    /* secondo metodo, utilizzo il toString() di GameState per salvare le liste
+	public void saveStatus(List<Character> allies, List<Character> enemies, int level) throws IOException 
+    {
+        GameState gameState = new GameState(level, allies, enemies);
+        File saveFile = getSaveFile();
+        
+        if (saveFile == null) 
         {
-            File saveFile = getSaveFile();
+            throw new IOException("Save file could not be determined.");
+        }
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(saveFile))) 
+        {
+            writer.write(gameState.toString()); // Assuming GameState has a toString method that formats the data
+            System.out.println("Game state saved successfully.");
+        } 
+        catch (IOException e) 
+        {
+            throw new IOException("Error while saving the game state to the file '" + saveFile.getAbsolutePath() + "': " + e.getMessage());
+        }
+    }*/
     
-            if (!saveFile.exists() || !saveFile.canRead()) 
-            {
-                throw new FileNotFoundException("The save file does not exist or is not readable: " + saveFile.getAbsolutePath());
-            }
     
-            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(saveFile))) 
-            {
-                return (GameState) in.readObject();
-            } 
-            catch (IOException | ClassNotFoundException e) 
-            {
-                throw new IOException("Error while loading the game state from the file: " + saveFile.getAbsolutePath() + " - " + e.getMessage());
-            }
+    /**
+     * Loads the game state from the save file.
+     * 
+     * @return the loaded GameState object, or null if the file does not exist,
+     *         is not readable, or an error occurs during loading.
+     *         If the file is corrupted or the class definition has changed, 
+     *         an error message will be printed, and null will be returned.
+     * @throws IOException 
+     */
+    public GameState loadStatus() throws IOException 
+    {
+        File saveFile = getSaveFile();
+    
+        if (!saveFile.exists() || !saveFile.canRead()) 
+        {
+            throw new FileNotFoundException("The save file does not exist or is not readable: " + saveFile.getAbsolutePath());
+        }
+    
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(saveFile))) 
+        {
+            return (GameState) in.readObject();
+        } 
+        catch (IOException | ClassNotFoundException e) 
+        {
+            throw new IOException("Error while loading the game state from the file: " + saveFile.getAbsolutePath() + " - " + e.getMessage());
         }
     }
+    
+    /*public GameState loadStatus() throws IOException 
+    {
+        File saveFile = getSaveFile();
+    
+        if (!saveFile.exists() || !saveFile.canRead()) 
+        {
+            throw new FileNotFoundException("The save file does not exist or is not readable: " + saveFile.getAbsolutePath());
+        }
+    
+        try (BufferedReader reader = new BufferedReader(new FileReader(saveFile))) 
+        {
+            StringBuilder content = new StringBuilder();
+            String line;
+
+            while ((line = reader.readLine()) != null) 
+            {
+                content.append(line).append(System.lineSeparator());
+            }
+
+            // Assuming GameState has a static method to parse from a formatted string
+            return GameState.parse(content.toString()); 
+        } 
+        catch (IOException e) 
+        {
+            throw new IOException("Error while loading the game state from the file '" + saveFile.getAbsolutePath() + "': " + e.getMessage());
+        }
+    }*/
+}
