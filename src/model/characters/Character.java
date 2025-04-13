@@ -1,5 +1,7 @@
 package model.characters;
 
+import java.util.List;
+
 import model.equipment.potions.Potion;
 import model.equipment.weapons.Weapon;
 import model.point.Point;
@@ -38,4 +40,7 @@ public interface Character {
 	public void becomeHero();
 	
 	public String getImage();
+	
+	public void whatToDo(/*Character character,*/ List<Character> alliedList, List<Character> enemyList);
+	public void fight(Character attackedCharacter, List<Character> alliedList, List<Character> enemyList) throws IllegalArgumentException;
 }
