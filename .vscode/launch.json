@@ -1,0 +1,27 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "type": "java",
+        "name": "LevelMap",
+        "request": "launch",
+        "mainClass": "view.map.LevelMap",
+        "projectName": "ProgettoPMO"
+      },
+      {
+        "type": "java",
+        "name": "Main",
+        "request": "launch",
+        "mainClass": "app.Main",
+        "projectName": "ProgettoPMO"
+      },
+      {
+        "type": "java",
+        "name": "Esegui Main",
+        "request": "launch",
+        "mainClass": "app.Main",
+        "projectName": "PROGETTO_PMO"
+      }
+    ]
+  }
+  

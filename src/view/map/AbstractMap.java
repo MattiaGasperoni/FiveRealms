@@ -61,7 +61,7 @@ public abstract class AbstractMap
     {
     	System.out.print("Open Level "+this.numLevel+" Frame ->");
     	
-    	Timer timer = new Timer(16, e -> {
+    	/*Timer timer = new Timer(16, e -> {
     	    Map<JButton, Point> imageButtonList = this.gridPanel.getImageButtonList();
 
     	    // CASO 1: Un bottone ha immagine ma NESSUN personaggio si trova in quella posizione
@@ -107,15 +107,18 @@ public abstract class AbstractMap
     	            button.setIcon(new ImageIcon(scaledImage));
     	        }
     	    }
-    	});
+    	});*/
 
     	
     	initializeFrame();
         
         //initializeControlPanel(); 
 
-        frame.setVisible(true);
-        timer.start();
+        this.frame.setVisible(true);
+        //timer.start();
+        
+        this.spawnCharacter(this.alliesList);
+
     }
     
     
@@ -324,30 +327,50 @@ public abstract class AbstractMap
      * @param allies The list of allied characters.
      * @param enemies The list of enemy characters.
      */
-	public void spawnCharacter(List<Character> spawnList) 
-	{
-		// Fare controllo se ci sono nella lista alleati o nemici
-		if(spawnList.get(0).isAllied()) {
-			// Lista di alleati e spawnare in basso
-			spawnList.get(0).moveTo(new Point(17, 3));			
-			/*ImageIcon originalIcon = new ImageIcon(spawnList.get(0).getImage());
-            JButton button = this.gridPanel.getGridButtons()[17][3];
-            Image scaledImage = originalIcon.getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH); // adatta la misura
-            button.setIcon(new ImageIcon(scaledImage));*/
-			
-			
-			spawnList.get(1).moveTo(new Point(19, 10));
-			spawnList.get(2).moveTo(new Point(17, 16));
-			
-		}else {
-			// Lista di nemici, spawnare in alto
-			spawnList.get(0).moveTo(new Point(2, 3));
-			spawnList.get(1).moveTo(new Point(8, 5));
-			spawnList.get(2).moveTo(new Point(5, 14));
-			
-		}
-	}
-			
+    public void spawnCharacter(List<Character> spawnList) 
+    {
+        if (spawnList == null || spawnList.size() < 3) 
+        {	
+        	System.out.println("Lista Spawn vuota");
+        	return;
+        }
+        
+        spawnList.stream().forEach(e -> System.out.println(e.getClass().getName()));
+        // Coordinate per spawn
+        Point[] positions;
+        if (spawnList.get(0).isAllied()) 
+        {
+            positions = new Point[] 
+            {
+                new Point(17, 3),
+                new Point(19, 10),
+                new Point(17, 16)
+            };
+        } 
+        else 
+        {
+            positions = new Point[] 
+            {
+                new Point(0, 0),
+                new Point(0, 0),
+                new Point(0, 0)
+            };
+        }
+
+        for (int i = 0; i < 3; i++) {
+            Character c = spawnList.get(i);
+            Point p = positions[i];
+            c.moveTo(p);
+
+            ImageIcon icon = new ImageIcon(c.getImage());
+            Image scaled = icon.getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH);
+            JButton button = this.gridPanel.getGridButtons()[p.getX()][p.getY()];
+            button.setIcon(new ImageIcon(scaled));
+            button.setOpaque(true);
+            button.setContentAreaFilled(true);  // Rende il bottone visibile
+
+        }
+    }
 	
 	/* Il metodo rimuove l'immagine dove si trova il personaggio e aggiunge l'immagine del personaggio nel  bottone targhet
 	 * moveCharacter usa moveTo e aggiornamento grafico
