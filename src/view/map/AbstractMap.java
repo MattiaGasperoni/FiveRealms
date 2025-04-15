@@ -118,6 +118,7 @@ public abstract class AbstractMap
         //timer.start();
         
         this.spawnCharacter(this.alliesList);
+        this.spawnCharacter(this.enemiesList); //Provato ad aggiungere questo
 
     }
     
