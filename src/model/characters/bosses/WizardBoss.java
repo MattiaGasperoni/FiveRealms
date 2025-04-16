@@ -4,8 +4,8 @@ import model.point.Point;
 
 public class WizardBoss extends Wizard{
 
-	public WizardBoss(Point startingPosition) {
-		super(startingPosition); //Random
+	public WizardBoss() {
+		super(); //Random
 		super.setImagePath("images/characters/wizards/wizardBoss.png");
 		this.increaseMaxHealth(0.4);
 		this.increasePower(0.5);

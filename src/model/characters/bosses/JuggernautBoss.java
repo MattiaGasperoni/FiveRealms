@@ -4,8 +4,8 @@ import model.point.Point;
 
 public class JuggernautBoss extends Juggernaut{
 
-	public JuggernautBoss(Point startingPosition) {
-		super(startingPosition); //Random
+	public JuggernautBoss() {
+		super(); //Random
 		super.setImagePath("images/characters/juggernaut/juggernautBoss.png");
 		this.increaseMaxHealth(1.4);
 		this.increasePower(1.3);

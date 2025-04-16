@@ -34,7 +34,7 @@ public abstract class AbstractCharacter implements Character, Serializable {
 	protected static final Random rand = new Random();
 	private static final long serialVersionUID = 1L;  // per salvare lo stato del gioco
 
-	public AbstractCharacter(int health, int speed, int power, int defence, Point startingPosition) {
+	public AbstractCharacter(int health, int speed, int power, int defence) {
 		this.maxHealth = health;
 		this.currentHealth = this.maxHealth;
 		this.speed = speed;
@@ -42,7 +42,6 @@ public abstract class AbstractCharacter implements Character, Serializable {
 		this.defence = defence;
 		this.experience = 0;
 		this.potion = null;
-		this.position = startingPosition;
 		this.isAllied = false;
 		this.generateDefaultImage();
 		this.availableWeapons = new ArrayList<>(2);
@@ -128,7 +127,14 @@ public abstract class AbstractCharacter implements Character, Serializable {
 			this.increaseDefence(heroStatIncreasePercentage);
 			this.increaseSpeed(heroStatIncreasePercentage);
 			this.setImagePath("images/characters/" + getClass().getSimpleName().toLowerCase() + "/" + getClass().getSimpleName().toLowerCase() + "Hero.png"); //not sure this is correct, needs testing
+			ImageIcon icon = new ImageIcon(this.imagePath);
+	        this.image = icon.getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH);
 		}
+	}
+	
+	@Override
+	public void setPosition(Point position) {
+		this.position = position;
 	}
 
 	@Override
@@ -205,8 +211,8 @@ public abstract class AbstractCharacter implements Character, Serializable {
 		//ugly way to handle it, but it's the first version
 		ArrayList<Point> positions = new ArrayList<>();
 		
-		for(int i = 0; i < view.map.AbstractMap.GRID_SIZE; i++) {
-			for(int k = 0; k < view.map.AbstractMap.GRID_SIZE; k++) {
+		for(int i = 0; i < view.map.AbstractMap.GRID_SIZE_WIDTH; i++) {
+			for(int k = 0; k < view.map.AbstractMap.GRID_SIZE_HEIGHT; k++) {
 				positions.add(new Point(i,k));
 			}
 		}

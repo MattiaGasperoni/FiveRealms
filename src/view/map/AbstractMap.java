@@ -1,10 +1,15 @@
 package view.map;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+
 import javax.swing.*;
+import javax.swing.text.Position;
+
 import model.characters.Character;
 import model.point.Point;
 
@@ -15,7 +20,9 @@ import model.point.Point;
 public abstract class AbstractMap 
 {
     
-    public static final int GRID_SIZE   = 20;  // Dimensione della griglia
+    public static final int GRID_SIZE_HEIGHT  = 15;  // Dimensione della griglia height
+    public static final int GRID_SIZE_WIDTH   = 20;  // Dimensione della griglia witdh
+    
     public static final int BUTTON_SIZE = 200; // Dimensione dei bottoni 120
 
     protected JFrame frame;
@@ -28,6 +35,11 @@ public abstract class AbstractMap
     private List<Character> alliesList;  // Lista degli alleati
     private final int numLevel;          // Numero del livello
     private Map<Character, Point> characterMap;
+
+    private List<Point> alliesPositionList;
+    private List<Point> enemiesPositionList;
+    
+    private Random random;
 
     //private GameStateManager gameStateManager;
 
@@ -43,6 +55,10 @@ public abstract class AbstractMap
         this.alliesList       = alliesList;
         this.numLevel         = numLevel;
         this.characterMap = new HashMap<>();
+        this.alliesPositionList = new ArrayList<>();
+        this.enemiesPositionList = new ArrayList<>();
+        this.random = new Random();
+        this.initializePositionList();
 
         // Popola la mappa con tutti i personaggi
         for (Character enemy : enemiesList) {
@@ -57,7 +73,17 @@ public abstract class AbstractMap
     }
     
     
-    public void start() 
+    private void initializePositionList() {
+		this.alliesPositionList.add(new Point(16,4));
+		this.alliesPositionList.add(new Point(14,7));
+		this.alliesPositionList.add(new Point(16,10));
+		this.enemiesPositionList.add(new Point(2,3));
+		this.enemiesPositionList.add(new Point(4,7));
+		this.enemiesPositionList.add(new Point(4,10));
+		
+	}
+
+	public void start() 
     {
     	System.out.print("Open Level "+this.numLevel+" Frame ->");
     	
@@ -125,23 +151,30 @@ public abstract class AbstractMap
      */
     private void initializeFrame()
     {
-        this.frame = new JFrame("Five Realms");                      //Creo la finestra
-        this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);   //Quando la finestra viene chiusa, il programma termina
+        this.frame = new JFrame("Five Realms");                      		//Creo la finestra
+        this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);   		//Quando la finestra viene chiusa, il programma termina
+        this.frame.setResizable(false);
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); // Ottego le dimensioni dello schermo
 	    int width  = (int) (screenSize.getWidth() * 0.6);                   // 60% della larghezza dello schermo
 	    int height = (int) (width * 3.0 / 4.0);                             // Rapporto 4:3
 	    this.frame.setSize(width, height);                                  // Imposta le dimensioni della finestra
 	         
-        this.frame.setLocationRelativeTo(null);   //Quando inizia il gioco posiziona la finestra al centro dello schermo 
+        this.frame.setLocationRelativeTo(null);   							//Quando inizia il gioco posiziona la finestra al centro dello schermo 
 
         this.frame.setLayout(new BorderLayout());
 
         // Crea il JLayeredPanel che gestisce i vari layer
         this.layeredPanel = new JLayeredPane();
+        
+        this.layeredPanel.setSize(width -17, height -35); // Da cambiare forse
+        
+        //TODO: Da studiare il metodo getContentPane()   
+
         this.frame.setContentPane(this.layeredPanel);
-   
-		// 0. Background 
+        
+        
+        // 0. Background 
         this.initializeBackgroundMap();
         
         // 1. Griglia di bottoni trasparente
@@ -149,9 +182,6 @@ public abstract class AbstractMap
         
         // 3. Personaggi     
         
-        
-        
-
         /*
         this.characterPanel = new JPanel();
         characterPanel.setBounds(0, 0, frame.getWidth(), frame.getHeight());
@@ -163,12 +193,8 @@ public abstract class AbstractMap
         controlPanel.setBackground(Color.LIGHT_GRAY); // Sfondo visibile
         controlPanel.setBorder(BorderFactory.createEmptyBorder(10, 50, 50, 50)); // Margine interno
         mainPanel.add(controlPanel, BorderLayout.EAST); // Pannello sulla destra*/
+        
     }
-
-    
-    
-
-
 
     private void initializeBackgroundMap() 
     {
@@ -181,17 +207,20 @@ public abstract class AbstractMap
         // Controlla che l'immagine sia valida
         if (backgroundImage.getIconWidth() > 0 && backgroundImage.getIconHeight() > 0) 
         {
-        	// Ridimensiona l'immagine per adattarla al frame
-            Image image = backgroundImage.getImage();
-            Image resizedImage = image.getScaledInstance(frame.getWidth(), frame.getHeight(), Image.SCALE_SMOOTH);
-            backgroundImage = new ImageIcon(resizedImage);
-        	
-            // Crea un JLabel per contenere l'immagine di sfondo
-            JLabel backgroundLabel = new JLabel(backgroundImage);
-            backgroundLabel.setBounds(0, 0, frame.getWidth(), frame.getHeight()); // Configura le dimensioni
+        	// Ridimensiona l'immagine per adattarla al frame (Problema qui)
+        	Dimension panelSize = this.layeredPanel.getSize();
+            int panelWidth = panelSize.width;
+            int panelHeight = panelSize.height;
 
+            Image image = backgroundImage.getImage();
+            Image resizedImage = image.getScaledInstance(panelWidth, panelHeight, Image.SCALE_SMOOTH);
+            backgroundImage = new ImageIcon(resizedImage);
+
+            JLabel backgroundLabel = new JLabel(backgroundImage);
+            backgroundLabel.setBounds(0, 0, panelWidth, panelHeight);
+            
             // Usa il JLayeredPane esistente del frame
-            JLayeredPane layeredPane = frame.getLayeredPane();
+            JLayeredPane layeredPane = this.frame.getLayeredPane();
 
             // Aggiungi il background al livello inferiore 0
             layeredPane.add(backgroundLabel, Integer.valueOf(0)); 
@@ -211,7 +240,7 @@ public abstract class AbstractMap
         }      
         
         // Imposta le dimensioni del gridPanel uguali a quelle del frame
-        this. gridPanel.setBounds(0, 0, frame.getWidth(), frame.getHeight()); // Stesse dimensioni del frame
+        this. gridPanel.setBounds(0, 0, this.layeredPanel.getWidth(), this.layeredPanel.getHeight()); // Stesse dimensioni del frame
 
         // Rendi la griglia trasparente per non coprire lo sfondo
         this.gridPanel.setOpaque(false);
@@ -315,25 +344,49 @@ public abstract class AbstractMap
     
     public void spawnCharacter(List<Character> spawnList) 
     {
+    	
+    	
         if (spawnList == null || spawnList.size() < 3) 
         {	
         	System.out.println("Lista Spawn vuota");
         	return;
         }
         
-        for (int i = 0; i < 3; i++) 
-        {
+        if(spawnList.get(0).isAllied()) {
         	
-            Character c = spawnList.get(i);
-    		System.out.println("Spwan di "+c.getClass());
+        	for (int i = 0; i < 3; i++) 
+            {
+            	
+                Character c = spawnList.get(i);
+                int target = random.nextInt(0,alliesPositionList.size());
+                c.setPosition(this.alliesPositionList.get(target)); 
+                this.alliesPositionList.remove(target);
+                
+                JButton button = this.gridPanel.getGridButtons()[c.getPosition().getX()][c.getPosition().getY()];
+                button.setIcon(new ImageIcon(c.getImage()));
+                button.setOpaque(true);
+                button.setContentAreaFilled(true); 
 
-            JButton button = this.gridPanel.getGridButtons()[c.getPosition().getX()][c.getPosition().getY()];
-            button.setIcon(new ImageIcon(c.getImage()));
-            button.setOpaque(true);
-            button.setContentAreaFilled(true); 
-
+            }
+        }else {
+        	for (int i = 0; i < 3; i++) 
+            {
+            	
+        		Character c = spawnList.get(i);
+                int target = random.nextInt(0,enemiesPositionList.size());
+                c.setPosition(this.enemiesPositionList.get(target)); 
+                this.enemiesPositionList.remove(target);
+                
+                JButton button = this.gridPanel.getGridButtons()[c.getPosition().getX()][c.getPosition().getY()];
+                button.setIcon(new ImageIcon(c.getImage()));
+                button.setOpaque(true);
+                button.setContentAreaFilled(true);  
+            }
         }
+        
     }
+    
+    
 	
 	/* Il metodo rimuove l'immagine dove si trova il personaggio e aggiunge l'immagine del personaggio nel  bottone targhet
 	 * moveCharacter usa moveTo e aggiornamento grafico
@@ -349,7 +402,7 @@ public abstract class AbstractMap
 	
     // Dato  x e y restituisce il bottone in quella posizione
 	public JButton getButtonAt(int x, int y) {
-        if (x >= 0 && x < GRID_SIZE && y >= 0 && y < GRID_SIZE) {
+        if (x >= 0 && x < GRID_SIZE_WIDTH && y >= 0 && y < GRID_SIZE_HEIGHT) {
             return gridPanel.getGridButtons()[x][y];
         }
         return null;

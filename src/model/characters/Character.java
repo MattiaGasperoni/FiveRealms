@@ -23,6 +23,7 @@ public interface Character {
 	public Potion getPotion();
 	public boolean hasPotion();
 	public void setPotion(Potion potion);
+	public void setPosition(Point position);
 		
 	public int getExperience();
 	public void gainExperience(int value);

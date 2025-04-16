@@ -33,12 +33,12 @@ public class GridPanel extends JPanel
      */
     public GridPanel(JLayeredPane layeredPane, List<Character> enemiesList, List<Character> alliesList) 
     {
-        super(new GridLayout(AbstractMap.GRID_SIZE, AbstractMap.GRID_SIZE)); // Setting GridLayout
+        super(new GridLayout(AbstractMap.GRID_SIZE_WIDTH, AbstractMap.GRID_SIZE_HEIGHT)); // Setting GridLayout
         
         this.layeredPane = layeredPane;
         this.enemiesList = enemiesList;
         this.alliesList  = alliesList;
-        this.gridButtons = new JButton[AbstractMap.GRID_SIZE][AbstractMap.GRID_SIZE];
+        this.gridButtons = new JButton[AbstractMap.GRID_SIZE_WIDTH][AbstractMap.GRID_SIZE_HEIGHT];
         
         initializeGrid();
     }
@@ -49,13 +49,13 @@ public class GridPanel extends JPanel
     private void initializeGrid() {
         this.removeAll(); // Clear all components
 
-        for (int i = 0; i < AbstractMap.GRID_SIZE; i++) {
-            for (int j = 0; j < AbstractMap.GRID_SIZE; j++) {
-                final int row = i;
-                final int col = j;
+        for (int i = 0; i < AbstractMap.GRID_SIZE_WIDTH; i++) {
+            for (int j = 0; j < AbstractMap.GRID_SIZE_HEIGHT; j++) {
+                int row = i;
+                int col = j;
                 
                 JButton button = new JButton(); // Create button
-                button.setPreferredSize(new Dimension(AbstractMap.BUTTON_SIZE, AbstractMap.BUTTON_SIZE));
+                button.setPreferredSize(new Dimension(AbstractMap.BUTTON_SIZE, AbstractMap.BUTTON_SIZE)); 
 
                 // Rendi il bottone invisibile ma cliccabile
                 button.setContentAreaFilled(false);
@@ -66,7 +66,7 @@ public class GridPanel extends JPanel
                 button.setIcon(null);
                 
                 button.addActionListener(e -> showButtonCoordinates(row, col));
-                gridButtons[i][j] = button;
+                this.gridButtons[i][j] = button;
                 
                 this.add(button);
             }
@@ -102,9 +102,9 @@ public class GridPanel extends JPanel
      */
     public void updateGridLayout() {
         // Ensure the grid buttons resize correctly with the frame size
-        for (int i = 0; i < AbstractMap.GRID_SIZE; i++) {
-            for (int j = 0; j < AbstractMap.GRID_SIZE; j++) {
-                gridButtons[i][j].setPreferredSize(new Dimension(layeredPane.getWidth() / AbstractMap.GRID_SIZE, layeredPane.getHeight() / AbstractMap.GRID_SIZE));
+        for (int i = 0; i < AbstractMap.GRID_SIZE_WIDTH; i++) {
+            for (int j = 0; j < AbstractMap.GRID_SIZE_HEIGHT; j++) {
+                gridButtons[i][j].setPreferredSize(new Dimension(layeredPane.getWidth() / AbstractMap.GRID_SIZE_WIDTH, layeredPane.getHeight() / AbstractMap.GRID_SIZE_HEIGHT));
             }
         }
         revalidate();

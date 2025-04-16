@@ -17,24 +17,25 @@ public class LevelMap extends AbstractMap{
 		super(enemiesList, alliesList, numLevel);
 	}
 	
-
 	public static void main(String[] args) 
     {
         SwingUtilities.invokeLater(() -> 
        {
     	   Random rand = new Random();
     	   List<Character> alliesList = new ArrayList<>();
-    	   alliesList.add(new Barbarian(new Point(2,5)));
-    	   alliesList.add(new Archer(new Point(5,9)));
-    	   alliesList.add(new Barbarian(new Point(2,13)));
+    	   alliesList.add(new Barbarian());
+    	   alliesList.add(new Archer());
+    	   alliesList.add(new Barbarian());
 
-
+    	   for(int i = 0; i < 3; i++) {
+    		   alliesList.get(i).becomeHero();
+    	   }
+    	   
     	   List<Character> enemiesList = new ArrayList<>();
-    	   enemiesList.add(new Barbarian(new Point(16,5)));
-    	   enemiesList.add(new Archer(new Point(15,9)));
-    	   enemiesList.add(new Barbarian(new Point(16,13)));
-
-
+    	   enemiesList.add(new Barbarian());
+    	   enemiesList.add(new Archer());
+    	   enemiesList.add(new Barbarian());
+    	   
            // Inizializza la mappa con le liste vuote
            LevelMap emptyMap = new LevelMap(enemiesList, alliesList, 5);
             
@@ -44,8 +45,6 @@ public class LevelMap extends AbstractMap{
         	    emptyMap.spawnCharacter(enemiesList);
         	    emptyMap.spawnCharacter(alliesList); 
         	});
-
-           
             
         });
     }
