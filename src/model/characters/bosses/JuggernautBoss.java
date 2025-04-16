@@ -6,7 +6,7 @@ public class JuggernautBoss extends Juggernaut{
 
 	public JuggernautBoss(Point startingPosition) {
 		super(startingPosition); //Random
-		super.setImage("images/characters/juggernaut/juggernautBoss.png");
+		super.setImagePath("images/characters/juggernaut/juggernautBoss.png");
 		this.increaseMaxHealth(1.4);
 		this.increasePower(1.3);
 		this.increaseDefence(1.5);

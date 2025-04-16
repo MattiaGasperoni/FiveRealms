@@ -1,10 +1,14 @@
 package model.characters;
+import java.awt.Image;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
+
+import javax.swing.ImageIcon;
+
 import model.equipment.potions.*;
 import model.equipment.weapons.Axe;
 import model.equipment.weapons.LongSword;
@@ -23,7 +27,8 @@ public abstract class AbstractCharacter implements Character, Serializable {
 	private Weapon weapon;
 	private Potion potion;
 	private Point position; 
-	private String image; //filepath
+	private String imagePath; //filepath
+	private Image image;
 	private boolean isAllied;
 	protected ArrayList<Weapon> availableWeapons;
 	protected static final Random rand = new Random();
@@ -122,7 +127,7 @@ public abstract class AbstractCharacter implements Character, Serializable {
 			this.increasePower(heroStatIncreasePercentage);
 			this.increaseDefence(heroStatIncreasePercentage);
 			this.increaseSpeed(heroStatIncreasePercentage);
-			this.setImage("images/characters/" + getClass().getSimpleName().toLowerCase() + "/" + getClass().getSimpleName().toLowerCase() + "Hero.png"); //not sure this is correct, needs testing
+			this.setImagePath("images/characters/" + getClass().getSimpleName().toLowerCase() + "/" + getClass().getSimpleName().toLowerCase() + "Hero.png"); //not sure this is correct, needs testing
 		}
 	}
 
@@ -254,7 +259,10 @@ public abstract class AbstractCharacter implements Character, Serializable {
 	}
 
 	protected void generateDefaultImage() {
-		this.setImage("images/characters/" + getClass().getSimpleName().toLowerCase() + "/" + getClass().getSimpleName().toLowerCase() + rand.nextInt(1,4) + ".png"); //not sure this is correct, needs testing
+		this.setImagePath("images/characters/" + getClass().getSimpleName().toLowerCase() + "/" + getClass().getSimpleName().toLowerCase() + rand.nextInt(1,4) + ".png"); //not sure this is correct, needs testing
+		//Pre-process images 
+		ImageIcon icon = new ImageIcon(this.imagePath);
+        this.image = icon.getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH);
 	}
 
 	@Override
@@ -313,12 +321,17 @@ public abstract class AbstractCharacter implements Character, Serializable {
 	}
 
 	@Override
-	public String getImage() {
-		return image;
+	public String getImagePath() {
+		return imagePath;
+	}
+	
+	@Override
+	public Image getImage() {
+		return this.image;
 	}
 
-	public void setImage(String image) {
-		this.image = image;
+	public void setImagePath(String image) {
+		this.imagePath = image;
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package model.characters;
 
+import java.awt.Image;
 import java.util.List;
 
 import model.equipment.potions.Potion;
@@ -39,8 +40,10 @@ public interface Character {
 	public boolean isAllied();
 	public void becomeHero();
 	
-	public String getImage();
+	public String getImagePath();
+	public Image getImage();
 	
 	public void whatToDo(/*Character character,*/ List<Character> alliedList, List<Character> enemyList);
 	public void fight(Character attackedCharacter, List<Character> alliedList, List<Character> enemyList) throws IllegalArgumentException;
+	
 }

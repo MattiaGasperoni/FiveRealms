@@ -116,10 +116,6 @@ public abstract class AbstractMap
 
         this.frame.setVisible(true);
         //timer.start();
-        
-        this.spawnCharacter(this.alliesList);
-        this.spawnCharacter(this.enemiesList); //Provato ad aggiungere questo
-
     }
     
     
@@ -317,17 +313,6 @@ public abstract class AbstractMap
         
     }
     
-    /**
-     * Spawns a character on the given button based on its position on the grid.
-     * If a character is present at the specified grid position, the button will display the character's image.
-     * If no character is present, the button will become transparent.
-     *
-     * @param button The button on the grid where the character will be spawned.
-     * @param row The row index of the button on the grid.
-     * @param col The column index of the button on the grid.
-     * @param allies The list of allied characters.
-     * @param enemies The list of enemy characters.
-     */
     public void spawnCharacter(List<Character> spawnList) 
     {
         if (spawnList == null || spawnList.size() < 3) 
@@ -336,39 +321,16 @@ public abstract class AbstractMap
         	return;
         }
         
-        spawnList.stream().forEach(e -> System.out.println(e.getClass().getName()));
-        // Coordinate per spawn
-        Point[] positions;
-        if (spawnList.get(0).isAllied()) 
+        for (int i = 0; i < 3; i++) 
         {
-            positions = new Point[] 
-            {
-                new Point(17, 3),
-                new Point(19, 10),
-                new Point(17, 16)
-            };
-        } 
-        else 
-        {
-            positions = new Point[] 
-            {
-                new Point(0, 0),
-                new Point(0, 0),
-                new Point(0, 0)
-            };
-        }
-
-        for (int i = 0; i < 3; i++) {
+        	
             Character c = spawnList.get(i);
-            Point p = positions[i];
-            c.moveTo(p);
+    		System.out.println("Spwan di "+c.getClass());
 
-            ImageIcon icon = new ImageIcon(c.getImage());
-            Image scaled = icon.getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH);
-            JButton button = this.gridPanel.getGridButtons()[p.getX()][p.getY()];
-            button.setIcon(new ImageIcon(scaled));
+            JButton button = this.gridPanel.getGridButtons()[c.getPosition().getX()][c.getPosition().getY()];
+            button.setIcon(new ImageIcon(c.getImage()));
             button.setOpaque(true);
-            button.setContentAreaFilled(true);  // Rende il bottone visibile
+            button.setContentAreaFilled(true); 
 
         }
     }
