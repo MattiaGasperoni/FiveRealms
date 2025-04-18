@@ -13,6 +13,7 @@ import javax.swing.SwingUtilities;
 
 import model.characters.Character;
 import model.point.Point;
+import view.map.AbstractMap;
 import view.map.LevelMap;
 import view.map.TutorialMap;
 
@@ -62,7 +63,7 @@ public class GraphicMovePhaseManager
 
     // Verifica se la posizione è valida (entro i limiti della griglia)
     private boolean isValidPosition(int x, int y) {
-        return x >= 0 && x < LevelMap.GRID_SIZE && y >= 0 && y < LevelMap.GRID_SIZE;
+        return x >= 0 && x < AbstractMap.GRID_SIZE_WIDTH&& y >= 0 && y < AbstractMap.GRID_SIZE_HEIGHT;
     }
 
     // Verifica se una posizione è occupata da un alleato o nemico

@@ -1,7 +1,12 @@
 package view;
 
 import javax.swing.*;
+
+import model.characters.Archer;
+import model.characters.Barbarian;
 import model.characters.Character;
+import view.map.LevelMap;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,6 +14,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class CharacterSelectionMenu {
@@ -111,6 +117,4 @@ public class CharacterSelectionMenu {
         gbc.gridy = y;
         bgLabel.add(panel, gbc);
     }
-
-
 }

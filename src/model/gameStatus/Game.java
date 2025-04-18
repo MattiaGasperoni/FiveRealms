@@ -78,13 +78,13 @@ public class Game {
 
         // Popolo la lista di nemici del tutorial
         List<Character> tutorialEnemies = new ArrayList<>();
-        tutorialEnemies.add(new Barbarian(new Point(rand.nextInt(0, 6), rand.nextInt(0, 3))));
-        tutorialEnemies.add(new Archer(new Point(rand.nextInt(0, 6), rand.nextInt(0, 3))));
+        tutorialEnemies.add(new Barbarian());
+        tutorialEnemies.add(new Archer());
 
         // Popolo la lista di personaggi con cui giocheremo il tutorial
         List<Character> tutorialAllies = new ArrayList<>();
-        tutorialAllies.add(new Barbarian(new Point(rand.nextInt(0, 6), rand.nextInt(0, 3))));
-        tutorialAllies.add(new Archer(new Point(rand.nextInt(0, 6), rand.nextInt(0, 3))));
+        tutorialAllies.add(new Barbarian());
+        tutorialAllies.add(new Archer());
 
         // Creo e istanzio l'oggetto tutorial
         Tutorial tutorial = new Tutorial(new TutorialMap(tutorialEnemies, tutorialAllies), tutorialEnemies,
@@ -104,7 +104,7 @@ public class Game {
             this.initializeGameLevels();
 
             // Gioca i livelli
-            for (int i = 0; i <= Game.TOTAL_LEVEL; i++) {
+            for (int i = 0; i < Game.TOTAL_LEVEL; i++) {
                 // Gioca il livello, playLevel ritorna true se il livello è stato completato
                 // sennò interrompe dal ciclo
                 try {
@@ -128,32 +128,32 @@ public class Game {
 
     private void createAllies() {
         // Popolo la lista di personaggi giocabili
-        this.availableAllies.add(new Barbarian(new Point(0, 0)));
-        this.availableAllies.add(new Archer(new Point(0, 0)));
+        this.availableAllies.add(new Barbarian());
+        this.availableAllies.add(new Archer());
         // ... Aggiungere altri personaggi
     }
 
     private void initializeGameLevels() {
         // Popolo le liste di nemici dei livelli principali
         List<Character> level1Enemies = new ArrayList<>();
-        level1Enemies.add(new Barbarian(new Point(rand.nextInt(0, 6), rand.nextInt(0, 3))));
-        level1Enemies.add(new Archer(new Point(rand.nextInt(0, 6), rand.nextInt(0, 3))));
+        level1Enemies.add(new Barbarian());
+        level1Enemies.add(new Archer());
 
         List<Character> level2Enemies = new ArrayList<>();
-        level2Enemies.add(new Barbarian(new Point(rand.nextInt(0, 6), rand.nextInt(0, 3))));
-        level2Enemies.add(new Archer(new Point(rand.nextInt(0, 6), rand.nextInt(0, 3))));
+        level2Enemies.add(new Barbarian());
+        level2Enemies.add(new Archer());
 
         List<Character> level3Enemies = new ArrayList<>();
-        level3Enemies.add(new Barbarian(new Point(rand.nextInt(0, 6), rand.nextInt(0, 3))));
-        level3Enemies.add(new Archer(new Point(rand.nextInt(0, 6), rand.nextInt(0, 3))));
+        level3Enemies.add(new Barbarian());
+        level3Enemies.add(new Archer());
 
         List<Character> level4Enemies = new ArrayList<>();
-        level4Enemies.add(new Barbarian(new Point(rand.nextInt(0, 6), rand.nextInt(0, 3))));
-        level4Enemies.add(new Archer(new Point(rand.nextInt(0, 6), rand.nextInt(0, 3))));
+        level4Enemies.add(new Barbarian());
+        level4Enemies.add(new Archer());
 
         List<Character> level5Enemies = new ArrayList<>();
-        level5Enemies.add(new Barbarian(new Point(rand.nextInt(0, 6), rand.nextInt(0, 3))));
-        level5Enemies.add(new Archer(new Point(rand.nextInt(0, 6), rand.nextInt(0, 3))));
+        level5Enemies.add(new Barbarian());
+        level5Enemies.add(new Archer());
 
         // Agggiungo tutti i livelli alla lista dei
         // PROBLEM : se qualche personaggio mi muore poi nei livelli prima poi la lista

@@ -20,8 +20,8 @@ import model.point.Point;
 public abstract class AbstractMap 
 {
     
-    public static final int GRID_SIZE_HEIGHT  = 15;  // Dimensione della griglia height
-    public static final int GRID_SIZE_WIDTH   = 20;  // Dimensione della griglia witdh
+    public static final int GRID_SIZE_HEIGHT  = 15;  // Righe della griglia 
+    public static final int GRID_SIZE_WIDTH   = 20;  // Colonne della griglia 
     
     public static final int BUTTON_SIZE = 200; // Dimensione dei bottoni 120
 
@@ -85,8 +85,13 @@ public abstract class AbstractMap
 
 	public void start() 
     {
-    	System.out.print("Open Level "+this.numLevel+" Frame ->");
-    	
+		 if (this.numLevel == 0){
+		        System.out.print(" Open Tutorial Frame ->");
+		 } 
+		 else{
+		        System.out.print("Open Level " + this.numLevel + " Frame ->");
+		 }
+		 
     	/*Timer timer = new Timer(16, e -> {
     	    Map<JButton, Point> imageButtonList = this.gridPanel.getImageButtonList();
 

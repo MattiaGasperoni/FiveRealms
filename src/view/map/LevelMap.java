@@ -19,6 +19,8 @@ public class LevelMap extends AbstractMap{
 	
 	public static void main(String[] args) 
     {
+		System.out.println("Java version:"+System.getProperty("java.version"));
+
         SwingUtilities.invokeLater(() -> 
        {
     	   Random rand = new Random();
@@ -36,15 +38,14 @@ public class LevelMap extends AbstractMap{
     	   enemiesList.add(new Archer());
     	   enemiesList.add(new Barbarian());
     	   
+    	   
            // Inizializza la mappa con le liste vuote
            LevelMap emptyMap = new LevelMap(enemiesList, alliesList, 5);
             
            emptyMap.start();
            
-           SwingUtilities.invokeLater(() -> {
-        	    emptyMap.spawnCharacter(enemiesList);
-        	    emptyMap.spawnCharacter(alliesList); 
-        	});
+    	    emptyMap.spawnCharacter(enemiesList);
+    	    emptyMap.spawnCharacter(alliesList); 
             
         });
     }

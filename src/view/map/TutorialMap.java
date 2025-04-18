@@ -22,7 +22,8 @@ public class TutorialMap extends LevelMap {
 	}
 
 	@Override
-	public void start() {
+	public void start() 
+	{
 	    super.start();        
 	    initializeMap();      
 	}
@@ -30,10 +31,11 @@ public class TutorialMap extends LevelMap {
     /**
      * Initializes the tutorial map and guides the player with instructions.
      */
-    public void initializeMap() {
-        Point centerPoint = new Point(GRID_SIZE / 2, GRID_SIZE / 2);
+    public void initializeMap() 
+    {
+        Point centerPoint = new Point(AbstractMap.GRID_SIZE_WIDTH / 2, AbstractMap.GRID_SIZE_HEIGHT / 2);
         
-        showTutorialPopup("Welcome, soldier! Listen carefully.", centerPoint, true);
+        /*showTutorialPopup("Welcome, soldier! Listen carefully.", centerPoint, true);
         
         highlightRowsWithTimer(0, 1, Color.RED, 1500, () -> {
             showTutorialPopup("Enemies are above you. Defeat them!", new Point(1, 2), false);
@@ -44,7 +46,7 @@ public class TutorialMap extends LevelMap {
                 showTutorialPopup("Your mission is to defeat all enemies!", new Point(3, 2), false);
                 showTutorialPopup("Good luck, soldier!", centerPoint, true);
             });
-        });
+        });*/
     }
 
     /**
@@ -56,9 +58,10 @@ public class TutorialMap extends LevelMap {
      * @param duration The duration of the highlight in milliseconds.
      * @param afterAction The action to perform after the highlight.
      */
-    private void highlightRowsWithTimer(int startRow, int endRow, Color color, int duration, Runnable afterAction) {
+    private void highlightRowsWithTimer(int startRow, int endRow, Color color, int duration, Runnable afterAction) 
+    {
         for (int i = startRow; i <= endRow; i++) {
-            for (int j = 0; j < GRID_SIZE; j++) {
+            for (int j = 0; j < AbstractMap.GRID_SIZE_HEIGHT; j++) {
                 gridPanel.getGridButtons()[i][j].setBackground(color);
                 gridPanel.getGridButtons()[i][j].setOpaque(true);
                 gridPanel.getGridButtons()[i][j].setBorderPainted(false);
@@ -126,8 +129,8 @@ public class TutorialMap extends LevelMap {
      * Resets all grid button colors to their default state.
      */
     private void resetGridColors() {
-        for (int i = 0; i < GRID_SIZE; i++) {
-            for (int j = 0; j < GRID_SIZE; j++) {
+        for (int i = 0; i < AbstractMap.GRID_SIZE_WIDTH; i++) {
+            for (int j = 0; j < AbstractMap.GRID_SIZE_HEIGHT; j++) {
             	gridPanel.getGridButtons()[i][j].setBackground(null);
                 gridPanel.getGridButtons()[i][j].setOpaque(true);
                 gridPanel.getGridButtons()[i][j].setBorderPainted(true);
