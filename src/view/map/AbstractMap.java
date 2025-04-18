@@ -179,15 +179,11 @@ public abstract class AbstractMap
         this.initializeButtonGrid();
         
         // layer 2. Menu di controllo
-        this.inizializeControlMenu();
+        this.initializeControlMenu();
         
     }
     
-	private void inizializeControlMenu() {
-		// TODO Auto-generated method stub
-		// Deve avere un pulsante nella mappa che apre un Jpanel con dentro 3 pulsanti: "Resume", "Save Game", "Exit"
-		
-	}
+
 
 	/**
 	 * Initializes the background map for the current level.
@@ -251,6 +247,65 @@ public abstract class AbstractMap
         this.layeredPanel.revalidate();
         this.layeredPanel.repaint();
     }
+    
+    private void initializeControlMenu() {
+        // Pulsante per aprire il menu
+        JButton menuButton = new JButton();
+        
+        // Carica e ridimensiona l'immagine del pulsante
+        ImageIcon originalIcon = new ImageIcon("images/pauseGame.png"); // quella nuova tipo cartone
+        Image scaledImage = originalIcon.getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH);
+        ImageIcon resizedIcon = new ImageIcon(scaledImage);
+        
+        menuButton.setIcon(resizedIcon);
+        menuButton.setBounds(10, 10, 60, 60); // Più grande
+        menuButton.setBorderPainted(false);
+        menuButton.setContentAreaFilled(false);
+        menuButton.setFocusPainted(false);
+
+        // Pannello del menu
+        JPanel controlPanel = new JPanel();
+        controlPanel.setLayout(new GridLayout(3, 1, 10, 10));
+        controlPanel.setSize(300, 200);
+        controlPanel.setVisible(false);
+
+        // Centra il pannello nella finestra
+        int centerX = (frame.getWidth() - controlPanel.getWidth()) / 2;
+        int centerY = (frame.getHeight() - controlPanel.getHeight()) / 2;
+        controlPanel.setLocation(centerX, centerY);
+
+        // Pulsanti
+        JButton resumeButton = new JButton("Resume");
+        JButton saveButton = new JButton("Save Game");
+        JButton exitButton = new JButton("Exit");
+
+        resumeButton.addActionListener(e -> {
+        	controlPanel.setVisible(false);
+            System.out.println("Resume button pressed");
+        });
+        saveButton.addActionListener(e -> {
+        	controlPanel.setVisible(false);
+            System.out.println("Save button pressed");
+        });
+        exitButton.addActionListener(e -> {
+            frame.dispose();
+            System.exit(0);
+            System.out.println("Exit pressed");
+            
+        });
+
+        controlPanel.add(resumeButton);
+        controlPanel.add(saveButton);
+        controlPanel.add(exitButton);
+
+        // Toggle visibilità
+        menuButton.addActionListener(e -> controlPanel.setVisible(true));
+
+        // Aggiunta ai livelli del layeredPane
+        this.layeredPanel.add(menuButton, Integer.valueOf(2));        // Pulsante su layer 2
+        this.layeredPanel.add(controlPanel, Integer.valueOf(2));      // Menu sopra tutto
+    }
+
 
     
     /**
