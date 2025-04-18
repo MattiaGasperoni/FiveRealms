@@ -1,16 +1,12 @@
 package view.map;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -20,8 +16,6 @@ import model.point.Point;
 public class GridPanel extends JPanel 
 {
 
-    private List<Character> enemiesList; // List of enemies
-    private List<Character> alliesList;  // List of allied characters
     private JButton[][] gridButtons; // 2D array for grid buttons
     private JLayeredPane layeredPane; // Riferimento al JLayeredPane
 
@@ -31,13 +25,11 @@ public class GridPanel extends JPanel
      * @param enemiesList List of enemy characters.
      * @param alliesList List of allied characters.
      */
-    public GridPanel(JLayeredPane layeredPane, List<Character> enemiesList, List<Character> alliesList) 
+    public GridPanel(JLayeredPane layeredPane) 
     {
         super(new GridLayout(AbstractMap.GRID_SIZE_WIDTH, AbstractMap.GRID_SIZE_HEIGHT)); // Setting GridLayout
         
         this.layeredPane = layeredPane;
-        this.enemiesList = enemiesList;
-        this.alliesList  = alliesList;
         this.gridButtons = new JButton[AbstractMap.GRID_SIZE_WIDTH][AbstractMap.GRID_SIZE_HEIGHT];
         
         initializeGrid();
@@ -60,23 +52,16 @@ public class GridPanel extends JPanel
                 // Rendi il bottone invisibile ma cliccabile
                 button.setContentAreaFilled(false);
                 button.setBorderPainted(false);
-                button.setFocusPainted(false);
-                button.setOpaque(false);
-                button.setText("");
-                button.setIcon(null);
                 
                 button.addActionListener(e -> showButtonCoordinates(row, col));
                 this.gridButtons[i][j] = button;
                 
                 this.add(button);
             }
-        }
+        } 
 
         this.revalidate(); 
         this.repaint();
-
-        // SOLO DOPO AVER INIZIALIZZATO TUTTA LA GRIGLIA, fai lo spawn
-       // CharacterSpawner.spawnCharacters(this.layeredPane, alliesList, enemiesList, gridButtons);
     }
 
 

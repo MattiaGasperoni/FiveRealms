@@ -21,7 +21,7 @@ public class LevelMap extends AbstractMap{
     {
 		System.out.println("Java version:"+System.getProperty("java.version"));
 
-        SwingUtilities.invokeLater(() -> 
+        SwingUtilities.invokeLater(() ->  
        {
     	   Random rand = new Random();
     	   List<Character> alliesList = new ArrayList<>();
