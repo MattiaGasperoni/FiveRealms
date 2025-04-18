@@ -350,7 +350,6 @@ public abstract class AbstractMap
     public void spawnCharacter(List<Character> spawnList) 
     {
     	
-    	
         if (spawnList == null || spawnList.size() < 3) 
         {	
         	System.out.println("Lista Spawn vuota");
@@ -385,9 +384,12 @@ public abstract class AbstractMap
                 JButton button = this.gridPanel.getGridButtons()[c.getPosition().getX()][c.getPosition().getY()];
                 button.setIcon(new ImageIcon(c.getImage()));
                 button.setOpaque(true);
-                button.setContentAreaFilled(true);  
+                button.setContentAreaFilled(true);
+                
             }
         }
+        this.layeredPanel.repaint();
+        this.gridPanel.repaint();
         
     }
     
