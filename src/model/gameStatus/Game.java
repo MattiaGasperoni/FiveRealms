@@ -162,12 +162,14 @@ public class Game {
         // initializeGameLevels mi crea gia le istanze delle finestre
         // per capire in che livello siamo a leveMap gli passo un numeroche lo
         // rappresenta.
-
-        this.gameLevels.add(new Level(new LevelMap(level1Enemies, this.selectedAllies, 1)));
-        this.gameLevels.add(new Level(new LevelMap(level2Enemies, this.selectedAllies, 2)));
-        this.gameLevels.add(new Level(new LevelMap(level3Enemies, this.selectedAllies, 3)));
-        this.gameLevels.add(new Level(new LevelMap(level4Enemies, this.selectedAllies, 4)));
-        this.gameLevels.add(new Level(new LevelMap(level5Enemies, this.selectedAllies, 5)));
+        
+        Controller controller = new Controller(); 
+        
+        this.gameLevels.add(new Level(new LevelMap(level1Enemies, this.selectedAllies, 1), controller));
+        this.gameLevels.add(new Level(new LevelMap(level2Enemies, this.selectedAllies, 2), controller));
+        this.gameLevels.add(new Level(new LevelMap(level3Enemies, this.selectedAllies, 3), controller));
+        this.gameLevels.add(new Level(new LevelMap(level4Enemies, this.selectedAllies, 4), controller));
+        this.gameLevels.add(new Level(new LevelMap(level5Enemies, this.selectedAllies, 5), controller));
     }
 
     // Metodo per sostituire gli alleati morti con nuovi personaggi scelti

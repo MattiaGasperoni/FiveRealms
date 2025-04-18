@@ -128,7 +128,7 @@ public abstract class AbstractCharacter implements Character, Serializable {
 			this.increaseSpeed(heroStatIncreasePercentage);
 			this.setImagePath("images/characters/" + getClass().getSimpleName().toLowerCase() + "/" + getClass().getSimpleName().toLowerCase() + "Hero.png"); //not sure this is correct, needs testing
 			ImageIcon icon = new ImageIcon(this.imagePath);
-	        this.image = icon.getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH);
+	        this.image = icon.getImage().getScaledInstance(75, 45, Image.SCALE_AREA_AVERAGING);
 		}
 	}
 	
@@ -268,7 +268,8 @@ public abstract class AbstractCharacter implements Character, Serializable {
 		this.setImagePath("images/characters/" + getClass().getSimpleName().toLowerCase() + "/" + getClass().getSimpleName().toLowerCase() + rand.nextInt(1,4) + ".png"); //not sure this is correct, needs testing
 		//Pre-process images 
 		ImageIcon icon = new ImageIcon(this.imagePath);
-        this.image = icon.getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH);
+        this.image = icon.getImage().getScaledInstance(75, 45, Image.SCALE_AREA_AVERAGING);
+		
 	}
 
 	@Override

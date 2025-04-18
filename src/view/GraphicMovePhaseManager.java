@@ -11,24 +11,23 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 
+import controller.Controller;
 import model.characters.Character;
 import model.point.Point;
 import view.map.AbstractMap;
 import view.map.LevelMap;
-import view.map.TutorialMap;
 
 public class GraphicMovePhaseManager 
 {
 
     private LevelMap levelMap;
     private Character selectedTarget;  // Variabile per il bersaglio selezionato
-
+    private Controller controller;
     
-    
-    
-    public GraphicMovePhaseManager(LevelMap map) 
+    public GraphicMovePhaseManager(LevelMap map, Controller controll) 
     {
 		this.levelMap       = map;
+		this.controller		= controll;
 		this.selectedTarget = null;
 	}
 
@@ -63,7 +62,7 @@ public class GraphicMovePhaseManager
 
     // Verifica se la posizione è valida (entro i limiti della griglia)
     private boolean isValidPosition(int x, int y) {
-        return x >= 0 && x < AbstractMap.GRID_SIZE_WIDTH&& y >= 0 && y < AbstractMap.GRID_SIZE_HEIGHT;
+        return x >= 0 && x < AbstractMap.GRID_SIZE_WIDTH && y >= 0 && y < AbstractMap.GRID_SIZE_HEIGHT;
     }
 
     // Verifica se una posizione è occupata da un alleato o nemico
@@ -90,13 +89,11 @@ public class GraphicMovePhaseManager
                 @Override
                 public void actionPerformed(ActionEvent e) {
                 	try {
-                		attacker.moveTo(point);  // Muovi il personaggio alla nuova posizione
-                                        		
+                		controller.move(levelMap, attacker, point);
                 	}catch (Exception ex) {
 						// Aggiunta di jDialog con messaggio di e.getMessage()
                 		
 					}
-                    
                 }
             });
         }

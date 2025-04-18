@@ -1,6 +1,11 @@
 package view.map;
 
+import java.util.List;
+
 import javax.swing.JButton;
+
+import model.characters.Character;
+import model.point.Point;
 
 /**
  * Interface representing a generic map in the game.
@@ -21,4 +26,10 @@ public interface Map {
      * Closes the current map window.
      */
     public void closeWindow();
+    
+    public void spawnCharacter(List<Character> spawnList);
+    
+    public void moveCharacter(Character character, Point target);
+    
+    public void removeCharacter(Character character, Point target);
 }

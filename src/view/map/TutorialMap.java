@@ -31,10 +31,12 @@ public class TutorialMap extends LevelMap {
     /**
      * Initializes the tutorial map and guides the player with instructions.
      */
+	
+	// Da togliere
     public void initializeMap() 
     {
         Point centerPoint = new Point(AbstractMap.GRID_SIZE_WIDTH / 2, AbstractMap.GRID_SIZE_HEIGHT / 2);
-        
+        // Da mettere dentro Tutorial e da chiamarlo di la, qui da eliminare inizializeMap()
         /*showTutorialPopup("Welcome, soldier! Listen carefully.", centerPoint, true);
         
         highlightRowsWithTimer(0, 1, Color.RED, 1500, () -> {

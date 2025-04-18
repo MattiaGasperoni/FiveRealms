@@ -21,8 +21,6 @@ public abstract class AbstractMap
     public static final int GRID_SIZE_HEIGHT  = 15;  // Righe della griglia 
     public static final int GRID_SIZE_WIDTH   = 20;  // Colonne della griglia 
     
-    public static final int BUTTON_SIZE = 200; // Dimensione dei bottoni 120
-
     protected JFrame frame;
     protected GridPanel gridPanel;       // Rappresenta il pannello della griglia di gioco
     private JLayeredPane layeredPanel;
@@ -64,16 +62,15 @@ public abstract class AbstractMap
         }
     }
     
-    
     private void initializePositionList() 
     {
 		this.alliesPositionList.add(new Point(16,4));
 		this.alliesPositionList.add(new Point(14,7));
 		this.alliesPositionList.add(new Point(16,10));
 		
-		this.enemiesPositionList.add(new Point(2,3));
-		this.enemiesPositionList.add(new Point(4,7));
 		this.enemiesPositionList.add(new Point(4,10));
+		this.enemiesPositionList.add(new Point(4,4));
+		this.enemiesPositionList.add(new Point(6,7));
 		
 	}
 
@@ -86,8 +83,10 @@ public abstract class AbstractMap
 		        System.out.print("Open Level " + this.numLevel + " Frame ->");
 		 }
 		 
-    	/*Timer timer = new Timer(16, e -> {
-    	    Map<JButton, Point> imageButtonList = this.gridPanel.getImageButtonList();
+    	Timer timer = new Timer(16, e -> {
+            //button.setToolTipText("<html>" + "Righe"+row + "<br>" + "Colonne"+col + "</html>"); // Sarebbe da fare solo con bottoni con immagine
+
+    	    /*Map<JButton, Point> imageButtonList = this.gridPanel.getImageButtonList();
 
     	    // CASO 1: Un bottone ha immagine ma NESSUN personaggio si trova in quella posizione
     	    for (Map.Entry<JButton, Point> entry : imageButtonList.entrySet()) 
@@ -131,8 +130,8 @@ public abstract class AbstractMap
     	            Image scaledImage = originalIcon.getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH); // adatta la misura
     	            button.setIcon(new ImageIcon(scaledImage));
     	        }
-    	    }
-    	});*/
+    	    }*/
+    	});
 
     	
     	initializeFrame();
@@ -152,7 +151,6 @@ public abstract class AbstractMap
         this.frame = new JFrame("Five Realms");                      		//Creo la finestra
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);   		//Quando la finestra viene chiusa, il programma termina
         this.frame.setResizable(false);
-        this.frame.setLocationRelativeTo(null);   							//Quando inizia il gioco posiziona la finestra al centro dello schermo 
 
         // Imposta le dimensioni della finestra in base alla risoluzione dello schermo
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); // Ottego le dimensioni dello schermo
@@ -160,6 +158,7 @@ public abstract class AbstractMap
 	    int height = (int) (width * 3.0 / 4.0);                             // Rapporto 4:3
 	    this.frame.setSize(width, height);                                  // Imposta le dimensioni della finestra
 	         
+        this.frame.setLocationRelativeTo(null);   							//Quando inizia il gioco posiziona la finestra al centro dello schermo 
 
         this.frame.setLayout(new BorderLayout());
 
@@ -168,18 +167,27 @@ public abstract class AbstractMap
         this.frame.setContentPane(this.layeredPanel);
         
         // Imposta le dimesioni del JLayeredPane
-        this.layeredPanel.setSize(width -17, height -35); 
+        this.layeredPanel.setSize(width -13, height -35); 
         
         //TODO: Da studiare il metodo getContentPane() per settare dinamicamente la size del JLayeredPane rispetto al frame
         
-               
+        
         // layer 0. Background 
         this.initializeBackgroundMap();
         
         // layer 1. Griglia di bottoni trasparente
         this.initializeButtonGrid();
         
+        // layer 2. Menu di controllo
+        this.inizializeControlMenu();
+        
     }
+    
+	private void inizializeControlMenu() {
+		// TODO Auto-generated method stub
+		// Deve avere un pulsante nella mappa che apre un Jpanel con dentro 3 pulsanti: "Resume", "Save Game", "Exit"
+		
+	}
 
 	/**
 	 * Initializes the background map for the current level.
@@ -231,7 +239,7 @@ public abstract class AbstractMap
         }      
         
         // Imposta le dimensioni del gridPanel uguali a quelle del frame
-        this. gridPanel.setBounds(0, 0, this.layeredPanel.getWidth(), this.layeredPanel.getHeight());
+        this.gridPanel.setBounds(0, 0, this.layeredPanel.getWidth(), this.layeredPanel.getHeight());
 
         // Aggiungi gridPanel al JLayeredPane nel livello superiore (livello 1)
         this.layeredPanel.add(this.gridPanel, Integer.valueOf(1));

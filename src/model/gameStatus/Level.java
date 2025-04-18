@@ -20,11 +20,11 @@ public class Level
     private final LevelMap levelMap;                            // Mappa del livello
     private final GraphicMovePhaseManager movementPhaseManager; // Oggetto che gestisce la fase di movimento dei personaggi
 
-    public Level(LevelMap map) 
+    public Level(LevelMap map, Controller controller) 
     {
         // Inizializzazione Oggetti Grafici
         this.levelMap = map;
-        this.movementPhaseManager = new GraphicMovePhaseManager(this.levelMap);
+        this.movementPhaseManager = new GraphicMovePhaseManager(this.levelMap, controller);
 
         // Inizializzazione delle liste di personaggi
         this.enemiesList      = this.levelMap.getEnemiesList();
