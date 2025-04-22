@@ -11,55 +11,67 @@ import model.point.Point;
  * Provides guided steps to introduce players to the game mechanics.
  */
 public class TutorialMap extends LevelMap {
-    
+
     /**
      * Constructor
      * @param enemiesList List of enemy characters.
      * @param alliesList List of allied characters.
      */
-	public TutorialMap(List<Character> enemiesList, List<Character> alliesList) {
-	    super(enemiesList, alliesList, 0); 
-	}
+    public TutorialMap(List<Character> enemiesList, List<Character> alliesList) {
+        super(enemiesList, alliesList, 0);
 
+        SwingUtilities.invokeLater(() -> {
+            showTutorialPopup("Benvenuto al tutorial!", new Point(0, 0), () -> {
+                highlightRows(0, AbstractMap.GRID_SIZE_HEIGHT / 2 - 1, Color.RED);
+                
+                showTutorialPopup("Attenzione! Nemici in arrivo.", new Point(1, 0), () -> {
+                    highlightRows(AbstractMap.GRID_SIZE_HEIGHT / 2, AbstractMap.GRID_SIZE_HEIGHT - 1, Color.BLUE);
 
-    /**
-     * Highlights specified rows in the grid for a limited duration.
-     *
-     * @param startRow The starting row index.
-     * @param endRow The ending row index.
-     * @param color The highlight color.
-     * @param duration The duration of the highlight in milliseconds.
-     * @param afterAction The action to perform after the highlight.
-     */
-    private void highlightRowsWithTimer(int startRow, int endRow, Color color, int duration, Runnable afterAction) 
-    {
-        for (int i = startRow; i <= endRow; i++) {
-            for (int j = 0; j < AbstractMap.GRID_SIZE_HEIGHT; j++) {
-                gridPanel.getGridButtons()[i][j].setBackground(color);
-                gridPanel.getGridButtons()[i][j].setOpaque(true);
-                gridPanel.getGridButtons()[i][j].setBorderPainted(false);
-            }
-        }
-        
-        Timer timer = new Timer(duration, e -> {
-            resetGridColors();
-            afterAction.run(); // Executes the next action
+                    showTutorialPopup("I tuoi alleati sono questi.", new Point(2, 0), () -> {
+                    	
+                        showTutorialPopup("Raccogli oggetti per migliorare le abilità.", new Point(3, 0), () -> {
+                        	showTutorialPopup("Complimenti! Tutorial completato.", new Point(4, 0), () -> {
+                        	});
+                        });
+                    });
+                });
+            });
         });
-        timer.setRepeats(false);
-        timer.start();
     }
 
     /**
-     * Displays a tutorial popup message 
-     *
-     * @param message The message to display.
-     * @param gridPoint The point in the grid where the message is associated.
-     * @param isCenter If true, the popup is centered on the screen.
+     * Evidenzia un intervallo di righe con un colore specifico.
+     * @param startRow La riga di partenza.
+     * @param endRow La riga finale.
+     * @param color Il colore da applicare.
      */
-    private void showTutorialPopup(String message, Point gridPoint, boolean isCenter) {
+    private void highlightRows(int startRow, int endRow, Color color) {
+        for (int i = startRow; i <= endRow; i++) {
+            for (int j = 0; j < AbstractMap.GRID_SIZE_HEIGHT; j++) {
+                JButton button = gridPanel.getGridButtons()[i][j];
+
+                button.setBackground(color);
+                button.setOpaque(true);
+                button.setBorderPainted(false);
+
+                // Permetti il click, ma evita hover strani
+                button.setFocusPainted(false);
+                button.setContentAreaFilled(true); 
+            }
+        }
+    }
+
+
+
+    /**
+     * Mostra un popup tutorial e avvia l'azione successiva dopo la chiusura.
+     * @param message Il messaggio da visualizzare.
+     * @param gridPoint La posizione del popup nella griglia.
+     * @param afterAction L'azione successiva dopo la chiusura del popup.
+     */
+    private void showTutorialPopup(String message, Point gridPoint, Runnable afterAction) {
         JDialog dialog = new JDialog();
         dialog.setSize(350, 130);
-        dialog.setLayout(new BorderLayout());
         dialog.setUndecorated(true);
         dialog.setModal(true);
 
@@ -68,60 +80,43 @@ public class TutorialMap extends LevelMap {
         messageLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         dialog.add(messageLabel, BorderLayout.CENTER);
 
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         JButton okButton = new JButton("OK");
-        JButton exitButton = new JButton("Exit");
+        okButton.addActionListener(e -> {
+            dialog.dispose();
+            
+            // Cancella la colorazione evidenziata prima di procedere
+            clearHighlightedRows();
 
-        okButton.addActionListener(e -> dialog.dispose());
-        exitButton.addActionListener(e -> System.exit(0));
-
-        buttonPanel.add(okButton);
-        buttonPanel.add(Box.createHorizontalStrut(10));
-        buttonPanel.add(exitButton);
-        dialog.add(buttonPanel, BorderLayout.SOUTH);
-
-        if (isCenter) {
-            dialog.setLocationRelativeTo(null);
-        } else {
-        	
-        	JButton targetButton = gridPanel.getGridButtons()[gridPoint.getX()][gridPoint.getY()];
-            if (targetButton != null) {
-                java.awt.Point buttonLocation = targetButton.getLocationOnScreen();
-                dialog.setLocation(
-                    buttonLocation.x + targetButton.getWidth()/2 - dialog.getWidth()/2,
-                    buttonLocation.y - dialog.getHeight() - 10
-                );
+            if (afterAction != null) {
+                afterAction.run(); // Avvia la prossima azione dopo la chiusura del popup
             }
-        }
-        dialog.pack();
+        });
+
+        dialog.add(okButton, BorderLayout.SOUTH);
+        dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
     }
 
     /**
-     * Resets all grid button colors to their default state.
+     * Cancella tutte le righe evidenziate
      */
-    private void resetGridColors() {
+    private void clearHighlightedRows() {
         for (int i = 0; i < AbstractMap.GRID_SIZE_WIDTH; i++) {
             for (int j = 0; j < AbstractMap.GRID_SIZE_HEIGHT; j++) {
-            	gridPanel.getGridButtons()[i][j].setBackground(null);
-                gridPanel.getGridButtons()[i][j].setOpaque(true);
-                gridPanel.getGridButtons()[i][j].setBorderPainted(true);
             }
         }
     }
-    
+
+
     /**
-     * Entry point for testing the tutorial map independently.
+     * Metodo `main()` per avviare il tutorial indipendentemente.
      */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             List<Character> emptyEnemies = List.of();
             List<Character> emptyAllies = List.of();
-            AbstractMap tutorial = new TutorialMap(emptyEnemies, emptyAllies);
+            TutorialMap tutorial = new TutorialMap(emptyEnemies, emptyAllies);
             tutorial.start();
-
         });
     }
-
 }
