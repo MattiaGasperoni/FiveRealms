@@ -21,35 +21,6 @@ public class TutorialMap extends LevelMap {
 	    super(enemiesList, alliesList, 0); 
 	}
 
-	@Override
-	public void start() 
-	{
-	    super.start();        
-	    initializeMap();      
-	}
-
-    /**
-     * Initializes the tutorial map and guides the player with instructions.
-     */
-	
-	// Da togliere
-    public void initializeMap() 
-    {
-        Point centerPoint = new Point(AbstractMap.GRID_SIZE_WIDTH / 2, AbstractMap.GRID_SIZE_HEIGHT / 2);
-        // Da mettere dentro Tutorial e da chiamarlo di la, qui da eliminare inizializeMap()
-        /*showTutorialPopup("Welcome, soldier! Listen carefully.", centerPoint, true);
-        
-        highlightRowsWithTimer(0, 1, Color.RED, 1500, () -> {
-            showTutorialPopup("Enemies are above you. Defeat them!", new Point(1, 2), false);
-            
-            highlightRowsWithTimer(4, 5, Color.BLUE, 1500, () -> {
-                showTutorialPopup("Your allies are positioned below!", new Point(5, 2), false);
-                showTutorialPopup("Use your allies' abilities to win!", new Point(4, 2), false);
-                showTutorialPopup("Your mission is to defeat all enemies!", new Point(3, 2), false);
-                showTutorialPopup("Good luck, soldier!", centerPoint, true);
-            });
-        });*/
-    }
 
     /**
      * Highlights specified rows in the grid for a limited duration.
@@ -147,8 +118,9 @@ public class TutorialMap extends LevelMap {
         SwingUtilities.invokeLater(() -> {
             List<Character> emptyEnemies = List.of();
             List<Character> emptyAllies = List.of();
-            TutorialMap tutorialMap = new TutorialMap(emptyEnemies, emptyAllies);
-            tutorialMap.start(); // <-- fondamentale!
+            AbstractMap tutorial = new TutorialMap(emptyEnemies, emptyAllies);
+            tutorial.start();
+
         });
     }
 
