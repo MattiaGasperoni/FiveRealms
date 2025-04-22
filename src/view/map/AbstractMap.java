@@ -251,22 +251,22 @@ public abstract class AbstractMap
     private void initializeControlMenu() {
         // Pulsante per aprire il menu
         JButton menuButton = new JButton();
-        
-        // Carica e ridimensiona l'immagine del pulsante
-        ImageIcon originalIcon = new ImageIcon("images/pauseGame.png"); // quella nuova tipo cartone
+        ImageIcon originalIcon = new ImageIcon("images/pauseGame.png");
         Image scaledImage = originalIcon.getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH);
         ImageIcon resizedIcon = new ImageIcon(scaledImage);
-        
+
         menuButton.setIcon(resizedIcon);
-        menuButton.setBounds(10, 10, 60, 60); // Più grande
+        menuButton.setBounds(10, 10, 60, 60);
         menuButton.setBorderPainted(false);
         menuButton.setContentAreaFilled(false);
         menuButton.setFocusPainted(false);
 
-        // Pannello del menu
+        // Pannello principale
         JPanel controlPanel = new JPanel();
-        controlPanel.setLayout(new GridLayout(3, 1, 10, 10));
-        controlPanel.setSize(300, 200);
+        controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
+        controlPanel.setSize(600, 500);
+        controlPanel.setOpaque(true);
+        controlPanel.setBackground(Color.DARK_GRAY);
         controlPanel.setVisible(false);
 
         // Centra il pannello nella finestra
@@ -274,36 +274,69 @@ public abstract class AbstractMap
         int centerY = (frame.getHeight() - controlPanel.getHeight()) / 2;
         controlPanel.setLocation(centerX, centerY);
 
-        // Pulsanti
+        // Titolo
+        JLabel titleLabel = new JLabel("PAUSE MENU");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 32));
+        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        controlPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        controlPanel.add(titleLabel);
+
+        // Linea bianca sotto il titolo
+        JSeparator whiteLine = new JSeparator();
+        whiteLine.setForeground(Color.WHITE);
+        whiteLine.setMaximumSize(new Dimension(400, 2));
+        controlPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        controlPanel.add(whiteLine);
+
+        // Sottotitolo
+        JLabel pausedLabel = new JLabel("Paused");
+        pausedLabel.setFont(new Font("Arial", Font.PLAIN, 20));
+        pausedLabel.setForeground(Color.LIGHT_GRAY);
+        pausedLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        controlPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        controlPanel.add(pausedLabel);
+        controlPanel.add(Box.createRigidArea(new Dimension(0, 40)));
+
+        // Bottoni
+        Dimension buttonSize = new Dimension(200, 60);
         JButton resumeButton = new JButton("Resume");
         JButton saveButton = new JButton("Save Game");
         JButton exitButton = new JButton("Exit");
 
+        JButton[] buttons = {resumeButton, saveButton, exitButton};
+        for (JButton btn : buttons) {
+            btn.setMaximumSize(buttonSize);
+            btn.setAlignmentX(Component.CENTER_ALIGNMENT);
+            btn.setFont(new Font("Arial", Font.PLAIN, 20));
+            btn.setBackground(new Color(200, 200, 200)); 
+            btn.setForeground(Color.BLACK);              
+            btn.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY)); // bordo semplice
+
+            controlPanel.add(btn);
+            controlPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+        }
+
+        // Azioni
         resumeButton.addActionListener(e -> {
-        	controlPanel.setVisible(false);
+            controlPanel.setVisible(false);
             System.out.println("Resume button pressed");
         });
         saveButton.addActionListener(e -> {
-        	controlPanel.setVisible(false);
+            controlPanel.setVisible(false);
             System.out.println("Save button pressed");
         });
         exitButton.addActionListener(e -> {
             frame.dispose();
             System.exit(0);
-            System.out.println("Exit pressed");
-            
         });
 
-        controlPanel.add(resumeButton);
-        controlPanel.add(saveButton);
-        controlPanel.add(exitButton);
-
-        // Toggle visibilità
+        // Mostra il menu
         menuButton.addActionListener(e -> controlPanel.setVisible(true));
 
-        // Aggiunta ai livelli del layeredPane
-        this.layeredPanel.add(menuButton, Integer.valueOf(2));        // Pulsante su layer 2
-        this.layeredPanel.add(controlPanel, Integer.valueOf(2));      // Menu sopra tutto
+        // Aggiunta
+        this.layeredPanel.add(menuButton, Integer.valueOf(2));
+        this.layeredPanel.add(controlPanel, Integer.valueOf(2));
     }
 
 
