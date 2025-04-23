@@ -25,9 +25,11 @@ public class Tutorial
     public boolean play() 
     {
     	
-    	this.tutorialMap.start();
-		// Inizializza la mappa del tutorial
-		//this.tutorialMap.initializeMap(); 
+    	this.tutorialMap.start(); //Chiama i metodi di AbstractMap
+    	
+    	// Inizializza i PopUp di TutorialMap
+		
+    	this.tutorialMap.startPopUpTutorial(); 
 		
 		// Spawna i personaggi
 		//this.tutorialMap.spawnCharacters(this.allies, this.enemies); 
