@@ -22,7 +22,7 @@ public class Game {
     private List<Character> selectedAllies; // Lista dei personaggi con cui l'utente giocherà il livello
 
     private GameStateManager gameStateManager; // Oggetto che gestiste il caricamento di una partita
-
+    private Controller controller;             
     private static final Random rand = new Random(); // ci inizializza i valori dei personaggi
 
     // Oggetti Grafici
@@ -30,11 +30,14 @@ public class Game {
     private TutorialMenu tutorialMenu;
     private CharacterSelectionMenu characterSelectionMenu; // Menu per la scelta dei personaggi
 
-    public Game() {
+    public Game() 
+    {
         this.gameLevels = new ArrayList<>();
         this.availableAllies = new ArrayList<>();
         this.selectedAllies = new ArrayList<>();
         this.gameStateManager = new GameStateManager();
+        this.controller = new Controller(); 
+
 
         // Inizializzazione Oggetti Grafici
         this.graphicsMenu = new MainMenu();
@@ -52,20 +55,20 @@ public class Game {
             // Il flusso del codice rimane in attesa finche l'utente non sceglie se giocare
             // o saltare il tutorial
             if (this.tutorialMenu.isTutorialSelected()) {
-                // Ha scelto di giocare il livello
-                System.out.print(" Starting Tutorial ->");
-
-                // Gioca il tutorial, In maniera temporanea ritorna true!!!
-                if (this.startTutorial()) {
+                // Ha scelto di giocare il tutorial               
+                if (this.startTutorial()) 
+                {
                     System.out.println(" You completed the tutorial");
                     // Voglio un PopUp a schermo che dice "Tutorial completato, inizia il gioco"
                     this.startSelectionCharacterAndLevels();
-                } else {
+                } 
+                else {
                     System.out.println(" You failed the tutorial");
                     // Voglio un PopUp a schermo che dice "Tutorial fallito, e mi chiede se voglio
                     // riprovare o uscire"
                 }
-            } else {
+            } 
+            else {
                 System.out.println(" Tutorial skipped");
                 this.startSelectionCharacterAndLevels();
             }
@@ -80,15 +83,20 @@ public class Game {
         List<Character> tutorialEnemies = new ArrayList<>();
         tutorialEnemies.add(new Barbarian());
         tutorialEnemies.add(new Archer());
+        tutorialEnemies.add(new Knight());
 
         // Popolo la lista di personaggi con cui giocheremo il tutorial
         List<Character> tutorialAllies = new ArrayList<>();
         tutorialAllies.add(new Barbarian());
         tutorialAllies.add(new Archer());
+        tutorialAllies.add(new Knight());
+        
+        for(Character ally : tutorialAllies) {
+			ally.becomeHero();
+		}
 
         // Creo e istanzio l'oggetto tutorial
-        Tutorial tutorial = new Tutorial(new TutorialMap(tutorialEnemies, tutorialAllies), tutorialEnemies,
-                tutorialAllies);
+        Tutorial tutorial = new Tutorial(new TutorialMap(tutorialEnemies, tutorialAllies), this.controller);
 
         // Gioco il Tutorial
         return tutorial.play();
@@ -163,13 +171,12 @@ public class Game {
         // per capire in che livello siamo a leveMap gli passo un numeroche lo
         // rappresenta.
         
-        Controller controller = new Controller(); 
-        
-        this.gameLevels.add(new Level(new LevelMap(level1Enemies, this.selectedAllies, 1), controller));
-        this.gameLevels.add(new Level(new LevelMap(level2Enemies, this.selectedAllies, 2), controller));
-        this.gameLevels.add(new Level(new LevelMap(level3Enemies, this.selectedAllies, 3), controller));
-        this.gameLevels.add(new Level(new LevelMap(level4Enemies, this.selectedAllies, 4), controller));
-        this.gameLevels.add(new Level(new LevelMap(level5Enemies, this.selectedAllies, 5), controller));
+		// Inizializzo i livelli        
+        this.gameLevels.add(new Level(new LevelMap(level1Enemies, this.selectedAllies, 1), this.controller));
+        this.gameLevels.add(new Level(new LevelMap(level2Enemies, this.selectedAllies, 2), this.controller));
+        this.gameLevels.add(new Level(new LevelMap(level3Enemies, this.selectedAllies, 3), this.controller));
+        this.gameLevels.add(new Level(new LevelMap(level4Enemies, this.selectedAllies, 4), this.controller));
+        this.gameLevels.add(new Level(new LevelMap(level5Enemies, this.selectedAllies, 5), this.controller));
     }
 
     // Metodo per sostituire gli alleati morti con nuovi personaggi scelti

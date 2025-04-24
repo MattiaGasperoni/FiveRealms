@@ -21,15 +21,15 @@ public abstract class AbstractMap
     public static final int GRID_SIZE_HEIGHT  = 15;  // Righe della griglia 
     public static final int GRID_SIZE_WIDTH   = 20;  // Colonne della griglia 
     
-    protected JFrame frame;
-    protected GridPanel gridPanel;       // Rappresenta il pannello della griglia di gioco
-    private JLayeredPane layeredPanel;
+    protected JFrame frame;				 // Finestra principale del gioco
+    protected GridPanel gridPanel;       // Griglia di bottoni
+    private JLayeredPane layeredPanel;   // Gestisce i vari layer del frame
 
     private List<Character> enemiesList; // Lista dei nemici
     private List<Character> alliesList;  // Lista degli alleati
     private final int numLevel;          // Numero del livello
+    
     private Map<Character, Point> characterMap;
-
     private List<Point> alliesPositionList;
     private List<Point> enemiesPositionList;
     
@@ -179,7 +179,7 @@ public abstract class AbstractMap
         this.initializeButtonGrid();
         
         // layer 2. Menu di controllo
-        this.initializeControlMenu();
+        this.initializePauseMenu();
         
     }
     
@@ -247,10 +247,15 @@ public abstract class AbstractMap
         this.layeredPanel.revalidate();
         this.layeredPanel.repaint();
     }
-    
-    private void initializeControlMenu() {
+     
+    /**
+     * Initializes the Pause menu with buttons for resuming, saving, and exiting the game.
+     */
+    private void initializePauseMenu() 
+    {
         // Pulsante per aprire il menu
         JButton menuButton = new JButton();
+        // Imposta l'immagina al pulsante
         ImageIcon originalIcon = new ImageIcon("images/pauseGame.png");
         Image scaledImage = originalIcon.getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH);
         ImageIcon resizedIcon = new ImageIcon(scaledImage);
