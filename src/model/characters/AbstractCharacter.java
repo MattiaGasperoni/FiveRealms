@@ -18,6 +18,7 @@ import model.point.Point;
 public abstract class AbstractCharacter implements Character, Serializable {
 	//TODO: implement exceptions/error messages
 	public static final int EXP_LEVELUP_THRESHOLD = 1000; //threshold at which you level up each time. placeholder value
+	public static final int SPEED_TO_MOVEMENT = 10;
 	private int maxHealth;
 	private int currentHealth;
 	private int speed;
@@ -49,10 +50,8 @@ public abstract class AbstractCharacter implements Character, Serializable {
 
 	@Override
 	public void moveTo(Point point) throws IllegalArgumentException {
-		int speedToMovementFactor = 10;
-
 		//redundancy
-		if(this.getDistanceInSquares(point) > this.speed / speedToMovementFactor) //movement per-turn depends on speed, the actual value is placeholder as of now
+		if(this.getDistanceInSquares(point) > this.speed / AbstractCharacter.SPEED_TO_MOVEMENT) //movement per-turn depends on speed, the actual value is placeholder as of now
 			throw new IllegalArgumentException("You tried to move farther than your movement speed allows!"); 
 		this.position = point;
 	}
@@ -126,7 +125,7 @@ public abstract class AbstractCharacter implements Character, Serializable {
 			this.increasePower(heroStatIncreasePercentage);
 			this.increaseDefence(heroStatIncreasePercentage);
 			this.increaseSpeed(heroStatIncreasePercentage);
-			this.setImagePath("images/characters/" + getClass().getSimpleName().toLowerCase() + "/" + getClass().getSimpleName().toLowerCase() + "Hero.png"); //not sure this is correct, needs testing
+			this.setImagePath("images/characters/" + getClass().getSimpleName().toLowerCase() + "/" + getClass().getSimpleName().toLowerCase() + "Hero.png");
 			ImageIcon icon = new ImageIcon(this.imagePath);
 	        this.image = icon.getImage().getScaledInstance(75, 45, Image.SCALE_AREA_AVERAGING);
 		}
@@ -201,7 +200,7 @@ public abstract class AbstractCharacter implements Character, Serializable {
 	}
 
 	@Override
-	public void whatToDo(/*Character character,*/ List<Character> alliedList, List<Character> enemyList) {
+	public void whatToDo(/*Character character,*/ List<Character> alliedList, List<Character> enemyList, List<Point> positions) {
 		//pick target
 		Character victim = alliedList.stream()
 						   .min(Comparator.comparing(charac -> charac.getDistanceInSquares(this.getPosition()))) //NOTE: If that's the wrong order (hard to test right now), put .reversed() on it. Picks closest enemy.
@@ -209,21 +208,16 @@ public abstract class AbstractCharacter implements Character, Serializable {
 
 		//part one: movement
 		//ugly way to handle it, but it's the first version
-		ArrayList<Point> positions = new ArrayList<>();
-		
-		for(int i = 0; i < view.map.AbstractMap.GRID_SIZE_WIDTH; i++) {
-			for(int k = 0; k < view.map.AbstractMap.GRID_SIZE_HEIGHT; k++) {
-				positions.add(new Point(i,k));
-			}
-		}
-
 		this.moveTo(positions.stream()
-					.filter(point -> this.getDistanceInSquares(point) < this.speed / 10) //redundancy!!!
+					.filter(point -> this.getDistanceInSquares(point) <= this.speed / AbstractCharacter.SPEED_TO_MOVEMENT)
 					.findAny()
-					.orElse(null));
-
+					.orElse(this.getPosition())); //if something doesn't work, remain where you are
 		//part twp: attacking
-		this.fight(victim, alliedList, enemyList);
+		try {
+			this.fight(victim, alliedList, enemyList);
+		} catch (IllegalArgumentException e) { //to handle the case where: even the closest enemy is still out of attack range after movement
+			System.out.println("Character " + this.toString() + " cannot find an enemy to fight."); //for debug purposes
+		}
 	}
 
 	protected void increaseMaxHealth(double percentage) {
@@ -268,8 +262,7 @@ public abstract class AbstractCharacter implements Character, Serializable {
 		this.setImagePath("images/characters/" + getClass().getSimpleName().toLowerCase() + "/" + getClass().getSimpleName().toLowerCase() + rand.nextInt(1,4) + ".png"); //not sure this is correct, needs testing
 		//Pre-process images 
 		ImageIcon icon = new ImageIcon(this.imagePath);
-        this.image = icon.getImage().getScaledInstance(75, 45, Image.SCALE_AREA_AVERAGING);
-		
+        this.image = icon.getImage().getScaledInstance(75, 45, Image.SCALE_AREA_AVERAGING); //Controls actual image size scaling on the map!!!
 	}
 
 	@Override
@@ -349,5 +342,12 @@ public abstract class AbstractCharacter implements Character, Serializable {
 	@Override
 	public boolean isAlive() {
 		return this.currentHealth > 0;
+	}
+
+	@Override
+	public String toString() {
+		return "AbstractCharacter [maxHealth=" + maxHealth + ", currentHealth=" + currentHealth + ", speed=" + speed
+				+ ", power=" + power + ", defence=" + defence + ", experience=" + experience + ", weapon=" + weapon
+				+ ", potion=" + potion + ", position=" + position + ", imagePath=" + imagePath + ", isAllied=" + isAllied + ", availableWeapons=" + availableWeapons + "]";
 	}
 }
