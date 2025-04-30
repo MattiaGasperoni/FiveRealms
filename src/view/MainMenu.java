@@ -1,29 +1,25 @@
 package view;
 
-import javax.swing.*;
-
 import model.gameStatus.Game;
 import model.gameStatus.GameStateManager;
 
+import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 
-public class MainMenu 
-{
+public class MainMenu {
 
-	public boolean NewGameSelected ;   // Variabile per tracciare la scelta
-	public boolean LoadGameSelected;   // Variabile per tracciare la scelta
-		
-    public MainMenu() 
-    {
-		this.NewGameSelected  = false;
-		this.LoadGameSelected = false;
-		
-	}
+    private boolean NewGameSelected;
+    private boolean LoadGameSelected;
 
-	public void startMainMenu(Game g) {
-		System.out.print("Open Main Menu Frame ->");
+    public MainMenu() {
+        this.NewGameSelected = false;
+        this.LoadGameSelected = false;
+    }
+
+    public void startMainMenu(Game g) {
+        System.out.print("Open Main Menu Frame ->");
+
         JFrame frame = new JFrame("Main Menu");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 800);
@@ -33,41 +29,43 @@ public class MainMenu
         JLabel backgroundLabel = new JLabel(new ImageIcon("images/Background/background4.jpg"));
         backgroundLabel.setLayout(new GridBagLayout());
 
-        JButton startButton = createButton("New Game", e -> {
-        	NewGameSelected = true;
-            frame.dispose(); // Chiude il menu attuale
-            System.out.println(" You chose to start a new game");
-            try {
-				g.startNewGame();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}   // Avvia una nuova partita
-        });
-
-        JButton loadButton = createButton("Load Game", e -> {
-        	LoadGameSelected = true;
-        	LoadGameMenu loadgame = new LoadGameMenu();
-        	loadgame.startLoadGame();
-        	System.out.println(" You chose to load a game");
-        	frame.dispose(); // Chiude il menu attuale
-            
-            // Logica per il caricamento di una partita
-            //LoadGameMenu.startLoadGame();
-            //g.loadGame();    // Carica una partita salvata
-        });
-
-        JButton exitButton = createButton("Exit", e -> {
-        	System.out.println(" You chose to close the game");
-        	System.exit(0);
-        });
-
-        // Disabilita il pulsante "Load Game" se non ci sono salvataggi (logica da implementare)
-        boolean hasSaves = checkSavedGames();
-        loadButton.setEnabled(hasSaves);
-
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
+
+        // Pulsante "New Game"
+        JButton startButton = createButton("New Game", e -> {
+            NewGameSelected = true;
+            frame.dispose();
+            System.out.println(" You chose to start a new game");
+            try {
+                g.startNewGame();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        });
+
+        // Pulsante "Load Game"
+        JButton loadButton = createButton("Load Game", e -> {
+            LoadGameSelected = true;
+            new LoadGameMenu(); // Avvia il menu di caricamento
+            System.out.println(" You chose to load a game");
+            frame.dispose();
+        });
+
+        // Controlla se esistono salvataggi
+        GameStateManager gsm = new GameStateManager();
+        if (!gsm.hasSaved()) {
+            loadButton.setEnabled(false);
+            loadButton.setToolTipText("Nessun salvataggio disponibile");
+        }
+
+        // Pulsante "Exit"
+        JButton exitButton = createButton("Exit", e -> {
+            System.out.println(" You chose to close the game");
+            System.exit(0);
+        });
+
+        // Aggiunta dei pulsanti al layout
         gbc.gridy = 0;
         backgroundLabel.add(startButton, gbc);
         gbc.gridy = 1;
@@ -90,19 +88,12 @@ public class MainMenu
         button.addActionListener(action);
         return button;
     }
-    
-    // Used also in LoadGameMenu
-    public boolean checkSavedGames() {
-        return new File("Saves/game_state_save.dat").exists();
+
+    public boolean isNewGameSelected() {
+        return this.NewGameSelected;
     }
 
-	public boolean isNewGameSelected() {
-		return this.NewGameSelected;
-	}
-
-	public boolean isLoadGameSelected() {
-		return this.LoadGameSelected;
-	}
-    
-
+    public boolean isLoadGameSelected() {
+        return this.LoadGameSelected;
+    }
 }

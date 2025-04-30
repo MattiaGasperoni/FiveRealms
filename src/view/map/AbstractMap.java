@@ -1,6 +1,9 @@
 package view.map;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +11,8 @@ import java.util.Map;
 import java.util.Random;
 
 import javax.swing.*;
+
+import controller.Controller;
 import model.characters.Character;
 import model.point.Point;
 
@@ -34,6 +39,8 @@ public abstract class AbstractMap
     private List<Point> enemiesPositionList;
     
     private Random random;
+    
+    private Controller controller;
 
     /**
      * Costruttore
@@ -50,6 +57,7 @@ public abstract class AbstractMap
         this.alliesPositionList = new ArrayList<>();
         this.enemiesPositionList = new ArrayList<>();
         this.random = new Random();
+        this.controller = new Controller();
         this.initializePositionList();
 
         // Popola la mappa con tutti i personaggi
@@ -251,101 +259,95 @@ public abstract class AbstractMap
     /**
      * Initializes the Pause menu with buttons for resuming, saving, and exiting the game.
      */
-    private void initializePauseMenu() 
-    {
-        // Pulsante per aprire il menu
-        JButton menuButton = new JButton();
-        // Imposta l'immagina al pulsante
-        ImageIcon originalIcon = new ImageIcon("images/pauseGame.png");
-        Image scaledImage = originalIcon.getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH);
-        ImageIcon resizedIcon = new ImageIcon(scaledImage);
+    private void initializePauseMenu() {
+        // **Pannello unico che copre tutta la finestra**
+        JPanel pauseMenuPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                ImageIcon backgroundImage = new ImageIcon("images/background/backgroundMenu.jpg");
+                g.drawImage(backgroundImage.getImage(), 0, 0, getWidth(), getHeight(), this);
+            }
+        };
 
-        menuButton.setIcon(resizedIcon);
-        menuButton.setBounds(10, 10, 60, 60);
-        menuButton.setBorderPainted(false);
-        menuButton.setContentAreaFilled(false);
-        menuButton.setFocusPainted(false);
+        pauseMenuPanel.setSize(frame.getSize());
+        pauseMenuPanel.setOpaque(false); // Mantiene la trasparenza del background
+        pauseMenuPanel.setLayout(new GridBagLayout()); // Layout per centrare elementi
+        pauseMenuPanel.setVisible(false);
 
-        // Pannello principale
-        JPanel controlPanel = new JPanel();
-        controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
-        controlPanel.setSize(600, 500);
-        controlPanel.setOpaque(true);
-        controlPanel.setBackground(Color.DARK_GRAY);
-        controlPanel.setVisible(false);
+        // **Impedisce i clic su elementi esterni**
+        pauseMenuPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                e.consume(); // Impedisce qualsiasi clic fuori dal menu
+            }
+        });
 
-        // Centra il pannello nella finestra
-        int centerX = (frame.getWidth() - controlPanel.getWidth()) / 2;
-        int centerY = (frame.getHeight() - controlPanel.getHeight()) / 2;
-        controlPanel.setLocation(centerX, centerY);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.insets = new Insets(10, 0, 20, 0); // Spaziatura
+        gbc.anchor = GridBagConstraints.CENTER;
 
-        // Titolo
-        JLabel titleLabel = new JLabel("PAUSE MENU");
+        // **Titolo centrato**
+        JLabel titleLabel = new JLabel("PAUSE MENU", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 32));
         titleLabel.setForeground(Color.WHITE);
-        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        controlPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        controlPanel.add(titleLabel);
 
-        // Linea bianca sotto il titolo
-        JSeparator whiteLine = new JSeparator();
-        whiteLine.setForeground(Color.WHITE);
-        whiteLine.setMaximumSize(new Dimension(400, 2));
-        controlPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        controlPanel.add(whiteLine);
+        // **Pannello interno per i pulsanti**
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+        buttonPanel.setOpaque(false);
 
-        // Sottotitolo
-        JLabel pausedLabel = new JLabel("Paused");
-        pausedLabel.setFont(new Font("Arial", Font.PLAIN, 20));
-        pausedLabel.setForeground(Color.LIGHT_GRAY);
-        pausedLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        controlPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        controlPanel.add(pausedLabel);
-        controlPanel.add(Box.createRigidArea(new Dimension(0, 40)));
-
-        // Bottoni
-        Dimension buttonSize = new Dimension(200, 60);
+        // Creazione dei pulsanti
         JButton resumeButton = new JButton("Resume");
         JButton saveButton = new JButton("Save Game");
         JButton exitButton = new JButton("Exit");
 
-        JButton[] buttons = {resumeButton, saveButton, exitButton};
-        for (JButton btn : buttons) {
-            btn.setMaximumSize(buttonSize);
-            btn.setAlignmentX(Component.CENTER_ALIGNMENT);
-            btn.setFont(new Font("Arial", Font.PLAIN, 20));
-            btn.setBackground(new Color(200, 200, 200)); 
-            btn.setForeground(Color.BLACK);              
-            btn.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY)); // bordo semplice
-
-            controlPanel.add(btn);
-            controlPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+        for (JButton button : new JButton[]{resumeButton, saveButton, exitButton}) {
+            button.setFont(new Font("Arial", Font.PLAIN, 20));
+            button.setAlignmentX(Component.CENTER_ALIGNMENT);
+            button.setMaximumSize(new Dimension(200, 50));
+            buttonPanel.add(Box.createRigidArea(new Dimension(0, 15))); // Spaziatura tra i bottoni
+            buttonPanel.add(button);
         }
 
-        // Azioni
-        resumeButton.addActionListener(e -> {
-            controlPanel.setVisible(false);
-            System.out.println("Resume button pressed");
-        });
+        // **Azioni dei pulsanti**
+        resumeButton.addActionListener(e -> pauseMenuPanel.setVisible(false));
+
         saveButton.addActionListener(e -> {
-            controlPanel.setVisible(false);
-            System.out.println("Save button pressed");
+            try {
+                this.controller.saveGame(this.alliesList, this.enemiesList, this.numLevel);
+                System.out.println("Game saved successfully!");
+            } catch (IOException ex) {
+                System.err.println("Error saving game: " + ex.getMessage());
+            }
         });
+
         exitButton.addActionListener(e -> {
-            frame.dispose();
+            System.out.println("You chose to close the game");
             System.exit(0);
         });
 
-        // Mostra il menu
-        menuButton.addActionListener(e -> controlPanel.setVisible(true));
+        gbc.gridy++; // Posiziona sotto il titolo
+        pauseMenuPanel.add(titleLabel, gbc);
+        gbc.gridy++;
+        pauseMenuPanel.add(buttonPanel, gbc); // Aggiunge i pulsanti centrati
 
-        // Aggiunta
+        // **Mostra il menu quando si clicca sull'immagine**
+        JButton menuButton = new JButton(new ImageIcon(new ImageIcon("images/pauseGame.png")
+            .getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+
+        menuButton.setBounds(10, 10, 60, 60);
+        menuButton.setBorderPainted(false);
+        menuButton.setContentAreaFilled(false);
+        menuButton.setFocusPainted(false);
+        menuButton.addActionListener(e -> pauseMenuPanel.setVisible(true));
+
+        this.layeredPanel.add(pauseMenuPanel, Integer.valueOf(3));
         this.layeredPanel.add(menuButton, Integer.valueOf(2));
-        this.layeredPanel.add(controlPanel, Integer.valueOf(2));
     }
 
-
-    
     /**
 	 * Closes the game window.
 	 */
