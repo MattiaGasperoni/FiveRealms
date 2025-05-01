@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import model.characters.*;
 import model.characters.Character;
+import model.characters.bosses.*;
 import model.point.Point;
 
 import view.*;
@@ -144,24 +145,41 @@ public class Game {
     private void initializeGameLevels() {
         // Popolo le liste di nemici dei livelli principali
         List<Character> level1Enemies = new ArrayList<>();
+        level1Enemies.add(new KnightBoss());
+        level1Enemies.add(new Knight());
+        level1Enemies.add(new Knight());
         level1Enemies.add(new Barbarian());
-        level1Enemies.add(new Archer());
 
         List<Character> level2Enemies = new ArrayList<>();
+        level2Enemies.add(new BarbarianBoss());
+        level2Enemies.add(new Barbarian());
+        level1Enemies.add(new Knight());
         level2Enemies.add(new Barbarian());
         level2Enemies.add(new Archer());
 
         List<Character> level3Enemies = new ArrayList<>();
-        level3Enemies.add(new Barbarian());
+        level3Enemies.add(new ArcherBoss());
         level3Enemies.add(new Archer());
+        level3Enemies.add(new Knight());
+        level3Enemies.add(new Archer());
+        level3Enemies.add(new Juggernaut());
 
         List<Character> level4Enemies = new ArrayList<>();
+        level4Enemies.add(new JuggernautBoss());
         level4Enemies.add(new Barbarian());
         level4Enemies.add(new Archer());
+        level4Enemies.add(new Wizard());
+        level4Enemies.add(new Knight());
+        level4Enemies.add(new Juggernaut());
 
         List<Character> level5Enemies = new ArrayList<>();
-        level5Enemies.add(new Barbarian());
+        level5Enemies.add(new WizardBoss());
+        level5Enemies.add(new Wizard());
+        level5Enemies.add(new Wizard());
+        level5Enemies.add(new Wizard());
         level5Enemies.add(new Archer());
+        level5Enemies.add(new Archer());
+        level5Enemies.add(new Juggernaut());
 
         // Agggiungo tutti i livelli alla lista dei
         // PROBLEM : se qualche personaggio mi muore poi nei livelli prima poi la lista

@@ -109,7 +109,7 @@ public abstract class AbstractCharacter implements Character, Serializable {
 	public void increaseCurrentHealth(double percentage) {
 		if(percentage >= 0) {
 			this.currentHealth += this.maxHealth * percentage;
-			if(this.currentHealth > this.maxHealth)
+			if(this.currentHealth > this.maxHealth) //current health must remain capped to the maximum health value
 				this.currentHealth = this.maxHealth;
 		}
 	}

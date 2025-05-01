@@ -7,18 +7,17 @@ public class JuggernautBoss extends Juggernaut{
 	public JuggernautBoss() {
 		super(); //Random
 		super.setImagePath("images/characters/juggernaut/juggernautBoss.png");
-		this.increaseMaxHealth(1.4);
-		this.increasePower(1.3);
-		this.increaseDefence(1.5);
-		this.increaseSpeed(0.1);
+		super.increaseMaxHealth(0.4);
+		super.increasePower(0.3);
+		super.increaseDefence(1.5);
+		super.increaseSpeed(0.1);
 	}
 
-	//GIMMICK: Starts off very strong, gets weaker every time he's hit, even if it deals no damage
+	//GIMMICK Ablative Armor: Starts off with extremely high defence, which gets reduced every time he gets hit, even if it deals no damage, but he also gets faster.
 	@Override
 	public void reduceCurrentHealth(int value) {
 		super.reduceCurrentHealth(value);
-		this.increaseMaxHealth(-0.2);
-		this.increasePower(-0.2);
-		this.increaseDefence(-0.2);
+		super.increaseDefence(-0.2);
+		super.increaseSpeed(0.1);
 	}
 }
