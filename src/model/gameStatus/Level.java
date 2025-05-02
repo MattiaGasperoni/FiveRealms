@@ -20,7 +20,7 @@ public class Level
     private final LevelMap levelMap;                            // Mappa del livello
     private final GraphicMovePhaseManager movementPhaseManager; // Oggetto che gestisce la fase di movimento dei personaggi
 
-    public Level(LevelMap map, Controller controller) 
+    public Level(LevelMap map, GameController controller) 
     {
         // Inizializzazione Oggetti Grafici
         this.levelMap = map;
@@ -35,7 +35,7 @@ public class Level
 
     
     //Metodo Pubblico per giocare il livello, restituisce true se il livello è stato completato, false altrimenti
-    public boolean playLevel(GameStateManager gameStateManager, int levelNumber) throws IOException 
+    public boolean play(GameStateManager gameStateManager, int levelNumber) throws IOException 
     {
         // Faccio comparire la mappa del livello
         this.levelMap.start();

@@ -6,7 +6,9 @@ public class Main {
 	
 	public static void main(String[] args) 
 	{
-        Game g = new Game(); // Creazione dell'istanza di Game
+        Game game = new Game(); // Creazione dell'istanza di Game
+        
+        game.start();
     }
 
 }

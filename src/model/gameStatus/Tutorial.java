@@ -2,7 +2,7 @@ package model.gameStatus;
 
 import java.util.List;
 
-import controller.Controller;
+import controller.GameController;
 import model.characters.Character;
 import view.map.TutorialMap;
 
@@ -13,7 +13,7 @@ public class Tutorial
 	private List<Character> enemiesList;       // Lista dei nemici del tutorial
 	private List<Character> alliesList;        // Lista degli alleati del tutorial
 	
-	public Tutorial(TutorialMap map, Controller controller) 
+	public Tutorial(TutorialMap map, GameController controller) 
 	{
 		
 		this.tutorialCompleted = false;

@@ -5,92 +5,84 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class TutorialMenu
-{
-    private boolean tutorialSelecion;
+{    
+    private JFrame frame;
+    private JLabel backgroundLabel;
+    private GridBagConstraints gbc;
+    private JLabel infoLabel;
+
+    private JButton yesButton;
+    private JButton noButton;
+    private JButton exitButton;
     
     public TutorialMenu()
     {
-    	this.tutorialSelecion = false;
-
+    	// Setup the frame
+        this.frame = new JFrame("Tutorial Menu");
+        this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.frame.setSize(800, 800);
+        this.frame.setLocationRelativeTo(null);
+        this.frame.setResizable(true);
+        
+        this.backgroundLabel = new JLabel(new ImageIcon("images/Background/background4.jpg"));
+        this.backgroundLabel.setLayout(new GridBagLayout());
+        
+        this.gbc = new GridBagConstraints();
+        this.gbc.insets = new Insets(10, 10, 10, 10);
+        this.gbc.gridy = 0;
+        
+        this.infoLabel = new JLabel("Do you want to play the Tutorial?", SwingConstants.CENTER);
+        this.infoLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        this.infoLabel.setForeground(Color.WHITE);
+        
+        this.backgroundLabel.add(this.infoLabel, this.gbc);
+        
+        this.yesButton  = createButton("Yes");
+    	this.noButton   = createButton("No");
+    	this.exitButton = createButton("Exit");
+    	
+		this.addButtonsToBackground(this.backgroundLabel, this.yesButton, this.noButton, this.exitButton, this.gbc);
+		
+		this.frame.add(this.backgroundLabel);
     }
-
-    public void start(ActionListener callback) 
+    
+    public void show() 
     {        
     	System.out.print("Open Tuturial Menu Frame ->");
-
-        JFrame frame = createFrame();
-
-        JLabel backgroundLabel = createBackgroundLabel();
-        GridBagConstraints gbc = createGridBagConstraints();
-
-        JLabel infoLabel = createInfoLabel();
-        backgroundLabel.add(infoLabel, gbc);
-
-        JButton yesButton = createButton("Yes", e -> handleSelection(frame, true, callback, e));
-        JButton noButton = createButton("No", e -> handleSelection(frame, false, callback, e));
-        JButton exitButton = createButton("Exit", e -> System.exit(0));
-
-        addButtonsToBackground(backgroundLabel, yesButton, noButton, exitButton, gbc);
-        
-        frame.add(backgroundLabel);
-        frame.setVisible(true);
-    }
-
-    private JFrame createFrame() 
-    {
-        JFrame frame = new JFrame("Tutorial Menu");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(800, 800);
-        frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
-        return frame;
-    }
-
-    private JLabel createBackgroundLabel() 
-    {
-        JLabel backgroundLabel = new JLabel(new ImageIcon("images/Background/background4.jpg"));
-        backgroundLabel.setLayout(new GridBagLayout());
-        return backgroundLabel;
-    }
-
-    private JLabel createInfoLabel() 
-    {
-        JLabel infoLabel = new JLabel("Do you want to play the Tutorial?", SwingConstants.CENTER);
         System.out.print(" Do you want to play the Tutorial? ->");
-        infoLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        infoLabel.setForeground(Color.WHITE);
-        return infoLabel;
+
+        this.frame.setVisible(true);
+    }
+    
+    
+    public void addYesListener(ActionListener listener) {
+        yesButton.addActionListener(listener);
     }
 
-    private GridBagConstraints createGridBagConstraints() 
-    {
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.gridy = 0;
-        return gbc;
+    public void addNoListener(ActionListener listener) {
+        noButton.addActionListener(listener);
     }
 
-    private JButton createButton(String text, ActionListener action) 
+    public void addExitListener(ActionListener listener) {
+        exitButton.addActionListener(listener);
+    }
+    
+    public void close() {
+        frame.dispose();
+    }
+
+    private JButton createButton(String buttonText) 
     {
-        JButton button = new JButton(text);
+        JButton button = new JButton(buttonText);
         button.setFont(new Font("Arial", Font.BOLD, 18));
         button.setForeground(Color.WHITE);
         button.setBackground(new Color(139, 69, 19));
         button.setBorder(BorderFactory.createRaisedBevelBorder());
         button.setFocusPainted(false);
         button.setPreferredSize(new Dimension(200, 50));
-        button.addActionListener(action);
         return button;
     }
-
-    private void handleSelection(JFrame frame, boolean selection, ActionListener callback, ActionEvent e)
-    {
-    	tutorialSelecion = selection;
-        System.out.print(selection ? " Yes ->" : " No ->");
-        frame.dispose();
-        callback.actionPerformed(new ActionEvent(e.getSource(), ActionEvent.ACTION_PERFORMED, selection ? "Yes" : "No"));
-    }
-
+    
     private void addButtonsToBackground(JLabel backgroundLabel, JButton yesButton, JButton noButton, JButton exitButton, GridBagConstraints gbc) {
         gbc.gridy = 1;
         backgroundLabel.add(yesButton, gbc);
@@ -100,7 +92,4 @@ public class TutorialMenu
         backgroundLabel.add(exitButton, gbc);
     }
 
-    public boolean isTutorialSelected() {
-        return tutorialSelecion;
-    }
 }

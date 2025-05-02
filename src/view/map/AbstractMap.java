@@ -12,7 +12,7 @@ import java.util.Random;
 
 import javax.swing.*;
 
-import controller.Controller;
+import controller.GameController;
 import model.characters.Character;
 import model.point.Point;
 
@@ -40,7 +40,7 @@ public abstract class AbstractMap
     
     private Random random;
     
-    private Controller controller;
+    private GameController controller;
 
     /**
      * Costruttore
@@ -57,7 +57,6 @@ public abstract class AbstractMap
         this.alliesPositionList = new ArrayList<>();
         this.enemiesPositionList = new ArrayList<>();
         this.random = new Random();
-        this.controller = new Controller();
         this.initializePositionList();
 
         // Popola la mappa con tutti i personaggi

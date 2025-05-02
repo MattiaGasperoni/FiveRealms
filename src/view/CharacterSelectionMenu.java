@@ -5,6 +5,7 @@ import javax.swing.*;
 import model.characters.Archer;
 import model.characters.Barbarian;
 import model.characters.Character;
+import model.gameStatus.Game;
 import view.map.LevelMap;
 
 import java.awt.*;
@@ -17,19 +18,23 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-public class CharacterSelectionMenu {
-
-    private static final int MAX_SELECTION = 3;
+public class CharacterSelectionMenu 
+{      
+	private JFrame frame;
+	private JButton nextButton;
     private final List<JPanel> selectedPanels = new ArrayList<>();
-    private JButton nextButton;
-    public List<String> selectedCharacters = new ArrayList<>(); // Inizializzazione della lista
+    private final List<String> selectedCharacters = new ArrayList<>();
+
     
-    public void start(List<Character> allAllies, List<Character> selectedAllies, ActionListener callback) {
+    public void start(List<Character> allAllies) 
+    {
     	System.out.print("Open Characters Selection Menu Frame ->");
-        JFrame frame = new JFrame("Characters Selection Menu");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 800);
-        frame.setLocationRelativeTo(null);
+        
+		// Creazione della finestra principale
+    	this.frame = new JFrame("Characters Selection Menu");
+    	this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    	this.frame.setSize(800, 800);
+    	this.frame.setLocationRelativeTo(null);
 
         // Sfondo
         JLabel bgLabel = new JLabel(new ImageIcon("images/background/background" + (int)(Math.random() * 6) + ".jpg"));
@@ -46,19 +51,14 @@ public class CharacterSelectionMenu {
         bgLabel.add(info, gbc);
 
         // Pulsante "Next"
-        nextButton = new JButton("Next");
-        nextButton.setFont(new Font("Arial", Font.BOLD, 16));
-        nextButton.setEnabled(false);
-        nextButton.addActionListener(e -> {
-        	// Ritorna la lista dei personaggi selezionati e fare la trasformList
-        	System.out.print(" You chose: " + String.join(", ", selectedCharacters) + " -> ");
-            System.out.println(" End of character selection");
-        	selectedAllies.clear();
-        	selectedAllies.addAll(transformList(allAllies, selectedCharacters));
-        	frame.dispose();
-        	callback.actionPerformed(new ActionEvent(e.getSource(), ActionEvent.ACTION_PERFORMED, "Next"));
-            
-        });
+        this.nextButton = new JButton("Next");
+        this.nextButton.setFont(new Font("Arial", Font.BOLD, 16));
+        this.nextButton.setEnabled(false);
+        
+        // Aggiunta del pulsante "Next" 
+        gbc.gridx = 1; 
+        gbc.gridy = 4;
+        bgLabel.add(this.nextButton, gbc);
 
         // Creazione e posizionamento dei personaggi
         addCharacter(bgLabel, "Archer", "A skilled archer, master of the bow.", "images/characters/archer/archerHero.png", 0, 1, gbc);
@@ -67,21 +67,26 @@ public class CharacterSelectionMenu {
         addCharacter(bgLabel, "Knight", "A noble knight, brave and strong.", "images/characters/knight/knightHero.png", 0, 3, gbc);
         addCharacter(bgLabel, "Mage", "A master of the arcane arts.", "images/characters/wizard/wizardHero.png", 2, 3, gbc);
 
-        // Aggiunta del pulsante "Next"
-        gbc.gridx = 1; 
-        gbc.gridy = 4;
-        bgLabel.add(nextButton, gbc);
 
-        frame.add(bgLabel);
-        frame.setVisible(true);
+        this.frame.add(bgLabel);
+        this.frame.setVisible(true);
     }
     
-    private List<Character> transformList(List<Character> allAllies, List<String> selectedCharacters) {
-        return allAllies.stream()
-            .filter(ally -> selectedCharacters.contains(ally.getClass().getSimpleName()))
-            .collect(Collectors.toList());
+ 
+
+    public void addNextButtonListener(ActionListener listener) {
+    	this.nextButton.addActionListener(listener);
     }
 
+    public List<String> getSelectedCharacterNames() {
+        return new ArrayList<>(this.selectedCharacters);
+    }
+
+    public void close() {
+    	this.frame.dispose();
+    }
+
+    
     private void addCharacter(JLabel bgLabel, String name, String desc, String imgPath, int x, int y, GridBagConstraints gbc) {
     	
         JPanel panel = new JPanel(new BorderLayout());
@@ -104,12 +109,12 @@ public class CharacterSelectionMenu {
                 	selectedPanels.remove(panel);
                 	selectedCharacters.remove(name);
                     panel.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
-                } else if (selectedPanels.size() < MAX_SELECTION) {
+                } else if (selectedPanels.size() < Game.MAX_ALLIES_PER_ROUND) {
                     selectedPanels.add(panel);
                 	selectedCharacters.add(name);
                     panel.setBorder(BorderFactory.createLineBorder(Color.GREEN, 3));
                 }
-                nextButton.setEnabled(selectedPanels.size() == MAX_SELECTION);
+                nextButton.setEnabled(selectedPanels.size() == Game.MAX_ALLIES_PER_ROUND);
             }
         });
 

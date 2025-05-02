@@ -11,7 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 
-import controller.Controller;
+import controller.GameController;
 import model.characters.Character;
 import model.point.Point;
 import view.map.AbstractMap;
@@ -22,9 +22,9 @@ public class GraphicMovePhaseManager
 
     private LevelMap levelMap;
     private Character selectedTarget;  // Variabile per il bersaglio selezionato
-    private Controller controller;
+    private GameController controller;
     
-    public GraphicMovePhaseManager(LevelMap map, Controller controll) 
+    public GraphicMovePhaseManager(LevelMap map, GameController controll) 
     {
 		this.levelMap       = map;
 		this.controller		= controll;

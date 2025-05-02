@@ -15,15 +15,15 @@ import view.map.*;
 import controller.*;
 
 public class Game {
-    private static final int TOTAL_LEVEL = 5; // Numero di livelli del gioco
-    private static final int MAX_ALLIES_PER_ROUND = 3; // Numero di personaggi giocabili per round
+    public static final int TOTAL_LEVEL = 5; // Numero di livelli del gioco
+    public static final int MAX_ALLIES_PER_ROUND = 3; // Numero di personaggi giocabili per round
 
     private List<Level> gameLevels; // Lista dei livelli del gioco
     private List<Character> availableAllies; // Lista di tutti i personaggi giocabili
     private List<Character> selectedAllies; // Lista dei personaggi con cui l'utente giocherà il livello
 
-    private GameStateManager gameStateManager; // Oggetto che gestiste il caricamento di una partita
-    private Controller controller;             
+    private GameStateManager gameStateManager;
+    private GameController controller;             
     private static final Random rand = new Random(); // ci inizializza i valori dei personaggi
 
     // Oggetti Grafici
@@ -36,8 +36,7 @@ public class Game {
         this.gameLevels = new ArrayList<>();
         this.availableAllies = new ArrayList<>();
         this.selectedAllies = new ArrayList<>();
-        this.gameStateManager = new GameStateManager();
-        this.controller = new Controller(); 
+       
 
 
         // Inizializzazione Oggetti Grafici
@@ -45,38 +44,23 @@ public class Game {
         this.tutorialMenu = new TutorialMenu();
         this.characterSelectionMenu = new CharacterSelectionMenu();
 
-        // Avvio il menù principale
-        this.graphicsMenu.startMainMenu(this);
+        this.gameStateManager = new GameStateManager();
+        this.controller = new GameController(this, this.gameStateManager, this.graphicsMenu, this.tutorialMenu, this.characterSelectionMenu); 
+    }
+    
+    public void start() 
+    {
+		// Mostro il menù principale
+		this.graphicsMenu.show();	
+	}
+
+    public void startNewGame() throws IOException 
+    {
+    	this.controller.startNewGame();
     }
 
-    public void startNewGame() throws IOException {
-
-        // Avvio il Tutorial Menu
-        this.tutorialMenu.start(event -> {
-            // Il flusso del codice rimane in attesa finche l'utente non sceglie se giocare
-            // o saltare il tutorial
-            if (this.tutorialMenu.isTutorialSelected()) {
-                // Ha scelto di giocare il tutorial               
-                if (this.startTutorial()) 
-                {
-                    System.out.println(" You completed the tutorial");
-                    // Voglio un PopUp a schermo che dice "Tutorial completato, inizia il gioco"
-                    this.startSelectionCharacterAndLevels();
-                } 
-                else {
-                    System.out.println(" You failed the tutorial");
-                    // Voglio un PopUp a schermo che dice "Tutorial fallito, e mi chiede se voglio
-                    // riprovare o uscire"
-                }
-            } 
-            else {
-                System.out.println(" Tutorial skipped");
-                this.startSelectionCharacterAndLevels();
-            }
-        });
-    }
-
-    private boolean startTutorial() {
+    public boolean startTutorial() 
+    {
         // Il tutorial prevede un gameplay statico, sempre uguale percio' non
         // permettiamo la scelta dei personaggi
 
@@ -103,44 +87,68 @@ public class Game {
         return tutorial.play();
     }
 
-    private void startSelectionCharacterAndLevels() {
-        // Inizializza la lista con tutti i personaggi giocabili
-        this.createAllies();
-
+    public void startSelectionCharacter() 
+    {
         // Appare il menu per la selezione dei personaggi
-        this.characterSelectionMenu.start(this.availableAllies, this.selectedAllies, event -> {
-            // Inizializzo le liste dei nemici e dei livelli
-            this.initializeGameLevels();
-
-            // Gioca i livelli
-            for (int i = 0; i < Game.TOTAL_LEVEL; i++) {
-                // Gioca il livello, playLevel ritorna true se il livello è stato completato
-                // sennò interrompe dal ciclo
-                try {
-                    if (!this.gameLevels.get(i).playLevel(this.gameStateManager, i)) {
-                        System.out.println("Il livello non è stato completato, uscita dal ciclo.");
-                        break;
-                    }
-                } catch (IOException e) {
-                    System.err.println("Errore durante l'esecuzione del livello " + i + ": " + e.getMessage());
-                    e.printStackTrace();
+        this.controller.startSelectionCharacter();
+    }
+    
+    public void startLevel() 
+    {
+        for (int i = 0; i < Game.TOTAL_LEVEL; i++) 
+        {
+            try {
+                if (!gameLevels.get(i).play(this.gameStateManager, i)) {
+                    System.out.println("Il livello non è stato completato, uscita dal ciclo.");
                     break;
                 }
-
-                // Sostituisci gli alleati morti con nuovi alleati
-                this.checkAndReplaceDeadAllies();
-
-                System.out.println("Passaggio al livello " + (i + 1));
+            } catch (IOException e) {
+                System.err.println("Errore durante l'esecuzione del livello " + i + ": " + e.getMessage());
+                e.printStackTrace();
+                break;
             }
-        });
-    }
 
-    private void createAllies() {
+            // Sostituisci eventuali alleati morti
+            checkAndReplaceDeadAllies(this.selectedAllies);
+            System.out.println("Passaggio al livello " + (i + 1));
+        }
+    }
+    
+    private void checkAndReplaceDeadAllies(List<Character> selectedAllies) 
+	{
+		// Implementa la logica per controllare e sostituire gli alleati morti
+		// Ad esempio, puoi rimuovere gli alleati morti dalla lista e aggiungere nuovi alleati
+		// ...
+    	
+        // Calcola quanti alleati sono morti
+        int alliesToChange = Game.MAX_ALLIES_PER_ROUND - selectedAllies.size();
+
+        if (alliesToChange > 0) {
+            System.out.println("Sostituzione di " + alliesToChange + " personaggi morti.");
+        }
+            // Seleziona nuovi alleati
+            // List<Character> newAllies =
+            // CharacterSelectionMenu.replaceDeadAlliesMenu(this.availableAllies ,
+            // alliesToChange);
+
+            // Aggiungi i nuovi alleati
+            // this.selectedAllies.addAll(newAllies);
+	}
+
+    public List<Character> createAllies() 
+    {
         // Popolo la lista di personaggi giocabili
         this.availableAllies.add(new Barbarian());
         this.availableAllies.add(new Archer());
         // ... Aggiungere altri personaggi
+        
+        return this.availableAllies;
     }
+    
+    public void setSelectedCharacters(List<Character> selectedAllies) {
+		this.selectedAllies = selectedAllies;
+	}
+
 
     private void initializeGameLevels() {
         // Popolo le liste di nemici dei livelli principali
@@ -197,22 +205,5 @@ public class Game {
         this.gameLevels.add(new Level(new LevelMap(level5Enemies, this.selectedAllies, 5), this.controller));
     }
 
-    // Metodo per sostituire gli alleati morti con nuovi personaggi scelti
-    // dall'utente
-    private void checkAndReplaceDeadAllies() {
-        // Calcola quanti alleati sono morti
-        int alliesToChange = MAX_ALLIES_PER_ROUND - this.selectedAllies.size();
 
-        if (alliesToChange > 0) {
-            System.out.println("Sostituzione di " + alliesToChange + " personaggi morti.");
-
-            // Seleziona nuovi alleati
-            // List<Character> newAllies =
-            // CharacterSelectionMenu.replaceDeadAlliesMenu(this.availableAllies ,
-            // alliesToChange);
-
-            // Aggiungi i nuovi alleati
-            // this.selectedAllies.addAll(newAllies);
-        }
-    }
 }
