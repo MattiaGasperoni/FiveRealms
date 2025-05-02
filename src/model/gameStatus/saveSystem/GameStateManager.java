@@ -1,6 +1,7 @@
-package model.gameStatus;
+package model.gameStatus.saveSystem;
 
 import model.characters.Character;
+
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

@@ -115,11 +115,14 @@ public class CharacterSelectionMenu
                     panel.setBorder(BorderFactory.createLineBorder(Color.GREEN, 3));
                 }
                 nextButton.setEnabled(selectedPanels.size() == Game.MAX_ALLIES_PER_ROUND);
+
             }
         });
 
         gbc.gridx = x;
         gbc.gridy = y;
         bgLabel.add(panel, gbc);
+        
+        
     }
 }

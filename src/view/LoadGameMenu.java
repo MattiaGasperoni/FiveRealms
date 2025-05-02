@@ -1,7 +1,9 @@
 package view;
 
 import javax.swing.*;
-import model.gameStatus.GameStateManager;
+
+import model.gameStatus.saveSystem.GameStateManager;
+
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.File;

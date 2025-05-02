@@ -1,4 +1,4 @@
-package model.gameStatus;
+package model.gameStatus.saveSystem;
 
 import model.characters.Character;
 import java.io.Serializable;

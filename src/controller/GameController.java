@@ -8,9 +8,9 @@ import javax.swing.JButton;
 
 import model.characters.Character;
 import model.gameStatus.Game;
-import model.gameStatus.GameState;
-import model.gameStatus.GameStateManager;
 import model.gameStatus.Level;
+import model.gameStatus.saveSystem.GameState;
+import model.gameStatus.saveSystem.GameStateManager;
 import model.point.Point;
 import view.CharacterSelectionMenu;
 import view.LoadGameMenu;

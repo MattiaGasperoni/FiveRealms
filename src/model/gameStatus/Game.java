@@ -2,29 +2,30 @@ package model.gameStatus;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
-
 import model.characters.*;
 import model.characters.Character;
 import model.characters.bosses.*;
-import model.point.Point;
-
+import model.gameStatus.saveSystem.GameStateManager;
 import view.*;
 import view.map.*;
-
 import controller.*;
+import javax.swing.Timer;
 
-public class Game {
-    public static final int TOTAL_LEVEL = 5; // Numero di livelli del gioco
+
+public class Game 
+{
+    public static final int TOTAL_LEVEL = 5;          // Numero di livelli del gioco
     public static final int MAX_ALLIES_PER_ROUND = 3; // Numero di personaggi giocabili per round
 
-    private List<Level> gameLevels; // Lista dei livelli del gioco
+    private List<Level> gameLevels;          // Lista dei livelli del gioco
     private List<Character> availableAllies; // Lista di tutti i personaggi giocabili
-    private List<Character> selectedAllies; // Lista dei personaggi con cui l'utente giocherà il livello
+    private List<Character> selectedAllies;  // Lista dei personaggi con cui l'utente giocherà il livello
 
     private GameStateManager gameStateManager;
-    private GameController controller;             
-    private static final Random rand = new Random(); // ci inizializza i valori dei personaggi
+    private GameController controller;           
+    
+    private Timer gameTimer;
+    private int currentLevelIndex;
 
     // Oggetti Grafici
     private MainMenu graphicsMenu;
@@ -37,16 +38,20 @@ public class Game {
         this.availableAllies = new ArrayList<>();
         this.selectedAllies = new ArrayList<>();
        
-
-
+        this.currentLevelIndex = 0;
+        
         // Inizializzazione Oggetti Grafici
         this.graphicsMenu = new MainMenu();
         this.tutorialMenu = new TutorialMenu();
         this.characterSelectionMenu = new CharacterSelectionMenu();
 
         this.gameStateManager = new GameStateManager();
+        
         this.controller = new GameController(this, this.gameStateManager, this.graphicsMenu, this.tutorialMenu, this.characterSelectionMenu); 
+        
     }
+    
+
     
     public void start() 
     {
@@ -91,28 +96,63 @@ public class Game {
     {
         // Appare il menu per la selezione dei personaggi
         this.controller.startSelectionCharacter();
+        
+        
     }
-    
+	
     public void startLevel() 
     {
-        for (int i = 0; i < Game.TOTAL_LEVEL; i++) 
-        {
-            try {
-                if (!gameLevels.get(i).play(this.gameStateManager, i)) {
-                    System.out.println("Il livello non è stato completato, uscita dal ciclo.");
-                    break;
-                }
-            } catch (IOException e) {
-                System.err.println("Errore durante l'esecuzione del livello " + i + ": " + e.getMessage());
-                e.printStackTrace();
-                break;
-            }
+    	this.initializeGameLevels(); // Inizializza i livelli di gioco
+    	
+        // Inizializza il timer con delay (es. ogni 100ms)
+        this.gameTimer = new Timer(100, e -> updateGame());
 
-            // Sostituisci eventuali alleati morti
-            checkAndReplaceDeadAllies(this.selectedAllies);
-            System.out.println("Passaggio al livello " + (i + 1));
+        // Avvia il primo livello
+        this.startCurrentLevel();
+
+        this.gameTimer.start(); // parte il loop
+
+    }
+    
+    private void startCurrentLevel() 
+    {
+        try 
+        {
+            Level livello = gameLevels.get(currentLevelIndex);
+            livello.start(currentLevelIndex); // nuovo metodo al posto di play sincrono
+        } 
+        catch (IOException e) 
+        {
+            System.err.println("Errore durante il livello " + currentLevelIndex + ": " + e.getMessage());
+            e.printStackTrace();
+            gameTimer.stop();
         }
     }
+    
+    private void updateGame() 
+    {
+        Level livello = gameLevels.get(currentLevelIndex);
+        livello.update();
+
+        if (livello.isCompleted()) {
+            System.out.println("Livello " + currentLevelIndex + " completato.");
+            checkAndReplaceDeadAllies(this.selectedAllies);
+
+            currentLevelIndex++;
+
+            if (currentLevelIndex >= Game.TOTAL_LEVEL) {
+                System.out.println("Tutti i livelli completati!");
+                gameTimer.stop();
+            } else {
+                startCurrentLevel();
+            }
+        } else if (livello.isFailed()) {
+            System.out.println("Il livello " + currentLevelIndex + " è fallito. Uscita.");
+            gameTimer.stop();
+        }
+    }
+
+
     
     private void checkAndReplaceDeadAllies(List<Character> selectedAllies) 
 	{
@@ -161,7 +201,7 @@ public class Game {
         List<Character> level2Enemies = new ArrayList<>();
         level2Enemies.add(new BarbarianBoss());
         level2Enemies.add(new Barbarian());
-        level1Enemies.add(new Knight());
+        level2Enemies.add(new Knight());
         level2Enemies.add(new Barbarian());
         level2Enemies.add(new Archer());
 

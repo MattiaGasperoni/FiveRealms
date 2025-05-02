@@ -53,6 +53,8 @@ public abstract class AbstractMap
         this.enemiesList      = enemiesList;
         this.alliesList       = alliesList;
         this.numLevel         = numLevel;
+        
+        
         this.characterMap = new HashMap<>();
         this.alliesPositionList = new ArrayList<>();
         this.enemiesPositionList = new ArrayList<>();
