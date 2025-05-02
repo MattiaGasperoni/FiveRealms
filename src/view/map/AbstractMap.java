@@ -319,6 +319,8 @@ public abstract class AbstractMap
             try {
                 this.controller.saveGame(this.alliesList, this.enemiesList, this.numLevel);
                 System.out.println("Game saved successfully!");
+                pauseMenuPanel.setVisible(false);
+                
             } catch (IOException ex) {
                 System.err.println("Error saving game: " + ex.getMessage());
             }
