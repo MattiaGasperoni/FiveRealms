@@ -65,7 +65,7 @@ public class CharacterSelectionMenu
         addCharacter(bgLabel, "Barbarian", "A fierce warrior with immense strength.", "images/characters/barbarian/barbarianHero.png", 2, 1, gbc);
         addCharacter(bgLabel, "Juggernaut", "A massive tank, unstoppable force.", "images/characters/juggernaut/juggernautHero.png", 1, 2, gbc);
         addCharacter(bgLabel, "Knight", "A noble knight, brave and strong.", "images/characters/knight/knightHero.png", 0, 3, gbc);
-        addCharacter(bgLabel, "Mage", "A master of the arcane arts.", "images/characters/wizard/wizardHero.png", 2, 3, gbc);
+        addCharacter(bgLabel, "Wizard", "A master of the arcane arts.", "images/characters/wizard/wizardHero.png", 2, 3, gbc);
 
 
         this.frame.add(bgLabel);

@@ -134,6 +134,7 @@ public class GameController
             System.out.println(" End of character selection");
             
             List<Character> characterSelected = transformList(availableCharacter, characterNames);
+            
             this.game.setSelectedCharacters(characterSelected);
             
             this.characterSelectionMenuView.close();
@@ -142,7 +143,8 @@ public class GameController
 
     }
     
-    private List<Character> transformList(List<Character> allAllies, List<String> selectedCharacters) {
+    private List<Character> transformList(List<Character> allAllies, List<String> selectedCharacters)
+    {
         return allAllies.stream()
             .filter(ally -> selectedCharacters.contains(ally.getClass().getSimpleName()))
             .collect(Collectors.toList());

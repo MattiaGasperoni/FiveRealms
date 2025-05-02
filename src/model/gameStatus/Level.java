@@ -143,14 +143,7 @@ public class Level
     public void start(int index) throws IOException 
     {
         // inizializzazioni e setup della mappa, dei nemici, ecc.
-    	
-    	//stampa di debug
-    	System.out.println("Allies:");
-	    alliesList.forEach(ally -> System.out.println(ally.getClass().getSimpleName()));
 
-	    System.out.println("Enemies:");
-	    enemiesList.forEach(enemy -> System.out.println(enemy.getClass().getSimpleName()));
-       
 	    // Faccio comparire la mappa del livello
         this.levelMap.start();
        
@@ -158,7 +151,9 @@ public class Level
     	
     	// Spawn dei personaggi
     	this.levelMap.spawnCharacter(this.enemiesList);
+
     	this.levelMap.spawnCharacter(this.alliesList);
+
     	
     	// Partiamo dalla fase di movimento
         this.currentPhase = LevelPhase.MOVEMENT;  

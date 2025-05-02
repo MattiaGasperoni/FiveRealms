@@ -80,7 +80,10 @@ public abstract class AbstractMap
 		this.enemiesPositionList.add(new Point(4,10));
 		this.enemiesPositionList.add(new Point(4,4));
 		this.enemiesPositionList.add(new Point(6,7));
-		
+		this.enemiesPositionList.add(new Point(6,4));
+		this.enemiesPositionList.add(new Point(3,7));
+		this.enemiesPositionList.add(new Point(2,12));
+
 	}
 
 	public void start() 
@@ -380,36 +383,49 @@ public abstract class AbstractMap
 	 * Spawns characters on the map.
 	 * @param spawnList List of characters to spawn.
 	 */
-	public void spawnCharacter(List<Character> spawnList) 
-	{
-	    if (spawnList == null || spawnList.size() < 3) 
-	    {
+	public void spawnCharacter(List<Character> spawnList) {
+	    // Controllo lista nulla o con meno di 3 personaggi
+	    if (spawnList == null || spawnList.size() < 3) {
 	        System.err.println("Spawn list is null or has less than 3 characters.");
 	        return;
 	    }
 
-	    List<Point> positionList = spawnList.get(0).isAllied() ? this.alliesPositionList : this.enemiesPositionList;
+	    // Prende la lista corretta e ne fa una copia difensiva
+	    List<Point> originalList = spawnList.get(0).isAllied() ? this.alliesPositionList : this.enemiesPositionList;
 
-	    for (int i = 0; i < 3; i++) {
+	    if (originalList == null || originalList.size() < 3) {
+	        System.err.println("Original position list is null or does not have enough positions.");
+	        return;
+	    }
+
+	    // Copia difensiva: non modifico la lista originale
+	    List<Point> positionList = new ArrayList<>(originalList);
+
+	    // Spawna massimo 3 personaggi o meno se non ci sono abbastanza posizioni
+	    int spawnCount = Math.min(3, positionList.size());
+
+	    for (int i = 0; i < spawnCount; i++) {
 	        spawnCharacterHelper(spawnList.get(i), positionList);
 	    }
 	}
-    
-	
-	private void spawnCharacterHelper(Character character, List<Point> positionList) 
-	{
-	    int target = random.nextInt(0, positionList.size());
-	    character.setPosition(positionList.get(target));
-	    positionList.remove(target);
 
-	    JButton button = this.gridPanel.getGridButtons()[character.getPosition().getX()][character.getPosition().getY()];
-	    
-	    // Setto il bottone con l'immagine del personaggio
+	private void spawnCharacterHelper(Character character, List<Point> positionList) {
+	    if (positionList == null || positionList.isEmpty()) {
+	        System.err.println("Position list is empty. Cannot spawn character.");
+	        return;
+	    }
+
+	    int target = random.nextInt(positionList.size());
+	    Point chosenPosition = positionList.remove(target);
+	    character.setPosition(chosenPosition);
+
+	    JButton button = this.gridPanel.getGridButtons()[chosenPosition.getX()][chosenPosition.getY()];
+
+	    // Imposta immagine del personaggio sul bottone
 	    button.setIcon(new ImageIcon(character.getImage()));
-	    
-	    //Bordino bianco vicino all'immagine del personaggio
-	    button.setContentAreaFilled(false);    
+	    button.setContentAreaFilled(false);  // Sfondo trasparente
 	}
+
     
 	
 	/* Il metodo rimuove l'immagine dove si trova il personaggio e aggiunge l'immagine del personaggio nel  bottone targhet

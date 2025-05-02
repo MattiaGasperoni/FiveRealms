@@ -96,8 +96,6 @@ public class Game
     {
         // Appare il menu per la selezione dei personaggi
         this.controller.startSelectionCharacter();
-        
-        
     }
 	
     public void startLevel() 
@@ -180,13 +178,22 @@ public class Game
         // Popolo la lista di personaggi giocabili
         this.availableAllies.add(new Barbarian());
         this.availableAllies.add(new Archer());
-        // ... Aggiungere altri personaggi
-        
+        this.availableAllies.add(new Knight());
+        this.availableAllies.add(new Wizard());
+        this.availableAllies.add(new Juggernaut());
+                
         return this.availableAllies;
     }
     
     public void setSelectedCharacters(List<Character> selectedAllies) {
 		this.selectedAllies = selectedAllies;
+        
+        for(Character ally : this.selectedAllies) {
+   			ally.becomeHero();
+   		}
+
+        
+        
 	}
 
 
