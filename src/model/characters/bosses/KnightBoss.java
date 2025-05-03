@@ -10,7 +10,7 @@ public class KnightBoss extends Knight{
 
 	public KnightBoss() {
 		super(); //Random
-		super.setImagePath("images/characters/knights/knightsBoss.png");
+		super.setImagePath("images/characters/knight/knightBoss.png");
 		super.increaseMaxHealth(0.3);
 		super.increasePower(0.3);
 		super.increaseDefence(0.3);

@@ -7,7 +7,7 @@ public class WizardBoss extends Wizard{
 
 	public WizardBoss() {
 		super();
-		super.setImagePath("images/characters/wizards/wizardBoss.png");
+		super.setImagePath("images/characters/wizard/wizardBoss.png");
 		super.increaseMaxHealth(0.4);
 		super.increasePower(0.5);
 		super.increaseDefence(0.3);

@@ -16,7 +16,6 @@ import model.equipment.weapons.Weapon;
 import model.equipment.weapons.ZoneShotWand;
 import model.point.Point;
 public abstract class AbstractCharacter implements Character, Serializable {
-	//TODO: implement exceptions/error messages
 	public static final int EXP_LEVELUP_THRESHOLD = 1000; //threshold at which you level up each time. placeholder value
 	public static final int SPEED_TO_MOVEMENT = 10;
 	private int maxHealth;
@@ -50,7 +49,6 @@ public abstract class AbstractCharacter implements Character, Serializable {
 
 	@Override
 	public void moveTo(Point point) throws IllegalArgumentException {
-		//redundancy
 		if(this.getDistanceInSquares(point) > this.speed / AbstractCharacter.SPEED_TO_MOVEMENT) //movement per-turn depends on speed, the actual value is placeholder as of now
 			throw new IllegalArgumentException("You tried to move farther than your movement speed allows!"); 
 		this.position = point;
@@ -330,8 +328,11 @@ public abstract class AbstractCharacter implements Character, Serializable {
 		return this.image;
 	}
 
-	public void setImagePath(String image) {
+	public void setImagePath(String image) { //updates the icon-image too as there's no point to having them be different
 		this.imagePath = image;
+		//Pre-process images 
+		ImageIcon icon = new ImageIcon(this.imagePath);
+        this.image = icon.getImage().getScaledInstance(75, 45, Image.SCALE_AREA_AVERAGING); //Controls actual image size scaling on the map!!!
 	}
 
 	@Override
