@@ -15,6 +15,7 @@ import model.point.Point;
 import view.CharacterSelectionMenu;
 import view.LoadGameMenu;
 import view.MainMenu;
+import view.PauseMenu;
 import view.TutorialMenu;
 import view.map.AbstractMap;
 
@@ -184,6 +185,37 @@ public class GameController
         character.moveTo(point);  // Update the character's position
     }
     
+    
+    /*public void setupPauseMenuListeners(PauseMenu pauseMenu) {
+
+        // Resume → nasconde il pannello di pausa
+        pauseMenu.addYesListener(e -> {
+            System.out.println("Game resumed");
+            pauseMenu.getPanel().setVisible(false); // Devi creare getPanel() se non esiste
+        });
+
+        // Save → salva il gioco
+        pauseMenu.addNoListener(e -> {
+            try {
+                this.saveGame(
+                    pauseMenu.getAlliesList(), 
+                    pauseMenu.getEnemiesList(), 
+                    pauseMenu.getNumLevel()
+                );
+                System.out.println("Game saved successfully!");
+                pauseMenu.getPanel().setVisible(false); 
+            } catch (IOException ex) {
+                System.err.println("Error saving game: " + ex.getMessage());
+            }
+        });
+
+        // Exit → chiude il gioco
+        pauseMenu.addExitListener(e -> {
+            System.out.println("You chose to close the game");
+            System.exit(0);
+        });
+    }*/
+
     
     
      

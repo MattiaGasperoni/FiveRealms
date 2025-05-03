@@ -41,21 +41,6 @@ public class TutorialMap extends LevelMap {
         showTutorialPopup("Good luck, soldier!", null);
     }
 
-    // Metodi per ottenere i punti specifici nella griglia
-    private Point getCenterPoint() {
-        return new Point(AbstractMap.GRID_SIZE_WIDTH / 2, AbstractMap.GRID_SIZE_HEIGHT / 2);
-    }
-
-    private Point getTopPoint() {
-        return new Point(AbstractMap.GRID_SIZE_WIDTH / 2, 0);
-    }
-
-    private Point getBottomPoint() {
-        return new Point(AbstractMap.GRID_SIZE_WIDTH / 2, AbstractMap.GRID_SIZE_HEIGHT - 1);
-    }
-
-    
-
     private void highlightRowsWithTimer(int startRow, int endRow, Color color, int duration, Runnable afterAction) {
         for (int i = startRow; i <= endRow; i++) {
             for (int j = 0; j < AbstractMap.GRID_SIZE_HEIGHT; j++) {

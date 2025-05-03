@@ -138,7 +138,7 @@ public class BattlePhaseView
                         b.setEnabled(false);
                     }
 
-                    System.out.println("Bersaglio selezionato: " + enemy.getClass().getName());
+                    System.out.println("Bersaglio selezionato: " + enemy.getClass().getSimpleName());
                     onTargetSelected.accept(enemy); // Esegui la lambda
                 }
             };
