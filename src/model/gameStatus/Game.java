@@ -100,9 +100,10 @@ public class Game
 	
     public void startLevel() 
     {
-    	this.initializeGameLevels(); // Inizializza i livelli di gioco
+    	// Inizializza i livelli di gioco
+    	this.initializeGameLevels(); 
     	
-        // Inizializza il timer con delay (es. ogni 100ms)
+        // Inizializza il timer con delay 100ms
         this.gameTimer = new Timer(100, e -> updateGame());
 
         // Avvia il primo livello
@@ -117,7 +118,7 @@ public class Game
         try 
         {
             Level livello = gameLevels.get(currentLevelIndex);
-            livello.start(currentLevelIndex); // nuovo metodo al posto di play sincrono
+            livello.play(); 
         } 
         catch (IOException e) 
         {
@@ -132,19 +133,25 @@ public class Game
         Level livello = gameLevels.get(currentLevelIndex);
         livello.update();
 
-        if (livello.isCompleted()) {
+        if (livello.isCompleted())
+        {
             System.out.println("Livello " + currentLevelIndex + " completato.");
             checkAndReplaceDeadAllies(this.selectedAllies);
 
             currentLevelIndex++;
 
-            if (currentLevelIndex >= Game.TOTAL_LEVEL) {
+            if (currentLevelIndex >= Game.TOTAL_LEVEL) 
+            {
                 System.out.println("Tutti i livelli completati!");
                 gameTimer.stop();
-            } else {
+            } 
+            else 
+            {
                 startCurrentLevel();
             }
-        } else if (livello.isFailed()) {
+        } 
+        else if (livello.isFailed())
+        {
             System.out.println("Il livello " + currentLevelIndex + " è fallito. Uscita.");
             gameTimer.stop();
         }
@@ -185,22 +192,20 @@ public class Game
         return this.availableAllies;
     }
     
-    public void setSelectedCharacters(List<Character> selectedAllies) {
+    public void setSelectedCharacters(List<Character> selectedAllies) 
+    {
 		this.selectedAllies = selectedAllies;
         
-        for(Character ally : this.selectedAllies) {
+        for(Character ally : this.selectedAllies) 
+        {
    			ally.becomeHero();
    		}
-
-        
-        
 	}
-
-
+    
     private void initializeGameLevels() {
         // Popolo le liste di nemici dei livelli principali
         List<Character> level1Enemies = new ArrayList<>();
-        level1Enemies.add(new KnightBoss());
+        level1Enemies.add(new Juggernaut()); //KnightBoss
         level1Enemies.add(new Knight());
         level1Enemies.add(new Knight());
         level1Enemies.add(new Barbarian());

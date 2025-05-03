@@ -71,21 +71,7 @@ public abstract class AbstractMap
         }
     }
     
-    private void initializePositionList() 
-    {
-		this.alliesPositionList.add(new Point(16,4));
-		this.alliesPositionList.add(new Point(14,7));
-		this.alliesPositionList.add(new Point(16,10));
-		
-		this.enemiesPositionList.add(new Point(4,10));
-		this.enemiesPositionList.add(new Point(4,4));
-		this.enemiesPositionList.add(new Point(6,7));
-		this.enemiesPositionList.add(new Point(6,4));
-		this.enemiesPositionList.add(new Point(3,7));
-		this.enemiesPositionList.add(new Point(2,12));
-
-	}
-
+    
 	public void start() 
     {
 		 if (this.numLevel == 0){
@@ -95,62 +81,9 @@ public abstract class AbstractMap
 		        System.out.print("Open Level " + this.numLevel + " Frame ->");
 		 }
 		 
-    	Timer timer = new Timer(16, e -> {
-            //button.setToolTipText("<html>" + "Righe"+row + "<br>" + "Colonne"+col + "</html>"); // Sarebbe da fare solo con bottoni con immagine
-
-    	    /*Map<JButton, Point> imageButtonList = this.gridPanel.getImageButtonList();
-
-    	    // CASO 1: Un bottone ha immagine ma NESSUN personaggio si trova in quella posizione
-    	    for (Map.Entry<JButton, Point> entry : imageButtonList.entrySet()) 
-    	    {
-    	        JButton button = entry.getKey();
-    	        Point buttonPos = entry.getValue();
-    	        boolean personFound = false;
-
-    	        // Stampa di debug per capire se un bottone ha un'immagine
-    	        if (button.getIcon() != null) {
-    	            System.out.println("Bottone con immagine trovato nella posizione " + buttonPos);
-    	        }
-
-    	        // Controlla se un personaggio è presente nella stessa posizione
-    	        for (Point characterPos : characterMap.values()) {
-    	            if (characterPos.equals(buttonPos)) {
-    	                personFound = true;
-    	                break;
-    	            }
-    	        }
-
-    	        // Se non ci sono personaggi nella posizione del bottone, rimuovi l'immagine
-    	        if (!personFound && button.getIcon() != null) {
-    	            System.out.println("Nessun personaggio trovato in " + buttonPos + ", rimuovo immagine");
-    	            button.setIcon(null); // Rimuovi immagine
-    	        }
-    	    }
-
-    	    // CASO 2: Un personaggio si trova su una posizione dove il bottone NON ha immagine
-    	    for (Map.Entry<Character, Point> entry : characterMap.entrySet()) {
-    	        Character character = entry.getKey();
-    	        Point characterPos = entry.getValue();
-    	        JButton button = this.gridPanel.getGridButtons()[characterPos.getY()][characterPos.getX()];
-
-    	        // Stampa di debug per capire se il personaggio ha un'immagine
-    	        System.out.println("Controllando personaggio " + character + " nella posizione " + characterPos);
-
-    	        if (button.getIcon() == null) {
-    	            System.out.println("Nessuna immagine nel bottone alla posizione " + characterPos + ", aggiungo immagine del personaggio");
-    	            ImageIcon originalIcon = new ImageIcon(character.getImage());
-    	            Image scaledImage = originalIcon.getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH); // adatta la misura
-    	            button.setIcon(new ImageIcon(scaledImage));
-    	        }
-    	    }*/
-    	});
-
-    	
     	initializeFrame();
         
         this.frame.setVisible(true);
-        
-        //timer.start();
     }
     
     
@@ -190,7 +123,7 @@ public abstract class AbstractMap
         // layer 1. Griglia di bottoni trasparente
         this.initializeButtonGrid();
         
-        // layer 2. Menu di controllo
+        // layer 2. Menu di Pausa
         this.initializePauseMenu();
         
     }
@@ -263,7 +196,8 @@ public abstract class AbstractMap
     /**
      * Initializes the Pause menu with buttons for resuming, saving, and exiting the game.
      */
-    private void initializePauseMenu() {
+    private void initializePauseMenu() 
+    {
         // **Pannello unico che copre tutta la finestra**
         JPanel pauseMenuPanel = new JPanel() {
             @Override
@@ -383,48 +317,54 @@ public abstract class AbstractMap
 	 * Spawns characters on the map.
 	 * @param spawnList List of characters to spawn.
 	 */
-	public void spawnCharacter(List<Character> spawnList) {
-	    // Controllo lista nulla o con meno di 3 personaggi
-	    if (spawnList == null || spawnList.size() < 3) {
-	        System.err.println("Spawn list is null or has less than 3 characters.");
+	public void spawnCharacter(List<Character> spawnList)
+	{
+	    if (spawnList == null || spawnList.isEmpty()) 
+	    {
+	        System.err.println("Spawn list is null or empty.");
 	        return;
 	    }
 
-	    // Prende la lista corretta e ne fa una copia difensiva
-	    List<Point> originalList = spawnList.get(0).isAllied() ? this.alliesPositionList : this.enemiesPositionList;
+	    List<Point> positionList = spawnList.get(0).isAllied() ? this.alliesPositionList : this.enemiesPositionList;
 
-	    if (originalList == null || originalList.size() < 3) {
-	        System.err.println("Original position list is null or does not have enough positions.");
+	    if (spawnList.size() > positionList.size()) {
+	        System.err.println("Not enough spawn positions for characters.");
 	        return;
 	    }
 
-	    // Copia difensiva: non modifico la lista originale
-	    List<Point> positionList = new ArrayList<>(originalList);
-
-	    // Spawna massimo 3 personaggi o meno se non ci sono abbastanza posizioni
-	    int spawnCount = Math.min(3, positionList.size());
-
-	    for (int i = 0; i < spawnCount; i++) {
+	    for (int i = 0; i < spawnList.size(); i++) 
+	    {
 	        spawnCharacterHelper(spawnList.get(i), positionList);
 	    }
 	}
 
-	private void spawnCharacterHelper(Character character, List<Point> positionList) {
-	    if (positionList == null || positionList.isEmpty()) {
-	        System.err.println("Position list is empty. Cannot spawn character.");
-	        return;
-	    }
-
+	private void spawnCharacterHelper(Character character, List<Point> positionList) 
+	{
 	    int target = random.nextInt(positionList.size());
 	    Point chosenPosition = positionList.remove(target);
 	    character.setPosition(chosenPosition);
 
 	    JButton button = this.gridPanel.getGridButtons()[chosenPosition.getX()][chosenPosition.getY()];
-
-	    // Imposta immagine del personaggio sul bottone
 	    button.setIcon(new ImageIcon(character.getImage()));
-	    button.setContentAreaFilled(false);  // Sfondo trasparente
+	    button.setContentAreaFilled(false);
 	}
+	
+	private void initializePositionList() 
+    {
+		this.alliesPositionList.add(new Point(16,4));
+		this.alliesPositionList.add(new Point(14,7));
+		this.alliesPositionList.add(new Point(16,10));
+		
+		this.enemiesPositionList.add(new Point(4,10));
+		this.enemiesPositionList.add(new Point(4,4));
+		this.enemiesPositionList.add(new Point(6,7));
+		this.enemiesPositionList.add(new Point(6,4));
+		this.enemiesPositionList.add(new Point(3,7));
+		this.enemiesPositionList.add(new Point(2,12));
+		this.enemiesPositionList.add(new Point(5,10));
+	}
+
+
 
     
 	
@@ -450,5 +390,56 @@ public abstract class AbstractMap
 		return alliesList;
 	}
 	
+	
+	public void updateMap() {
+		
+        //button.setToolTipText("<html>" + "Righe"+row + "<br>" + "Colonne"+col + "</html>"); // Sarebbe da fare solo con bottoni con immagine
+
+	    /*Map<JButton, Point> imageButtonList = this.gridPanel.getImageButtonList();
+
+	    // CASO 1: Un bottone ha immagine ma NESSUN personaggio si trova in quella posizione
+	    for (Map.Entry<JButton, Point> entry : imageButtonList.entrySet()) 
+	    {
+	        JButton button = entry.getKey();
+	        Point buttonPos = entry.getValue();
+	        boolean personFound = false;
+
+	        // Stampa di debug per capire se un bottone ha un'immagine
+	        if (button.getIcon() != null) {
+	            System.out.println("Bottone con immagine trovato nella posizione " + buttonPos);
+	        }
+
+	        // Controlla se un personaggio è presente nella stessa posizione
+	        for (Point characterPos : characterMap.values()) {
+	            if (characterPos.equals(buttonPos)) {
+	                personFound = true;
+	                break;
+	            }
+	        }
+
+	        // Se non ci sono personaggi nella posizione del bottone, rimuovi l'immagine
+	        if (!personFound && button.getIcon() != null) {
+	            System.out.println("Nessun personaggio trovato in " + buttonPos + ", rimuovo immagine");
+	            button.setIcon(null); // Rimuovi immagine
+	        }
+	    }
+
+	    // CASO 2: Un personaggio si trova su una posizione dove il bottone NON ha immagine
+	    for (Map.Entry<Character, Point> entry : characterMap.entrySet()) {
+	        Character character = entry.getKey();
+	        Point characterPos = entry.getValue();
+	        JButton button = this.gridPanel.getGridButtons()[characterPos.getY()][characterPos.getX()];
+
+	        // Stampa di debug per capire se il personaggio ha un'immagine
+	        System.out.println("Controllando personaggio " + character + " nella posizione " + characterPos);
+
+	        if (button.getIcon() == null) {
+	            System.out.println("Nessuna immagine nel bottone alla posizione " + characterPos + ", aggiungo immagine del personaggio");
+	            ImageIcon originalIcon = new ImageIcon(character.getImage());
+	            Image scaledImage = originalIcon.getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH); // adatta la misura
+	            button.setIcon(new ImageIcon(scaledImage));
+	        }
+	    }*/
+	}
 	
 }

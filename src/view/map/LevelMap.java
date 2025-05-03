@@ -17,7 +17,7 @@ public class LevelMap extends AbstractMap{
 		super(enemiesList, alliesList, numLevel);
 	}
 	
-	public static void main(String[] args) 
+	/*public static void main(String[] args) 
     {
 		System.out.println("Java version:"+System.getProperty("java.version"));
 
@@ -48,6 +48,6 @@ public class LevelMap extends AbstractMap{
     	    emptyMap.spawnCharacter(alliesList); 
             
         });
-    }
+    }*/
 
 }

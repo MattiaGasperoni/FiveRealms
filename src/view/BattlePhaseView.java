@@ -17,14 +17,14 @@ import model.point.Point;
 import view.map.AbstractMap;
 import view.map.LevelMap;
 
-public class GraphicMovePhaseManager 
+public class BattlePhaseView 
 {
 
     private LevelMap levelMap;
     private Character selectedTarget;  // Variabile per il bersaglio selezionato
     private GameController controller;
     
-    public GraphicMovePhaseManager(LevelMap map, GameController controll) 
+    public BattlePhaseView(LevelMap map, GameController controll) 
     {
 		this.levelMap       = map;
 		this.controller		= controll;
@@ -32,7 +32,8 @@ public class GraphicMovePhaseManager
 	}
 
 	// Gestisce la fase di movimento
-    public void movementPhase(Character attacker, List<Character> alliesList, List<Character> enemiesList) {
+    public void movementPhase(Character attacker, List<Character> alliesList, List<Character> enemiesList) 
+    {
         // Ottieni tutte le posizioni dei bottoni
         List<Point> availableMoves = getAvailableMoves(attacker, alliesList, enemiesList);
 
@@ -81,7 +82,8 @@ public class GraphicMovePhaseManager
     }
     
     // Mostra la griglia con i movimenti disponibili
-    private void showGrid(List<Point> availableMoves, Character attacker) {
+    private void showGrid(List<Point> availableMoves, Character attacker) 
+   {
         for (Point point : availableMoves) {
             JButton button = this.levelMap.getButtonAt(point.getX(), point.getY());
             button.setBackground(Color.GRAY);
