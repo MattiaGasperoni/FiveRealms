@@ -108,11 +108,15 @@ public class Level
             {
             	this.movementPhaseManager.movementPhase(attacker, alliesList, enemiesList);  
             	
-            	this.movementPhaseManager.chooseTarget(this.enemiesList, target -> 
+            	/*this.movementPhaseManager.chooseTarget(this.enemiesList, target -> 
                 {
                 	// Il personaggio attacca il target
                 	attacker.fight(target, this.alliesList, this.enemiesList);
-                });
+                });*/
+            	
+            	this.movementPhaseManager.chooseTarget(this.enemiesList, attacker);
+
+            	
             }
             else 
             {

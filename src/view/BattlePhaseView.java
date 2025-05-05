@@ -119,7 +119,7 @@ public class BattlePhaseView
     
 
     
-    public void chooseTarget(List<Character> enemiesList, Consumer<Character> onTargetSelected) {
+    public void chooseTarget(List<Character> enemiesList, Character attacker) {
         List<JButton> enemyButtons = new ArrayList<>();
 
         for (Character enemy : enemiesList) {
@@ -127,26 +127,65 @@ public class BattlePhaseView
             JButton button = this.levelMap.getButtonAt(position.getX(), position.getY());
             enemyButtons.add(button);
 
-            ActionListener actionListener = new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    // Disabilita tutti i bottoni e rimuove i listener
-                    for (JButton b : enemyButtons) {
-                        for (ActionListener al : b.getActionListeners()) {
-                            b.removeActionListener(al);
+            // Calcolo della distanza
+            int distance = attacker.getPosition().distanceFrom(enemy.getPosition());
+
+            if (distance <= attacker.getWeapon().getRange()) {
+                button.setEnabled(true);
+
+                button.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        // Disabilita tutti i bottoni e rimuove i listener
+                        for (JButton b : enemyButtons) {
+                            for (ActionListener al : b.getActionListeners()) {
+                                b.removeActionListener(al);
+                            }
+                            b.setEnabled(false);
                         }
-                        b.setEnabled(false);
+
+                        System.out.println("Bersaglio selezionato: " + enemy.getClass().getSimpleName());
+                        
+                    	attacker.fight(attacker, levelMap.getAlliesList(), enemiesList);
+
                     }
+                });
 
-                    System.out.println("Bersaglio selezionato: " + enemy.getClass().getSimpleName());
-                    onTargetSelected.accept(enemy); // Esegui la lambda
-                }
-            };
-
-            button.addActionListener(actionListener);
-            button.setEnabled(true);
+            }
         }
     }
+    
+    /*
+     * public void chooseTarget(List<Character> enemiesList, Consumer<Character> onTargetSelected) {
+    List<JButton> enemyButtons = new ArrayList<>();
+
+    for (Character enemy : enemiesList) {
+        Point position = enemy.getPosition();
+        JButton button = this.levelMap.getButtonAt(position.getX(), position.getY());
+        enemyButtons.add(button);
+
+        ActionListener actionListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Disabilita tutti i bottoni e rimuove i listener
+                for (JButton b : enemyButtons) {
+                    for (ActionListener al : b.getActionListeners()) {
+                        b.removeActionListener(al);
+                    }
+                    b.setEnabled(false);
+                }
+
+                System.out.println("Bersaglio selezionato: " + enemy.getClass().getSimpleName());
+                onTargetSelected.accept(enemy); // Esegui la lambda
+            }
+        };
+
+        button.addActionListener(actionListener);
+        button.setEnabled(true);
+    }
+}
+
+     */
 
     
 }
