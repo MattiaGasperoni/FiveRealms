@@ -3,6 +3,8 @@ package model.characters;
 import java.awt.Image;
 import java.util.List;
 
+import javax.swing.ImageIcon;
+
 import model.equipment.potions.Potion;
 import model.equipment.weapons.Weapon;
 import model.point.Point;
@@ -43,6 +45,7 @@ public interface Character {
 	
 	public String getImagePath();
 	public Image getImage();
+	public ImageIcon getIcon();	
 	
 	public void whatToDo(/*Character character,*/ List<Character> alliedList, List<Character> enemyList, List<Point> positions);
 	public void fight(Character attackedCharacter, List<Character> alliedList, List<Character> enemyList) throws IllegalArgumentException;

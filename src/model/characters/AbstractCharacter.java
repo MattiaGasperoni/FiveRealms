@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
-
 import javax.swing.ImageIcon;
 
 import model.equipment.potions.*;
@@ -29,6 +28,7 @@ public abstract class AbstractCharacter implements Character, Serializable {
 	private Point position; 
 	private String imagePath; //filepath
 	private Image image;
+	private ImageIcon icon;
 	private boolean isAllied;
 	protected ArrayList<Weapon> availableWeapons;
 	protected static final Random rand = new Random();
@@ -123,9 +123,10 @@ public abstract class AbstractCharacter implements Character, Serializable {
 			this.increasePower(heroStatIncreasePercentage);
 			this.increaseDefence(heroStatIncreasePercentage);
 			this.increaseSpeed(heroStatIncreasePercentage);
+		
 			this.setImagePath("images/characters/" + getClass().getSimpleName().toLowerCase() + "/" + getClass().getSimpleName().toLowerCase() + "Hero.png");
-			ImageIcon icon = new ImageIcon(this.imagePath);
-	        this.image = icon.getImage().getScaledInstance(75, 45, Image.SCALE_AREA_AVERAGING);
+			this.icon = new ImageIcon(this.imagePath);
+	        this.image = this.icon.getImage().getScaledInstance(75, 45, Image.SCALE_AREA_AVERAGING);
 		}
 	}
 	
@@ -258,9 +259,8 @@ public abstract class AbstractCharacter implements Character, Serializable {
 
 	protected void generateDefaultImage() {
 		this.setImagePath("images/characters/" + getClass().getSimpleName().toLowerCase() + "/" + getClass().getSimpleName().toLowerCase() + rand.nextInt(1,4) + ".png"); //not sure this is correct, needs testing
-		//Pre-process images 
-		ImageIcon icon = new ImageIcon(this.imagePath);
-        this.image = icon.getImage().getScaledInstance(75, 45, Image.SCALE_AREA_AVERAGING); //Controls actual image size scaling on the map!!!
+		this.icon = new ImageIcon(this.imagePath);
+        this.image = this.icon.getImage().getScaledInstance(75, 45, Image.SCALE_AREA_AVERAGING); //Controls actual image size scaling on the map!!!
 	}
 
 	@Override
@@ -326,6 +326,11 @@ public abstract class AbstractCharacter implements Character, Serializable {
 	@Override
 	public Image getImage() {
 		return this.image;
+	}
+	
+	@Override
+	public ImageIcon getIcon() {
+		return this.icon;
 	}
 
 	public void setImagePath(String image) { //updates the icon-image too as there's no point to having them be different

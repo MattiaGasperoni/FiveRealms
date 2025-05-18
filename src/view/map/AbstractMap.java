@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 
 import javax.swing.*;
@@ -60,15 +61,6 @@ public abstract class AbstractMap
         this.enemiesPositionList = new ArrayList<>();
         this.random = new Random();
         this.initializePositionList();
-
-        // Popola la mappa con tutti i personaggi
-        for (Character enemy : enemiesList) {
-            characterMap.put(enemy, enemy.getPosition());
-        }
-
-        for (Character ally : alliesList) {
-            characterMap.put(ally, ally.getPosition());
-        }
     }
     
     
@@ -247,17 +239,19 @@ public abstract class AbstractMap
 	    }
 	}
 
-	private void spawnCharacterHelper(Character character, List<Point> positionList) 
-	{
+	private void spawnCharacterHelper(Character character, List<Point> positionList) {
 	    int target = random.nextInt(positionList.size());
 	    Point chosenPosition = positionList.remove(target);
 	    character.setPosition(chosenPosition);
+
+	    // Aggiorna characterMap solo ora che il personaggio ha posizione
+	    this.characterMap.put(character, chosenPosition);
 
 	    JButton button = this.gridPanel.getGridButtons()[chosenPosition.getX()][chosenPosition.getY()];
 	    button.setIcon(new ImageIcon(character.getImage()));
 	    button.setContentAreaFilled(false);
 	}
-	
+
 	private void initializePositionList() 
     {
 		this.alliesPositionList.add(new Point(16,4));
@@ -309,55 +303,43 @@ public abstract class AbstractMap
 	}
 	
 	
-	public void updateMap() {
-		
-        //button.setToolTipText("<html>" + "Righe"+row + "<br>" + "Colonne"+col + "</html>"); // Sarebbe da fare solo con bottoni con immagine
+	public void updateMap() 
+	{
+	    // Ottieni le strutture dati dalla classe
+	    Map<JButton, Point> imageButtonList = this.gridPanel.getImageButtonList();
+	    JButton[][] buttonGrid               = this.gridPanel.getGridButtons();
 
-	    /*Map<JButton, Point> imageButtonList = this.gridPanel.getImageButtonList();
-
-	    // CASO 1: Un bottone ha immagine ma NESSUN personaggio si trova in quella posizione
-	    for (Map.Entry<JButton, Point> entry : imageButtonList.entrySet()) 
-	    {
+	    // 1) Rimuove immagini dai bottoni che non hanno più un personaggio
+	    for (Map.Entry<JButton, Point> entry : imageButtonList.entrySet()) {
 	        JButton button = entry.getKey();
-	        Point buttonPos = entry.getValue();
-	        boolean personFound = false;
+	        Point point    = entry.getValue();
 
-	        // Stampa di debug per capire se un bottone ha un'immagine
-	        if (button.getIcon() != null) {
-	            System.out.println("Bottone con immagine trovato nella posizione " + buttonPos);
-	        }
+	        boolean pointOccupato = this.characterMap.values().stream()
+					                    .filter(Objects::nonNull)
+					                    .anyMatch(p -> p.equals(point));
 
-	        // Controlla se un personaggio è presente nella stessa posizione
-	        for (Point characterPos : characterMap.values()) {
-	            if (characterPos.equals(buttonPos)) {
-	                personFound = true;
-	                break;
-	            }
-	        }
 
-	        // Se non ci sono personaggi nella posizione del bottone, rimuovi l'immagine
-	        if (!personFound && button.getIcon() != null) {
-	            System.out.println("Nessun personaggio trovato in " + buttonPos + ", rimuovo immagine");
-	            button.setIcon(null); // Rimuovi immagine
+	        if (!pointOccupato) {
+	            button.setIcon(null); // Rimuove immagine
 	        }
 	    }
 
-	    // CASO 2: Un personaggio si trova su una posizione dove il bottone NON ha immagine
-	    for (Map.Entry<Character, Point> entry : characterMap.entrySet()) {
+	    // 2) Aggiunge immagini a bottoni dove è presente un personaggio ma non c'è immagine
+	    for (Map.Entry<Character, Point> entry : this.characterMap.entrySet()) {
 	        Character character = entry.getKey();
-	        Point characterPos = entry.getValue();
-	        JButton button = this.gridPanel.getGridButtons()[characterPos.getY()][characterPos.getX()];
+	        Point point         = entry.getValue();
 
-	        // Stampa di debug per capire se il personaggio ha un'immagine
-	        System.out.println("Controllando personaggio " + character + " nella posizione " + characterPos);
+	        if (point == null) {
+	            System.err.println("ERRORE: Personaggio " + character.getClass().getSimpleName() + " ha posizione null");
+	            continue;
+	        }
+
+	        JButton button = buttonGrid[point.getY()][point.getX()];
 
 	        if (button.getIcon() == null) {
-	            System.out.println("Nessuna immagine nel bottone alla posizione " + characterPos + ", aggiungo immagine del personaggio");
-	            ImageIcon originalIcon = new ImageIcon(character.getImage());
-	            Image scaledImage = originalIcon.getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH); // adatta la misura
-	            button.setIcon(new ImageIcon(scaledImage));
+	            button.setIcon(character.getIcon());
 	        }
-	    }*/
+	    }
+
 	}
-	
 }

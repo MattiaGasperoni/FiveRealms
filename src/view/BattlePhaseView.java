@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 import javax.swing.JButton;
@@ -35,54 +36,58 @@ public class BattlePhaseView
 
 	// Gestisce la fase di movimento, mostra la griglia delle possibili posizioni in cui il personaggio può spostarsi
     // e cliccando sulla posizione della griglia ti sposta in quel punto
-    public void movementPhase(Character attacker, List<Character> alliesList, List<Character> enemiesList) 
+    public void movementPhase(Character character, List<Character> alliesList, List<Character> enemiesList, Runnable onMovementCompleted)
     {
-        // Ottieni tutte le posizioni dei bottoni
-        List<Point> availableMoves = getAvailablePositions(attacker, alliesList, enemiesList);
-
-        //Mette i bottoni dentro alla lista availableButton 
-        //availableMoves.stream().forEach(a -> availableButton.add(this.levelMap.getButtonAt(a.getX(), a.getY())));
-        
-        // Mostra i movimenti disponibili sulla griglia
-        showAvailableMovementGrid(availableMoves);
-        
+        // Ottieni le posizioni in cui possiamo spostarci
+        List<Point> availableMoves = this.getAvailablePositions(character,onMovementCompleted);
+                
     }
 
-    // Questo metodo genera la lista dei bottoni, in cui il personaggio si può spostare
-    private List<Point> getAvailablePositions(Character character, List<Character> alliesList, List<Character> enemiesList) {
+    private List<Point> getAvailablePositions(Character character, Runnable onMovementCompleted) 
+    {
         List<Point> availableMoves = new ArrayList<>();
-        int moveRange = character.getSpeed() / 10;  // Range di movimento fisso per tutti i personaggi!!
-        
-        // Otteniamo tutti i pulsanti della mappa 
+        int moveRange = character.getSpeed() / 10;
         JButton[][] buttonGrid = this.levelMap.getGridButtons();
-        
-        // Ora dobbiamo scorrere tutti i pulsanti e prendiamo solo quelli abbastanza vicini al nostro personaggio
-        for (int y = 0; y < buttonGrid.length; y++){
-		    for (int x = 0; x < buttonGrid[y].length; x++){
-		        Point point = new Point(x, y);
-		        JButton button = buttonGrid[x][y];
-		        // Calcoliamo la distanza tra dove si trova il pesonaggio e l'iesimo bottone,  
-		        // se abbastanza vicini e non ce gia un personaggio lo inseriamo nella lista dei possibili movimenti. 
-		        if(point.distanceFrom(character.getPosition()) <= moveRange && !this.levelMap.isPositionOccupied(point)){
-		        	availableMoves.add(point);
-		        	
-		        	button.addActionListener(click ->
-	        			this.controller.move(levelMap, character, point)
-		            );
-		        	
-		        }
-		    }
-		}
-        
-        return availableMoves;
-    }
 
-    // Mostra la griglia con i movimenti disponibili
-    private void showAvailableMovementGrid(List<Point> availableMoves){
-        for (Point point : availableMoves) {
-            JButton button = this.levelMap.getButtonAt(point.getX(), point.getY());
-            button.setBackground(Color.GRAY);
+        // Per prevenire click multipli
+        AtomicBoolean movementDone = new AtomicBoolean(false);
+
+        for (int row = 0; row < buttonGrid.length; row++) {
+            for (int col = 0; col < buttonGrid[row].length; col++) {
+                Point point = new Point(row, col);
+                JButton button = buttonGrid[row][col];
+
+                if (point.distanceFrom(character.getPosition()) <= moveRange && !this.levelMap.isPositionOccupied(point)) 
+                {
+                    availableMoves.add(point);
+                    // Evidenzia i movimenti validi
+                    button.setBackground(Color.GRAY); 
+
+                    button.addActionListener(click -> 
+                    {
+                        // Assicura che il movimento venga eseguito solo una volta
+                        if (movementDone.compareAndSet(false, true)) 
+                        {
+                            this.controller.move(levelMap, character, point);
+
+                            // Rimuove i listener e resetta i colori da tutti i bottoni coinvolti
+                            for (Point p : availableMoves) 
+                            {
+                                JButton b = this.levelMap.getButtonAt(p.getX(), p.getY());
+                                for (ActionListener al : b.getActionListeners()) 
+                                {
+                                    b.removeActionListener(al);
+                                }
+                                b.setBackground(null); // Reset colore
+                            }
+                            onMovementCompleted.run();
+                        }
+                    });
+                }
+            }
         }
+
+        return availableMoves;
     }
 
     
@@ -109,36 +114,12 @@ public class BattlePhaseView
         return availableAttackMoves;
     }
     
-    // Mostra la griglia con gli attacchi possibili, fare un altro metodo che ti da una lista di posizioni occupate per l'attacco
-    private void showAvailableAttackGrid(List<Point> availableMoves){
-        for (Point point : availableMoves) {
-            JButton button = this.levelMap.getButtonAt(point.getX(), point.getY());
-            button.setBackground(Color.RED);
-        }
-    }
-    
-    
-    
 
-    // Seleziona un bersaglio tra gli avversari, IL metodo non funziona non aspetta che lutente clicchi il bersaglio
-    /*public Character chooseTarget(List<Character> enemiesList) 
+        
+    public void chooseTarget(List<Character> enemiesList, Character attacker) 
     {
-        for (Character enemy : enemiesList) 
-        {
-            Point position = enemy.getPosition();
-            JButton button = this.levelMap.getButtonAt(position.getX(), position.getY());
+	    System.out.print("sono nella Fase di attacco");
 
-            button.addActionListener(e -> {
-                selectedTarget = enemy;  // Assegna il bersaglio selezionato
-                System.out.println("Bersaglio selezionato: " + enemy.getClass().getSimpleName());
-            });
-        }
-        return this.selectedTarget;
-    }*/
-    
-
-    
-    public void chooseTarget(List<Character> enemiesList, Character attacker) {
         List<JButton> enemyButtons = new ArrayList<>();
 
         for (Character enemy : enemiesList) {
@@ -172,39 +153,13 @@ public class BattlePhaseView
 
             }
         }
-    }
+    }    
     
-    /*
-     * public void chooseTarget(List<Character> enemiesList, Consumer<Character> onTargetSelected) {
-    List<JButton> enemyButtons = new ArrayList<>();
-
-    for (Character enemy : enemiesList) {
-        Point position = enemy.getPosition();
-        JButton button = this.levelMap.getButtonAt(position.getX(), position.getY());
-        enemyButtons.add(button);
-
-        ActionListener actionListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Disabilita tutti i bottoni e rimuove i listener
-                for (JButton b : enemyButtons) {
-                    for (ActionListener al : b.getActionListeners()) {
-                        b.removeActionListener(al);
-                    }
-                    b.setEnabled(false);
-                }
-
-                System.out.println("Bersaglio selezionato: " + enemy.getClass().getSimpleName());
-                onTargetSelected.accept(enemy); // Esegui la lambda
-            }
-        };
-
-        button.addActionListener(actionListener);
-        button.setEnabled(true);
+    // Mostra la griglia con gli attacchi possibili, fare un altro metodo che ti da una lista di posizioni occupate per l'attacco
+    private void showAvailableAttackGrid(List<Point> availableMoves){
+        for (Point point : availableMoves) {
+            JButton button = this.levelMap.getButtonAt(point.getX(), point.getY());
+            button.setBackground(Color.RED);
+        }
     }
-}
-
-     */
-
-    
 }

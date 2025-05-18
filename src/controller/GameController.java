@@ -183,6 +183,7 @@ public class GameController
     public void move(AbstractMap map, Character character, Point point) {
         map.moveCharacter(character, point);  // Move the character on the map
         character.moveTo(point);  // Update the character's position
+        map.updateMap();  // Refresh the map to reflect the new position
     }
     
     

@@ -108,22 +108,16 @@ public class Level
             // se e' un nemico l'A.I. decide dove spostarlo e chi attaccare
             if(attacker.isAllied()) 
             {
-            	
-            	this.movementPhaseManager.movementPhase(attacker, alliesList, enemiesList);
-            	
-            	/*this.movementPhaseManager.chooseTarget(this.enemiesList, target -> 
-                {
-                	// Il personaggio attacca il target
-                	attacker.fight(target, this.alliesList, this.enemiesList);
-                });*/
-            	
-            	this.movementPhaseManager.chooseTarget(this.enemiesList, attacker);
+            	System.out.println("Fase di movimento");
+            	this.movementPhaseManager.movementPhase(attacker, alliesList, enemiesList, () -> 
+            	{
+            	    this.movementPhaseManager.chooseTarget(this.enemiesList, attacker);
+            	});
 
-            	
             }
             else 
             {
-            	//..
+            	System.out.print("Bot non implementato");
             }           
                              
             // Ricostruisci la coda dell'ordine di attacco senza i personaggi morti
@@ -133,16 +127,13 @@ public class Level
                 Stream.concat(alliesList.stream(), enemiesList.stream())
                       .filter(Character::isAlive)
                       .toList()
-            );   	
-    		
+            );   		
     	}
         else 
         {
             //Finito il round, passiamo alla fase di aggiornamento della mappa
             currentPhase = LevelPhase.UPDATE_MAP;
         }
-
- 
     }
 	
     private void handleUpdateMap() 
