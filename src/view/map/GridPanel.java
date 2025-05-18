@@ -67,11 +67,13 @@ public class GridPanel extends JPanel
     }
 
 
-    /**
+
+	/**
      * Displays a dialog with the button's coordinates when clicked.
      * @param row The row index of the button.
      * @param col The column index of the button.
      */
+    // Quando siamo nella fase di spostamento deve spostarsi
     private void showButtonCoordinates(int row, int col) {
         JOptionPane.showMessageDialog(layeredPane, "Position: [" + row + ", " + col + "]");
     }

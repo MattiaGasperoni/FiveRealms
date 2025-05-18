@@ -1,9 +1,11 @@
 package view;
 
+import java.awt.Button;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -20,7 +22,7 @@ import view.map.LevelMap;
 public class BattlePhaseView 
 {
 
-    private LevelMap levelMap;
+	private LevelMap levelMap;
     private Character selectedTarget;  // Variabile per il bersaglio selezionato
     private GameController controller;
     
@@ -31,75 +33,92 @@ public class BattlePhaseView
 		this.selectedTarget = null;
 	}
 
-	// Gestisce la fase di movimento
+	// Gestisce la fase di movimento, mostra la griglia delle possibili posizioni in cui il personaggio può spostarsi
+    // e cliccando sulla posizione della griglia ti sposta in quel punto
     public void movementPhase(Character attacker, List<Character> alliesList, List<Character> enemiesList) 
     {
         // Ottieni tutte le posizioni dei bottoni
-        List<Point> availableMoves = getAvailableMoves(attacker, alliesList, enemiesList);
+        List<Point> availableMoves = getAvailablePositions(attacker, alliesList, enemiesList);
 
+        //Mette i bottoni dentro alla lista availableButton 
+        //availableMoves.stream().forEach(a -> availableButton.add(this.levelMap.getButtonAt(a.getX(), a.getY())));
+        
         // Mostra i movimenti disponibili sulla griglia
-        showGrid(availableMoves, attacker);
+        showAvailableMovementGrid(availableMoves);
+        
     }
 
-    // Ottiene le posizioni valide per i movimenti
-    private List<Point> getAvailableMoves(Character attacker, List<Character> alliesList, List<Character> enemiesList) {
+    // Questo metodo genera la lista dei bottoni, in cui il personaggio si può spostare
+    private List<Point> getAvailablePositions(Character character, List<Character> alliesList, List<Character> enemiesList) {
         List<Point> availableMoves = new ArrayList<>();
-        int moveRange = attacker.getSpeed() / 10;  // Da cambiare utilizzando la costante in AbstractCharacter!!
-        Point currentPosition = attacker.getPosition();
-
-        // Aggiungi le posizioni libere entro il raggio di movimento
-        for (int dx = -moveRange; dx <= moveRange; dx++) {
-            for (int dy = -moveRange; dy <= moveRange; dy++) {
-                int newX = currentPosition.getX() + dx;
-                int newY = currentPosition.getY() + dy;
-
-                if (isValidPosition(newX, newY) && !isOccupied(newX, newY, alliesList, enemiesList)) {
-                    availableMoves.add(new Point(newX, newY));
-                }
-            }
-        }
+        int moveRange = character.getSpeed() / 10;  // Range di movimento fisso per tutti i personaggi!!
+        
+        // Otteniamo tutti i pulsanti della mappa 
+        JButton[][] buttonGrid = this.levelMap.getGridButtons();
+        
+        // Ora dobbiamo scorrere tutti i pulsanti e prendiamo solo quelli abbastanza vicini al nostro personaggio
+        for (int y = 0; y < buttonGrid.length; y++){
+		    for (int x = 0; x < buttonGrid[y].length; x++){
+		        Point point = new Point(x, y);
+		        JButton button = buttonGrid[x][y];
+		        // Calcoliamo la distanza tra dove si trova il pesonaggio e l'iesimo bottone,  
+		        // se abbastanza vicini e non ce gia un personaggio lo inseriamo nella lista dei possibili movimenti. 
+		        if(point.distanceFrom(character.getPosition()) <= moveRange && !this.levelMap.isPositionOccupied(point)){
+		        	availableMoves.add(point);
+		        	
+		        	button.addActionListener(click ->
+	        			this.controller.move(levelMap, character, point)
+		            );
+		        	
+		        }
+		    }
+		}
+        
         return availableMoves;
     }
 
-    // Verifica se la posizione è valida (entro i limiti della griglia)
-    private boolean isValidPosition(int x, int y) {
-        return x >= 0 && x < AbstractMap.GRID_SIZE_WIDTH && y >= 0 && y < AbstractMap.GRID_SIZE_HEIGHT;
-    }
-
-    // Verifica se una posizione è occupata da un alleato o nemico
-    private boolean isOccupied(int x, int y, List<Character> alliesList, List<Character> enemiesList) {
-        for (Character character : alliesList) {
-            if (character.getPosition().getX() == x && character.getPosition().getY() == y) {
-                return true;
-            }
-        }
-        for (Character character : enemiesList) {
-            if (character.getPosition().getX() == x && character.getPosition().getY() == y) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
     // Mostra la griglia con i movimenti disponibili
-    private void showGrid(List<Point> availableMoves, Character attacker) 
-   {
+    private void showAvailableMovementGrid(List<Point> availableMoves){
         for (Point point : availableMoves) {
             JButton button = this.levelMap.getButtonAt(point.getX(), point.getY());
             button.setBackground(Color.GRAY);
-            button.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                	try {
-                		controller.move(levelMap, attacker, point);
-                	}catch (Exception ex) {
-						// Aggiunta di jDialog con messaggio di e.getMessage()
-                		
-					}
-                }
-            });
         }
     }
+
+    
+ // Questo metodo genera la lista dei bottoni, in cui il personaggio si può spostare
+    private List<Point> getAttackablePositions(Character character, List<Character> alliesList, List<Character> enemiesList) {
+        List<Point> availableAttackMoves = new ArrayList<>();
+        
+        // Otteniamo tutti i pulsanti della mappa 
+        JButton[][] buttonGrid = this.levelMap.getGridButtons();
+        
+        // Ora dobbiamo scorrere tutti i pulsanti e prendiamo solo quelli abbastanza vicini al nostro personaggio
+        for (int y = 0; y < buttonGrid.length; y++){
+		    for (int x = 0; x < buttonGrid[y].length; x++){
+		        Point point = new Point(x, y);
+		        
+		        // Calcoliamo la distanza tra dove si trova il pesonaggio e l'iesimo bottone,  
+		        // se abbastanza vicini e non ce gia un personaggio lo inseriamo nella lista dei possibili movimenti. 
+		        if(point.distanceFrom(character.getPosition()) <= character.getRange() && this.levelMap.isPositionOccupied(point)){
+		        	availableAttackMoves.add(point);
+		        }
+		    }
+		}
+        
+        return availableAttackMoves;
+    }
+    
+    // Mostra la griglia con gli attacchi possibili, fare un altro metodo che ti da una lista di posizioni occupate per l'attacco
+    private void showAvailableAttackGrid(List<Point> availableMoves){
+        for (Point point : availableMoves) {
+            JButton button = this.levelMap.getButtonAt(point.getX(), point.getY());
+            button.setBackground(Color.RED);
+        }
+    }
+    
+    
+    
 
     // Seleziona un bersaglio tra gli avversari, IL metodo non funziona non aspetta che lutente clicchi il bersaglio
     /*public Character chooseTarget(List<Character> enemiesList) 

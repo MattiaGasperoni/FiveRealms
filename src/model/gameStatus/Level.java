@@ -87,6 +87,8 @@ public class Level
 
 	private void handleMovementAttackPhase() 
     {   
+		// Bisogna sbiscenare questo metodo privato in piu metodi, finche non selezioni un blocco dove spostarti ti continua
+		// a rimandare in quella fase del gioco 
     	// Ottieni l'ordine del round
     	PriorityQueue<Character> characterTurnOrder = this.getTurnOrder(this.alliesList, this.enemiesList);
     	
@@ -106,7 +108,8 @@ public class Level
             // se e' un nemico l'A.I. decide dove spostarlo e chi attaccare
             if(attacker.isAllied()) 
             {
-            	this.movementPhaseManager.movementPhase(attacker, alliesList, enemiesList);  
+            	
+            	this.movementPhaseManager.movementPhase(attacker, alliesList, enemiesList);
             	
             	/*this.movementPhaseManager.chooseTarget(this.enemiesList, target -> 
                 {

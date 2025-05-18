@@ -27,8 +27,6 @@ public class MainMenu
         this.setupLayout();
     }
 
-
-
     public void show() {
     	this.frame.setVisible(true);
     }

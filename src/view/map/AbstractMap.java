@@ -36,8 +36,8 @@ public abstract class AbstractMap
     private final int numLevel;          // Numero del livello
     
     private Map<Character, Point> characterMap;
-    private List<Point> alliesPositionList;
-    private List<Point> enemiesPositionList;
+    private List<Point> alliesPositionList;	// per lo spawn
+    private List<Point> enemiesPositionList; // per lo spawn
     
     private Random random;
     
@@ -297,6 +297,15 @@ public abstract class AbstractMap
 
 	public List<Character> getAlliesList() {
 		return alliesList;
+	}
+	
+	public JButton[][] getGridButtons() {
+        return this.gridPanel.getGridButtons();
+    }
+	
+	// Metodo che ti dice se è occupata gia la posizione di un personaggio
+	public boolean isPositionOccupied(Point point) {
+		return this.alliesList.stream().anyMatch(a -> a.getPosition().equals(point)) || this.enemiesList.stream().anyMatch(a -> a.getPosition().equals(point));
 	}
 	
 	
