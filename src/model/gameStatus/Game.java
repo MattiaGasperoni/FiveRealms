@@ -205,7 +205,7 @@ public class Game
     private void initializeGameLevels() {
         // Popolo le liste di nemici dei livelli principali
         List<Character> level1Enemies = new ArrayList<>();
-        level1Enemies.add(new Juggernaut()); //KnightBoss
+        level1Enemies.add(new KnightBoss()); //KnightBoss
         level1Enemies.add(new Knight());
         level1Enemies.add(new Knight());
         level1Enemies.add(new Barbarian());

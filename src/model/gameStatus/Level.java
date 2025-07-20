@@ -23,6 +23,7 @@ public class Level
     private List<Character> alliesList;           // Lista dei personaggi con cui giochiamo il livello
     private boolean levelCompleted;               // Flag che indica se il livello è completato
     private boolean levelFailed;                  // Flag che indica se il livello è fallito
+    private boolean combatPhaseInitiated;		  // Flag che indica se la fase di combattimento è già iniziata
         
     private final LevelMap levelMap;                    // Mappa del livello
     private final BattlePhaseView movementPhaseManager; // Gestisce l'interazione con la mappa, i personaggi e l'utente nella fase BATTLE
@@ -41,6 +42,7 @@ public class Level
         
         this.levelCompleted = false;
         this.levelFailed = false;
+        this.combatPhaseInitiated = false;
     }
 
     
@@ -67,7 +69,8 @@ public class Level
         switch (this.currentPhase) 
         {
             case BATTLE:
-            	handleMovementAttackPhase();
+            	if(!combatPhaseInitiated)
+            		handleMovementAttackPhase();
                 break;
             case UPDATE_MAP:
                 handleUpdateMap();
@@ -92,8 +95,9 @@ public class Level
     	// Ottieni l'ordine del round
     	PriorityQueue<Character> characterTurnOrder = this.getTurnOrder(this.alliesList, this.enemiesList);
     	
-    	if (this.hasRemainingAttackers(characterTurnOrder))    	
+    	if (this.hasRemainingAttackers(characterTurnOrder))
     	{
+    		this.combatPhaseInitiated = true;
         	// Estrai il personaggio più veloce e lo rimuove dalla coda essedo il primo che attacca
             Character attacker = characterTurnOrder.poll(); 
             
