@@ -73,6 +73,7 @@ public class Level
             		handleMovementAttackPhase();
                 break;
             case UPDATE_MAP:
+            	this.combatPhaseInitiated = false;
                 handleUpdateMap();
             case CHECK_END:
                 handleEndCheck();
