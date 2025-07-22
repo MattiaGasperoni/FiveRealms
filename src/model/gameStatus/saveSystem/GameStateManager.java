@@ -5,6 +5,8 @@ import model.characters.Character;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -111,10 +113,12 @@ public class GameStateManager
      */
     private File getLatestSaveFile() {
         File directory = new File(DIRECTORY_NAME);
-        if (!directory.exists()) return null;
         File[] files = directory.listFiles();
         if (files == null || files.length == 0) return null;
-        return files[files.length - 1];  // Return the last file in the directory
+        return Arrays.stream(files)
+                     .filter(File::isFile)
+                     .max(Comparator.comparingLong(File::lastModified))
+                     .orElse(null);
     }
 
     /**

@@ -1,34 +1,25 @@
 package view;
 
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.IOException;
 import java.util.List;
 import javax.swing.*;
+
 import controller.GameController;
 import model.characters.Character;
-import view.map.GridPanel;
 
-public class PauseMenu{
-	
-	private JFrame frame;				 // Finestra principale del gioco
-	private GridPanel gridPanel;       // Griglia di bottoni
-    private JLayeredPane layeredPanel;   // Gestisce i vari layer del frame
+public class PauseMenu {
 
-    private List<Character> enemiesList; // Lista dei nemici
-    private List<Character> alliesList;  // Lista degli alleati
-    private final int numLevel;          // Numero del livello
-    
+    private JFrame frame;
+    private JLayeredPane layeredPanel;
+    private List<Character> enemiesList;
+    private List<Character> alliesList;
+    private final int numLevel;
     private GameController controller;
-    
-    private JButton resumeButton;
-    private JButton saveButton;
-    private JButton exitButton;
-    
-	
-    public PauseMenu(JFrame frame, JLayeredPane layeredPanel, List<Character> enemiesList, List<Character> alliesList, int numLevel, GameController controller) {
+
+    public PauseMenu(JFrame frame, JLayeredPane layeredPanel, List<Character> enemiesList,
+                     List<Character> alliesList, int numLevel, GameController controller) {
         this.frame = frame;
         this.layeredPanel = layeredPanel;
         this.enemiesList = enemiesList;
@@ -37,13 +28,7 @@ public class PauseMenu{
         this.controller = controller;
     }
 
-	
-	/**
-     * Initializes the Pause menu with buttons for resuming, saving, and exiting the game.
-     */
-    public void initializePauseMenu() 
-    {
-        // **Pannello unico che copre tutta la finestra**
+    public void initializePauseMenu() {
         JPanel pauseMenuPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -54,74 +39,56 @@ public class PauseMenu{
         };
 
         pauseMenuPanel.setSize(frame.getSize());
-        pauseMenuPanel.setOpaque(false); // Mantiene la trasparenza del background
-        pauseMenuPanel.setLayout(new GridBagLayout()); // Layout per centrare elementi
+        pauseMenuPanel.setOpaque(false);
+        pauseMenuPanel.setLayout(new GridBagLayout());
         pauseMenuPanel.setVisible(false);
-
-        // **Impedisce i clic su elementi esterni**
-        pauseMenuPanel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                e.consume(); // Impedisce qualsiasi clic fuori dal menu
-            }
-        });
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.insets = new Insets(10, 0, 20, 0); // Spaziatura
+        gbc.insets = new Insets(10, 0, 20, 0);
         gbc.anchor = GridBagConstraints.CENTER;
 
-        // **Titolo centrato**
         JLabel titleLabel = new JLabel("PAUSE MENU", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 32));
+        titleLabel.setFont(new Font("Stencil", Font.BOLD, 32));
         titleLabel.setForeground(Color.WHITE);
 
-        // **Pannello interno per i pulsanti**
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
         buttonPanel.setOpaque(false);
 
-        // Creazione dei pulsanti
-        JButton resumeButton = new JButton("Resume");
-        JButton saveButton = new JButton("Save Game");
-        JButton exitButton = new JButton("Exit");
+        JButton resumeButton = createButton("Resume");
+        JButton saveButton = createButton("Save Game");
+        JButton exitButton = createButton("Exit");
 
-        for (JButton button : new JButton[]{resumeButton, saveButton, exitButton}) {
-            button.setFont(new Font("Arial", Font.PLAIN, 20));
-            button.setAlignmentX(Component.CENTER_ALIGNMENT);
-            button.setMaximumSize(new Dimension(200, 50));
-            buttonPanel.add(Box.createRigidArea(new Dimension(0, 15))); // Spaziatura tra i bottoni
-            buttonPanel.add(button);
-        }
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+        buttonPanel.add(resumeButton);
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+        buttonPanel.add(saveButton);
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+        buttonPanel.add(exitButton);
 
-        // **Azioni dei pulsanti** ----> da togliere pk ci sono i metodi sotto
         resumeButton.addActionListener(e -> pauseMenuPanel.setVisible(false));
 
         saveButton.addActionListener(e -> {
             try {
-                this.controller.saveGame(this.alliesList, this.enemiesList, this.numLevel);
+                controller.saveGame(alliesList, enemiesList, numLevel);
                 System.out.println("Game saved successfully!");
                 pauseMenuPanel.setVisible(false);
-                
             } catch (IOException ex) {
                 System.err.println("Error saving game: " + ex.getMessage());
             }
         });
 
-        exitButton.addActionListener(e -> {
-            System.out.println("You chose to close the game");
-            System.exit(0);
-        });
+        exitButton.addActionListener(e -> System.exit(0));
 
-        gbc.gridy++; // Posiziona sotto il titolo
+        gbc.gridy++;
         pauseMenuPanel.add(titleLabel, gbc);
         gbc.gridy++;
-        pauseMenuPanel.add(buttonPanel, gbc); // Aggiunge i pulsanti centrati
+        pauseMenuPanel.add(buttonPanel, gbc);
 
-        // **Mostra il menu quando si clicca sull'immagine**
         JButton menuButton = new JButton(new ImageIcon(new ImageIcon("images/pauseGame.png")
-            .getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+                .getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
 
         menuButton.setBounds(10, 10, 60, 60);
         menuButton.setBorderPainted(false);
@@ -129,22 +96,31 @@ public class PauseMenu{
         menuButton.setFocusPainted(false);
         menuButton.addActionListener(e -> pauseMenuPanel.setVisible(true));
 
-        this.layeredPanel.add(pauseMenuPanel, Integer.valueOf(3));
-        this.layeredPanel.add(menuButton, Integer.valueOf(2));
-    }
-    
-    
-    // Farli bene
-    public void addYesListener(ActionListener listener) {
-    	this.resumeButton.addActionListener(listener);
+        layeredPanel.add(pauseMenuPanel, Integer.valueOf(3));
+        layeredPanel.add(menuButton, Integer.valueOf(2));
     }
 
-    public void addNoListener(ActionListener listener) {
-    	this.saveButton.addActionListener(listener);
-    }
+    private JButton createButton(String text) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("Stencil", Font.BOLD, 22));
+        button.setForeground(Color.WHITE);
+        button.setBackground(new Color(34, 34, 34));
+        button.setBorder(BorderFactory.createLineBorder(Color.GREEN, 2));
+        button.setFocusPainted(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        button.setMaximumSize(new Dimension(250, 60));
 
-    public void addExitListener(ActionListener listener) {
-    	this.exitButton.addActionListener(listener);
-    }
+        button.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent evt) {
+                button.setBackground(new Color(44, 44, 44));
+                button.setBorder(BorderFactory.createLineBorder(Color.YELLOW, 2));
+            }
+            public void mouseExited(MouseEvent evt) {
+                button.setBackground(new Color(34, 34, 34));
+                button.setBorder(BorderFactory.createLineBorder(Color.GREEN, 2));
+            }
+        });
 
+        return button;
+    }
 }
