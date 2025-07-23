@@ -88,7 +88,8 @@ public class BattlePhaseView
             JButton button = this.levelMap.getButtonAt(validPoint.getX(), validPoint.getY());
             
             // Evidenzia i movimenti validi
-            button.setBackground(Color.GRAY);
+            //button.setBackground(Color.GRAY);
+            this.levelMap.colourPositionAvailable(availableMoves);
             
             // Crea il listener per questa specifica posizione
             ActionListener moveListener = click -> 
@@ -119,17 +120,20 @@ public class BattlePhaseView
     // Metodo helper per pulire l'interfaccia dopo il movimento
     private void cleanupMovementUI(List<Point> availableMoves) 
     {
-        for (Point p : availableMoves) {
+        for (Point p : availableMoves) 
+        {
             JButton button = this.levelMap.getButtonAt(p.getX(), p.getY());
             
             // Rimuove tutti gli ActionListener dal bottone
             ActionListener[] listeners = button.getActionListeners();
-            for (ActionListener listener : listeners) {
+            
+            for (ActionListener listener : listeners)
+            {
                 button.removeActionListener(listener);
             }
             
             // Reset del colore di sfondo
-            button.setBackground(null);
+            this.levelMap.resetGridColors();
         }
     }
     
@@ -157,47 +161,78 @@ public class BattlePhaseView
     }
     
 
-    public void chooseTarget(List<Character> enemiesList, Character attacker, Runnable onAttackCompleted) {
-        System.out.print("sono nella Fase di attacco");
+    public void chooseTarget(List<Character> enemiesList, Character attacker, Runnable onAttackCompleted) 
+    {
+        System.out.println("[Attacco] Fase di attacco iniziata per: " + attacker.getClass().getSimpleName());
 
+        // Verifica se almeno un nemico è nel raggio
+        boolean hasReachableEnemy = enemiesList.stream()
+            .anyMatch(enemy -> attacker.getPosition().distanceFrom(enemy.getPosition()) <= attacker.getWeapon().getRange());
+
+        if (!hasReachableEnemy) {
+            System.out.println("[Attacco] Nessun nemico è nel raggio di attacco. Fase annullata.");
+            onAttackCompleted.run();
+            return;
+        }
+
+        // Se almeno un nemico è nel raggio, continua
         List<JButton> enemyButtons = new ArrayList<>();
 
-        for (Character enemy : enemiesList) {
-            Point position = enemy.getPosition();
-            JButton button = this.levelMap.getButtonAt(position.getX(), position.getY());
-            enemyButtons.add(button);
+        for (Character enemy : enemiesList) 
+        {
+            Point enemyPos = enemy.getPosition();
+            JButton enemyButton = this.levelMap.getButtonAt(enemyPos.getX(), enemyPos.getY());
+            enemyButtons.add(enemyButton);
 
-            // Calcolo della distanza
-            int distance = attacker.getPosition().distanceFrom(enemy.getPosition());
+            int distance = attacker.getPosition().distanceFrom(enemyPos);
+            int range = attacker.getWeapon().getRange();
 
-            if (distance <= attacker.getWeapon().getRange()) {
-                button.setEnabled(true);
+            System.out.println("[Attacco] Distanza da " + enemy.getClass().getSimpleName() + ": " + distance + " (Range: " + range + ")");
 
-                button.addActionListener(new ActionListener() {
+            if (distance <= range) 
+            {
+                enemyButton.setEnabled(true);
+                System.out.println("[Attacco] " + enemy.getClass().getSimpleName() + " è nel raggio. Bottone abilitato.");
+
+                enemyButton.addActionListener(new ActionListener() 
+                {
                     @Override
-                    public void actionPerformed(ActionEvent e) {
+                    public void actionPerformed(ActionEvent e) 
+                    {
+                        System.out.println("[Attacco] Bersaglio selezionato: " + enemy.getClass().getSimpleName());
+
                         // Disabilita tutti i bottoni e rimuove i listener
-                        for (JButton b : enemyButtons) {
+                        for (JButton b : enemyButtons) 
+                        {
                             for (ActionListener al : b.getActionListeners()) {
                                 b.removeActionListener(al);
                             }
-                            b.setEnabled(false);
+                            // b.setEnabled(false); // Scommenta se vuoi disabilitare anche visivamente
                         }
 
-                        System.out.println("Bersaglio selezionato: " + enemy.getClass().getSimpleName());
-
                         // Esegui l'attacco
-                        attacker.fight(attacker, levelMap.getAlliesList(), enemiesList);
+                        attacker.fight(enemy, levelMap.getAlliesList(), enemiesList);
+                        System.out.println("[Attacco] Attacco eseguito da " + attacker.getClass().getSimpleName());
 
-                        // Chiama il callback per notificare che l'attacco è completato
-                        if (onAttackCompleted != null) {
+                        // Callback completamento
+                        if (onAttackCompleted != null) 
+                        {
+                            System.out.println("[Attacco] Callback di fine attacco invocata.");
                             onAttackCompleted.run();
                         }
                     }
                 });
             }
+            else 
+            {
+                System.out.println("[Attacco] " + enemy.getClass().getSimpleName() + " è fuori dal raggio. Bottone disabilitato.");
+            }
         }
+
+        System.out.println("[Attacco] In attesa selezione del bersaglio...");
     }
+
+
     
     // Mostra la griglia con gli attacchi possibili, fare un altro metodo che ti da una lista di posizioni occupate per l'attacco
     private void showAvailableAttackGrid(List<Point> availableMoves){

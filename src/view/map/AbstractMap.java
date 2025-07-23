@@ -191,6 +191,66 @@ public abstract class AbstractMap
     }
      
     
+    public void colourPositionAvailable(List<Point> availableMoves) 
+    {
+        if (availableMoves == null || availableMoves.isEmpty()) 
+        {
+            System.err.println("La lista delle posizioni disponibili è vuota o nulla.");
+            return;
+        }
+
+        JButton[][] buttonGrid = this.gridPanel.getGridButtons();
+
+        int rows = buttonGrid.length;
+        int cols = buttonGrid[0].length;
+
+        for (Point p : availableMoves) 
+        {
+            int y = p.getX();
+            int x = p.getY();
+
+            // Controllo bounds per evitare eccezioni
+            if (y >= 0 && y < rows && x >= 0 && x < cols) 
+            {
+                JButton button = buttonGrid[y][x];
+
+                Color semiTransparentGray = new Color(200, 200, 200, 100);
+
+                // Per rendere la trasparenza visibile bisogna disegnare su un componente non opaco
+                button.setBackground(semiTransparentGray);
+                button.setOpaque(true);                 // Importante: deve essere false!
+                button.setContentAreaFilled(true);       // Importante: true per disegnare il colore
+                button.setBorderPainted(false);          // opzionale
+                button.setFocusPainted(false);
+                button.setRolloverEnabled(false);
+            } 
+        }
+
+        // Rinfresca la griglia per mostrare i cambiamenti
+        this.gridPanel.revalidate();
+        this.gridPanel.repaint();
+    }
+    
+    public void resetGridColors() 
+    {
+        JButton[][] buttonGrid = this.gridPanel.getGridButtons();
+
+        for (int y = 0; y < buttonGrid.length; y++) 
+        {
+            for (int x = 0; x < buttonGrid[y].length; x++) 
+            {
+                JButton button = buttonGrid[y][x];
+                button.setOpaque(false);         
+            }
+        }
+
+        this.gridPanel.revalidate();
+        this.gridPanel.repaint();
+    }
+
+
+    
+    
     /**
 	 * Closes the game window.
 	 */
@@ -269,9 +329,6 @@ public abstract class AbstractMap
 		this.enemiesPositionList.add(new Point(5,10));
 	}
 
-
-
-    
 	
 	/* Il metodo rimuove l'immagine dove si trova il personaggio e aggiunge l'immagine del personaggio nel  bottone targhet
 	 * moveCharacter usa moveTo e aggiornamento grafico
@@ -400,7 +457,7 @@ public abstract class AbstractMap
 	        JButton button = buttonGrid[row][col];
 	        if (button.getIcon() == null)
 	        {
-	            button.setIcon(character.getIcon());
+	            button.setIcon(new ImageIcon(character.getImage()));
 	        }
 	    }
 	}

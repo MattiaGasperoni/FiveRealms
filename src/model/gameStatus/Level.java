@@ -206,7 +206,7 @@ public class Level
         currentBattleState = BattleState.WAITING_FOR_TARGET;
         
         this.movementPhaseManager.chooseTarget(enemiesList, currentAttacker, () -> {
-            System.out.println("Attacco completato!");
+            System.out.println("Fase di Attacco completato!");
             this.onAttackCompleted();
         });
     }
