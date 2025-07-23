@@ -1,6 +1,7 @@
 package model.point;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import model.equipment.weapons.Weapon;
 
@@ -41,5 +42,18 @@ public class Point  implements Serializable{
 	@Override
 	public String toString() {
 		return "Point [x=" + x + ", y=" + y + "]";
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+	    if (this == obj) return true;
+	    if (obj == null || getClass() != obj.getClass()) return false;
+	    Point point = (Point) obj;
+	    return x == point.x && y == point.y;
+	}
+
+	@Override
+	public int hashCode() {
+	    return Objects.hash(x, y);
 	}
 }

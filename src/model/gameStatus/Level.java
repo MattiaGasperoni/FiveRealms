@@ -226,7 +226,8 @@ public class Level
     
     // Metod che gestisce il turno dell'AI
     private void startAITurn()
-    {        
+    {
+    	Character deadCharacter = null;
         System.out.println("Turno AI");
 		Character victim = alliesList.stream()
 				   .min(Comparator.comparing(charac -> charac.getDistanceInSquares(currentAttacker.getPosition()))) //NOTE: If that's the wrong order (hard to test right now), put .reversed() on it. Picks closest enemy.
@@ -248,7 +249,17 @@ public class Level
         Set<Point> occupiedPositions = new HashSet<>();
         alliesList.stream().forEach(character -> occupiedPositions.add(character.getPosition()));
         enemiesList.stream().forEach(character -> occupiedPositions.add(character.getPosition()));
-        	
+        
+        alliesList.stream().forEach(character -> System.out.println(character.getPosition()));        
+        System.out.println("BEFORE FILTERING BY OCCUPIED POSITIONS");
+        System.out.println(availablePositions.stream()
+				.filter(point -> currentAttacker.getDistanceInSquares(point) <= (currentAttacker.getSpeed() / AbstractCharacter.SPEED_TO_MOVEMENT))
+				.toList());
+        System.out.println(availablePositions.stream()
+				.filter(point -> currentAttacker.getDistanceInSquares(point) <= (currentAttacker.getSpeed() / AbstractCharacter.SPEED_TO_MOVEMENT))
+				.filter(point -> !occupiedPositions.contains(point)).toList());
+        System.out.println("AFTER FILTERING BY OCCUPIED POSITIONS");
+        
         movementPhaseManager.graphicMovementCharacterToPoint(currentAttacker, availablePositions.stream()
 				.filter(point -> currentAttacker.getDistanceInSquares(point) <= (currentAttacker.getSpeed() / AbstractCharacter.SPEED_TO_MOVEMENT))
 				.filter(point -> !occupiedPositions.contains(point)) //supposed to filter out already-occupied positions...
@@ -256,7 +267,9 @@ public class Level
 				.orElse(currentAttacker.getPosition()));
         
         try {
-        	currentAttacker.fight(victim, alliesList, enemiesList);
+        	deadCharacter = currentAttacker.fight(victim, alliesList, enemiesList);
+        	if(deadCharacter != null)
+        		this.levelMap.removeCharacter(deadCharacter, deadCharacter.getPosition());
 		} catch (IllegalArgumentException e) { //to handle the case where: even the closest enemy is still out of attack range after movement
 			System.out.println("Character " + this.getClass().getSimpleName() + " cannot find an enemy to fight, ERROR: " + e); //for debug purposes
 			System.out.println("Attempted to attack " + victim.getClass().getSimpleName() + " in position: " + victim.getPosition() + " but self was in position: " + currentAttacker.getPosition()); //for debug purposes

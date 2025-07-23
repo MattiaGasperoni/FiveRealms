@@ -214,7 +214,9 @@ public class BattlePhaseView
                         System.out.println("Vita attaccante: "+ attacker.getCurrentHealth());
                         System.out.println("Vita nemico: "+ enemy.getCurrentHealth());
 	        	        
-                        attacker.fight(enemy, levelMap.getAlliesList(), enemiesList);
+                        Character deadCharacter = attacker.fight(enemy, levelMap.getAlliesList(), enemiesList);
+                        if(deadCharacter != null)
+                    		levelMap.removeCharacter(deadCharacter, deadCharacter.getPosition());
                         System.out.println("[Attacco] Attacco eseguito da " + attacker.getClass().getSimpleName());
                         
                         System.out.println("Vita attaccante: "+ attacker.getCurrentHealth());

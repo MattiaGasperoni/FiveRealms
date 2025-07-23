@@ -136,8 +136,11 @@ public abstract class AbstractCharacter implements Character, Serializable {
 		this.position = position;
 	}
 
+	//If someone dies, returns their Character, otherwise returns null
 	@Override
-	public void fight(Character attackedCharacter, List<Character> alliedList, List<Character> enemyList) throws IllegalArgumentException {
+	public Character fight(Character attackedCharacter, List<Character> alliedList, List<Character> enemyList) throws IllegalArgumentException {
+		Character deadCharacter = null;
+		
 		if(this.isAllied() == attackedCharacter.isAllied())
 			throw new IllegalArgumentException("You cannot attack someone belonging to your own faction!");
 		if (!this.isWithinAttackRange(this, attackedCharacter))
@@ -161,7 +164,7 @@ public abstract class AbstractCharacter implements Character, Serializable {
 				this.reduceCurrentHealth(attackedCharacter.getPower() - this.getDefence());
 
 			if (!attackedCharacter.isAlive()) {
-				this.removeDeadCharacterFromList(attackedCharacter, alliedList, enemyList);
+				deadCharacter = attackedCharacter;
 				this.gainExperience(AbstractCharacter.EXP_LEVELUP_THRESHOLD/3);
 				//random potion drop on kill
 				switch(rand.nextInt(0,9)) { //50% chance of getting a potion, if so get one of the four randomly
@@ -181,11 +184,15 @@ public abstract class AbstractCharacter implements Character, Serializable {
 			}
 
 			if (!this.isAlive()) {
-				this.removeDeadCharacterFromList(this, alliedList, enemyList);
+				deadCharacter = this;
 				attackedCharacter.gainExperience(AbstractCharacter.EXP_LEVELUP_THRESHOLD/3);
 			}
 		}
+		
+		if(deadCharacter != null)
+			this.removeDeadCharacterFromList(deadCharacter, alliedList, enemyList);
 
+		return deadCharacter;
 	}
 
 	private boolean isWithinAttackRange(Character attackingCharacter, Character attackedCharacter) {

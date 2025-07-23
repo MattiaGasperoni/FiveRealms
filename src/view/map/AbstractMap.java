@@ -398,7 +398,7 @@ public abstract class AbstractMap
 	    }
 
 	    System.out.println("\nTentativo di rimuovere il personaggio: " + character.getClass().getSimpleName() +
-	            " dalla posizione " + target);
+	            " dalla posizione " + target + " Esso ha salute: " + character.getCurrentHealth());
 
 	    if (!this.characterMap.containsKey(character)) {
 	        System.err.println("Character not found in the map: " + character.getClass().getSimpleName());
