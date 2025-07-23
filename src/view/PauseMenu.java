@@ -104,8 +104,8 @@ public class PauseMenu {
         menuButton.setFocusPainted(false);
         menuButton.addActionListener(e -> pauseMenuPanel.setVisible(true));
 
-        layeredPanel.add(pauseMenuPanel, Integer.valueOf(3));
-        layeredPanel.add(menuButton, Integer.valueOf(2));
+        layeredPanel.add(pauseMenuPanel, Integer.valueOf(4));
+        layeredPanel.add(menuButton, Integer.valueOf(3));
     }
 
 

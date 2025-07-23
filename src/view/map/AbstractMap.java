@@ -22,6 +22,7 @@ import controller.GameController;
 import model.characters.AbstractCharacter;
 import model.characters.Character;
 import model.point.Point;
+import view.BannerPanel;
 import view.PauseMenu;
 
 /**
@@ -37,6 +38,7 @@ public abstract class AbstractMap
     protected JFrame frame;				 // Finestra principale del gioco
     protected GridPanel gridPanel;       // Griglia di bottoni
     private JLayeredPane layeredPanel;   // Gestisce i vari layer del frame
+    private BannerPanel banner;          // Banner di gioco per messaggi
 
     private List<Character> enemiesList; // Lista dei nemici
     private List<Character> alliesList;  // Lista degli alleati
@@ -121,7 +123,10 @@ public abstract class AbstractMap
         // layer 1. Griglia di bottoni trasparente
         this.initializeButtonGrid();
         
-        // layer 2. Menu di Pausa
+        // layer 2. Banner di gioco
+        this.initializeBanner();
+        
+        // layer 3. Menu di Pausa
         //this.initializePauseMenu();
         PauseMenu pauseMenu = new PauseMenu(this.frame, this.layeredPanel, enemiesList, alliesList, numLevel, this.controller);
         pauseMenu.initializePauseMenu();
@@ -194,6 +199,26 @@ public abstract class AbstractMap
         this.layeredPanel.repaint();
     }
      
+    private void initializeBanner()
+    {
+    	int width = this.layeredPanel.getWidth();
+        int height = this.layeredPanel.getHeight();
+
+        this.banner = new BannerPanel(width, height);
+
+        // Aggiungilo sopra tutti gli altri componenti (layer 10)
+        this.layeredPanel.add(this.banner, Integer.valueOf(2));
+
+        this.layeredPanel.revalidate();
+        this.layeredPanel.repaint();
+    }
+
+    public void updateBannerMessage(String msg) {
+        if (this.banner != null) {
+            this.banner.showMessage(msg);
+        }
+    }
+
     
     public void colourPositionAvailable(List<Point> availableMoves) 
     {
@@ -252,9 +277,6 @@ public abstract class AbstractMap
         this.gridPanel.repaint();
     }
 
-
-    
-    
     /**
 	 * Closes the game window.
 	 */

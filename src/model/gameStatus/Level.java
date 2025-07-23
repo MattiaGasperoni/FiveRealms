@@ -118,6 +118,7 @@ public class Level
     {
         System.out.println("\n=== INIZIALIZZANDO UN NUOVO ROUND ===");
         
+        
         this.currentTurnOrder = getTurnOrder(this.alliesList, this.enemiesList);
         
         System.out.println("Ordine turni: " + currentTurnOrder.stream()
@@ -195,9 +196,12 @@ public class Level
     {
         currentBattleState = BattleState.WAITING_FOR_MOVEMENT;
         System.out.println("In attesa del movimento di " + currentAttacker.getClass().getSimpleName());
+        this.levelMap.updateBannerMessage("In attesa del movimento di: "+ currentAttacker.getClass().getSimpleName());
+
         // Configura il movimento con callback
         this.movementPhaseManager.movementPhase(currentAttacker, alliesList, enemiesList, () -> 
         {
+        	this.levelMap.updateBannerMessage("Movimento completato, "+currentAttacker.getClass().getSimpleName()+" scegli un  bersaglio");
             System.out.println("Movimento completato, passando alla scelta bersaglio");
             this.onMovementCompleted();
         });
