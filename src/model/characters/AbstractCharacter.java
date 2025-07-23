@@ -347,8 +347,8 @@ public abstract class AbstractCharacter implements Character, Serializable {
 
 	@Override
 	public String toString() {
-		return "AbstractCharacter [maxHealth=" + maxHealth + ", currentHealth=" + currentHealth + ", speed=" + speed
-				+ ", power=" + power + ", defence=" + defence + ", experience=" + experience + ", weapon=" + weapon
+		return this.getClass().getSimpleName() + ": [maxHealth=" + maxHealth + ", currentHealth=" + currentHealth + ", speed=" + speed
+				+ ", power=" + power + ", defence=" + defence + ", experience=" + experience + ", weapon=" + weapon.getClass().getSimpleName()
 				+ ", potion=" + potion + ", position=" + position + ", isAllied=" + isAllied + "]";
 	}
 }
