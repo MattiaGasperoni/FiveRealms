@@ -211,8 +211,15 @@ public class BattlePhaseView
                         }
 
                         // Esegui l'attacco
+                        System.out.println("Vita attaccante: "+ attacker.getCurrentHealth());
+                        System.out.println("Vita nemico: "+ enemy.getCurrentHealth());
+	        	        
                         attacker.fight(enemy, levelMap.getAlliesList(), enemiesList);
                         System.out.println("[Attacco] Attacco eseguito da " + attacker.getClass().getSimpleName());
+                        
+                        System.out.println("Vita attaccante: "+ attacker.getCurrentHealth());
+                        System.out.println("Vita nemico: "+ enemy.getCurrentHealth());
+
 
                         // Callback completamento
                         if (onAttackCompleted != null) 

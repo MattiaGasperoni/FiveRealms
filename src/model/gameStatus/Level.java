@@ -140,6 +140,7 @@ public class Level
     private void moveToNextTurn() 
     {
     	// Controlla se questo era l'ultimo personaggio che doveva attaccare, se sì, il round è finito
+    	this.levelMap.updateMap(); // Aggiorna stats
         if (currentTurnOrder.isEmpty()) 
         {
             System.out.println("Round completato!");

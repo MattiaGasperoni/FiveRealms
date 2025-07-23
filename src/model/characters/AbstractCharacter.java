@@ -49,9 +49,10 @@ public abstract class AbstractCharacter implements Character, Serializable {
 
 	@Override
 	public void moveTo(Point point) throws IllegalArgumentException {
-		if(this.getDistanceInSquares(point) > (this.speed / AbstractCharacter.SPEED_TO_MOVEMENT)) //movement per-turn depends on speed, the actual value is placeholder as of now
-			throw new IllegalArgumentException("You tried to move farther than your movement speed allows!"); 
+		/*if(this.getDistanceInSquares(point) > (this.speed / AbstractCharacter.SPEED_TO_MOVEMENT)) //movement per-turn depends on speed, the actual value is placeholder as of now
+			throw new IllegalArgumentException("You tried to move farther than your movement speed allows!"); */
 		this.position = point;
+		
 	}
 
 	//note that a diagonal spot is counted as two squares away, which is fine
@@ -347,7 +348,7 @@ public abstract class AbstractCharacter implements Character, Serializable {
 
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + ": [maxHealth=" + maxHealth + ", currentHealth=" + currentHealth + ", speed=" + speed
+		return this.getClass().getSimpleName() + ": [maxHealth="+ maxHealth + ", currentHealth=" + currentHealth + ", speed=" + speed
 				+ ", power=" + power + ", defence=" + defence + ", experience=" + experience + ", weapon=" + weapon.getClass().getSimpleName()
 				+ ", potion=" + potion + ", position=" + position + ", isAllied=" + isAllied + "]";
 	}

@@ -43,6 +43,14 @@ public class PauseMenu {
         pauseMenuPanel.setLayout(new GridBagLayout());
         pauseMenuPanel.setVisible(false);
 
+        // 🔴 BLOCCO CLICK FUORI DAI PULSANTI
+        pauseMenuPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                e.consume(); // Consuma l'evento per evitare effetti collaterali
+            }
+        });
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -99,6 +107,7 @@ public class PauseMenu {
         layeredPanel.add(pauseMenuPanel, Integer.valueOf(3));
         layeredPanel.add(menuButton, Integer.valueOf(2));
     }
+
 
     private JButton createButton(String text) {
         JButton button = new JButton(text);
