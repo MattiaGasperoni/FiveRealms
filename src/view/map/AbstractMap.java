@@ -425,6 +425,7 @@ public abstract class AbstractMap
 	        if (!occupiedPositions.contains(point))
 	        {
 	            button.setIcon(null);
+	            //button.setToolTipText(""); //may not be necessary?
 	        }
 	    }
 
@@ -458,6 +459,7 @@ public abstract class AbstractMap
 	        if (button.getIcon() == null)
 	        {
 	            button.setIcon(new ImageIcon(character.getImage()));
+	            button.setToolTipText(character.toString());
 	        }
 	    }
 	}

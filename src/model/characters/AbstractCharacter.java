@@ -49,7 +49,7 @@ public abstract class AbstractCharacter implements Character, Serializable {
 
 	@Override
 	public void moveTo(Point point) throws IllegalArgumentException {
-		if(this.getDistanceInSquares(point) > this.speed / AbstractCharacter.SPEED_TO_MOVEMENT) //movement per-turn depends on speed, the actual value is placeholder as of now
+		if(this.getDistanceInSquares(point) > (this.speed / AbstractCharacter.SPEED_TO_MOVEMENT)) //movement per-turn depends on speed, the actual value is placeholder as of now
 			throw new IllegalArgumentException("You tried to move farther than your movement speed allows!"); 
 		this.position = point;
 	}
@@ -57,7 +57,7 @@ public abstract class AbstractCharacter implements Character, Serializable {
 	//note that a diagonal spot is counted as two squares away, which is fine
 	@Override
 	public int getDistanceInSquares(Point point) {
-		return Math.abs(point.getX() - this.position.getX()) + Math.abs(point.getY() - this.position.getY());
+		return this.position.distanceFrom(point);
 	}
 
 	@Override
@@ -327,11 +327,6 @@ public abstract class AbstractCharacter implements Character, Serializable {
 	public Image getImage() {
 		return this.image;
 	}
-	
-	@Override
-	public ImageIcon getIcon() {
-		return this.icon;
-	}
 
 	public void setImagePath(String image) { //updates the icon-image too as there's no point to having them be different
 		this.imagePath = image;
@@ -354,6 +349,6 @@ public abstract class AbstractCharacter implements Character, Serializable {
 	public String toString() {
 		return "AbstractCharacter [maxHealth=" + maxHealth + ", currentHealth=" + currentHealth + ", speed=" + speed
 				+ ", power=" + power + ", defence=" + defence + ", experience=" + experience + ", weapon=" + weapon
-				+ ", potion=" + potion + ", position=" + position + ", imagePath=" + imagePath + ", isAllied=" + isAllied + ", availableWeapons=" + availableWeapons + "]";
+				+ ", potion=" + potion + ", position=" + position + ", isAllied=" + isAllied + "]";
 	}
 }
