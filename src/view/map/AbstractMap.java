@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.RoundRectangle2D;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -372,10 +373,18 @@ public abstract class AbstractMap
 	    // Rimuove l'immagine dal bottone corrente
 	    JButton currentButton = this.gridPanel.getGridButtons()[currentPosition.getX()][currentPosition.getY()];
 	    currentButton.setIcon(null);
+	    /*for(ActionListener al : currentButton.getActionListeners() ) {
+	    	currentButton.removeActionListener(al);
+	    }*/
+	    MouseListener[] mouseListeners = currentButton.getMouseListeners();
+	    for (MouseListener listener : mouseListeners) {
+	    	currentButton.removeMouseListener(listener);
+	    }
 
 	    // Imposta l'immagine nel nuovo bottone
 	    JButton targetButton = this.gridPanel.getGridButtons()[target.getX()][target.getY()];
 	    targetButton.setIcon(new ImageIcon(character.getImage()));
+	    showCharacterTooltip(character, targetButton);
 	    
 
 	    System.out.println("\nPersonaggio " + character.getClass().getSimpleName() + " spostato con successo.");
@@ -411,6 +420,13 @@ public abstract class AbstractMap
 	    // Rimuove l'immagine dal bottone
 	    JButton targetButton = this.gridPanel.getGridButtons()[target.getX()][target.getY()];
 	    targetButton.setIcon(null);
+	    /*for(ActionListener al : targetButton.getActionListeners() ) {
+	    	targetButton.removeActionListener(al);
+	    }*/
+	    MouseListener[] mouseListeners = targetButton.getMouseListeners();
+	    for (MouseListener listener : mouseListeners) {
+	    	targetButton.removeMouseListener(listener);
+	    }
 
 	    System.out.println("Personaggio " + character.getClass().getSimpleName() + 
 	            " rimosso con successo dalla posizione " + target);
@@ -442,7 +458,7 @@ public abstract class AbstractMap
 	    System.out.println("Grid dimensioni: " + buttonGrid.length + " righe, " + buttonGrid[0].length + " colonne");
 
 	    // SOLUZIONE 1: Raccogli prima i personaggi da rimuovere, poi rimuovili
-	    List<Map.Entry<Character, Point>> charactersToRemove = new ArrayList<>();
+	    /*List<Map.Entry<Character, Point>> charactersToRemove = new ArrayList<>();
 	    for (Map.Entry<Character, Point> entry : this.characterMap.entrySet()) {
 	        Character character = entry.getKey();
 	        Point point = entry.getValue();
@@ -451,7 +467,6 @@ public abstract class AbstractMap
 	        }
 	    }
 
-	    // Ora rimuovi i personaggi morti senza interferire con l'iterazione
 	 // Ora rimuovi i personaggi morti senza interferire con l'iterazione
 	    for (Map.Entry<Character, Point> entry : charactersToRemove) {
 	        Character deadCharacter = entry.getKey();
@@ -459,31 +474,8 @@ public abstract class AbstractMap
 
 	        // Rimuovi il personaggio dalla mappa PRIMA
 	        this.removeCharacter(deadCharacter, position);
-
-	        // Controlla bounds per sicurezza
-	        if (position.getX() >= 0 && position.getX() < buttonGrid.length && 
-	            position.getY() >= 0 && position.getY() < buttonGrid[0].length) {
-
-	            JButton button = buttonGrid[position.getX()][position.getY()];
-
-	            // Se il bottone NON ha più un personaggio associato, rimuovi tooltip e listener
-	            boolean stillOccupied = this.characterMap.values().stream()
-	                .anyMatch(p -> p.equals(position));
-
-	            if (!stillOccupied) {
-	                button.setToolTipText(null);
-
-	                // Rimuovi tutti gli action listener
-	                ActionListener[] listeners = button.getActionListeners();
-	                for (ActionListener listener : listeners) {
-	                    button.removeActionListener(listener);
-	                }
-	            }
-	        }
 	    }
-
-	
-
+	    
 	    // Crea un set delle posizioni occupate per efficienza O(1) lookup
 	    Set<Point> occupiedPositions = this.characterMap.values().stream()
 	            .filter(Objects::nonNull)
@@ -496,10 +488,12 @@ public abstract class AbstractMap
 
 	        if (!occupiedPositions.contains(point)) {
 	            button.setIcon(null);
-	            //button.setToolTipText(""); //may not be necessary?
+	            for(ActionListener al : button.getActionListeners()) {
+	                button.removeActionListener(al);
+	            }
 	        }
 	    }
-
+	    */
 	    // 2) Aggiunge immagini a bottoni dove è presente un personaggio
 	    for (Map.Entry<Character, Point> entry : this.characterMap.entrySet()) {
 	        Character character = entry.getKey();
@@ -525,7 +519,7 @@ public abstract class AbstractMap
 
 	        JButton button = buttonGrid[row][col];
 	        if (button.getIcon() == null) {
-	            button.setIcon(new ImageIcon(character.getImage()));
+	            //button.setIcon(new ImageIcon(character.getImage()));
 	            showCharacterTooltip(character, button);
 	        }
 	    }

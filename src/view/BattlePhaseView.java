@@ -248,4 +248,8 @@ public class BattlePhaseView
             button.setBackground(Color.RED);
         }
     }
+    
+    public void graphicMovementCharacterToPoint (Character character, Point validPoint) {
+    	this.controller.move(levelMap, character, validPoint);
+    }
 }

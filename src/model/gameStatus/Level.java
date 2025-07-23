@@ -5,8 +5,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import model.characters.AbstractCharacter;
 import model.characters.Character;
 import model.gameStatus.saveSystem.GameStateManager;
+import model.point.Point;
 import view.*;
 import view.map.LevelMap;
 import controller.*;
@@ -219,18 +221,52 @@ public class Level
         currentBattleState = BattleState.TURN_COMPLETED;
         
         // Rimuovi personaggi morti dalle liste
-        this.cleanupDeadCharacters();
+        //this.cleanupDeadCharacters();
     }
     
     // Metod che gestisce il turno dell'AI
     private void startAITurn()
-    {
-        System.out.println("Turno AI - non ancora implementato");
+    {        
+        System.out.println("Turno AI");
+		Character victim = alliesList.stream()
+				   .min(Comparator.comparing(charac -> charac.getDistanceInSquares(currentAttacker.getPosition()))) //NOTE: If that's the wrong order (hard to test right now), put .reversed() on it. Picks closest enemy.
+				   .orElse(null);
+		
+	    if (victim == null) {
+	        currentBattleState = BattleState.TURN_COMPLETED;
+	        return;
+	    }
+		
+        List<Point> availablePositions = new ArrayList<>();
+
+        for(int i = 0; i < 20; i++) { //AbstractMap.GRID_SIZE_WIDTH
+        	for(int j = 0; j < 15; j++) {  //AbstractMap.GRID_SIZE_HEIGHT
+        		availablePositions.add(new Point(i,j));
+        	}
+        }
+        
+        Set<Point> occupiedPositions = new HashSet<>();
+        alliesList.stream().forEach(character -> occupiedPositions.add(character.getPosition()));
+        enemiesList.stream().forEach(character -> occupiedPositions.add(character.getPosition()));
+        	
+        movementPhaseManager.graphicMovementCharacterToPoint(currentAttacker, availablePositions.stream()
+				.filter(point -> currentAttacker.getDistanceInSquares(point) <= (currentAttacker.getSpeed() / AbstractCharacter.SPEED_TO_MOVEMENT))
+				.filter(point -> !occupiedPositions.contains(point)) //supposed to filter out already-occupied positions...
+				.min(Comparator.comparing(point -> victim.getDistanceInSquares(point)))
+				.orElse(currentAttacker.getPosition()));
+        
+        try {
+        	currentAttacker.fight(victim, alliesList, enemiesList);
+		} catch (IllegalArgumentException e) { //to handle the case where: even the closest enemy is still out of attack range after movement
+			System.out.println("Character " + this.getClass().getSimpleName() + " cannot find an enemy to fight, ERROR: " + e); //for debug purposes
+			System.out.println("Attempted to attack " + victim.getClass().getSimpleName() + " in position: " + victim.getPosition() + " but self was in position: " + currentAttacker.getPosition()); //for debug purposes
+		}
+        
         currentBattleState = BattleState.TURN_COMPLETED;
     }
     
-    // Rimuove personaggi morti
-    private void cleanupDeadCharacters() 
+    // Rimuove personaggi morti SAREBBE DA RIMUOVERE? (RINDONDANTE, VIENE FATTO DENTRO FIGHT DI CHARACTER, O SI RIMUOVE QUESTO O SI RIMUOVE DA FIGHT)
+    /*private void cleanupDeadCharacters() 
     {
         int deadAllies  = (int) alliesList.stream().filter(c -> !c.isAlive()).count();
         int deadEnemies = (int) enemiesList.stream().filter(c -> !c.isAlive()).count();
@@ -241,7 +277,7 @@ public class Level
         if (deadAllies > 0 || deadEnemies > 0) {
             System.out.println("Rimossi " + deadAllies + " alleati e " + deadEnemies + " nemici morti");
         }
-    }
+    }*/
     
     private void handleUpdateMap() 
     {

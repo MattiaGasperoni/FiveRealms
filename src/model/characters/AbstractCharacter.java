@@ -199,29 +199,9 @@ public abstract class AbstractCharacter implements Character, Serializable {
 			alliedList.remove(deadCharacter);
 	}
 
-	@Override
-	public void whatToDo(/*Character character,*/ List<Character> alliedList, List<Character> enemyList, List<Point> positions) {
-		//pick target
-		Character victim = alliedList.stream()
-						   .min(Comparator.comparing(charac -> charac.getDistanceInSquares(this.getPosition()))) //NOTE: If that's the wrong order (hard to test right now), put .reversed() on it. Picks closest enemy.
-						   .orElse(null);
-
-		//part one: movement
-		//ugly way to handle it, but it's the first version
-		this.moveTo(positions.stream()
-					.filter(point -> this.getDistanceInSquares(point) <= this.speed / AbstractCharacter.SPEED_TO_MOVEMENT)
-					.findAny()
-					.orElse(this.getPosition())); //if something doesn't work, remain where you are
-		//part twp: attacking
-		try {
-			this.fight(victim, alliedList, enemyList);
-		} catch (IllegalArgumentException e) { //to handle the case where: even the closest enemy is still out of attack range after movement
-			System.out.println("Character " + this.toString() + " cannot find an enemy to fight."); //for debug purposes
-		}
-	}
-
-	protected void increaseMaxHealth(double percentage) {
+	protected void increaseMaxHealth(double percentage) {		
 		this.maxHealth += this.maxHealth * percentage;
+		this.increaseCurrentHealth(percentage);
 	}
 
 	protected void increasePower(double percentage) {
