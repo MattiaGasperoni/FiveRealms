@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.*;
 
@@ -274,9 +276,51 @@ public abstract class AbstractMap
 	/* Il metodo rimuove l'immagine dove si trova il personaggio e aggiunge l'immagine del personaggio nel  bottone targhet
 	 * moveCharacter usa moveTo e aggiornamento grafico
 	*/
-	public void moveCharacter(Character character, Point target) {
-		
+	public void moveCharacter(Character character, Point target) 
+	{
+	    if (character == null || target == null) 
+	    {
+	        throw new IllegalArgumentException("Character and target point must not be null");
+	    }
+
+	    System.out.println("\nTentativo di spostare il personaggio: " + character.getClass().getSimpleName() +
+	                       " da " + character.getPosition() + " a " + target);
+
+	    if (!this.characterMap.containsKey(character)) 
+	    {
+	        System.err.println("Character not found in the map: " + character.getClass().getSimpleName());
+	        return;
+	    }
+
+	    Point currentPosition = character.getPosition();
+
+	    if (currentPosition.equals(target)) 
+	    {
+	        System.out.println("Il personaggio è già nella posizione target: " + target);
+	        return;
+	    }
+
+	    if (isPositionOccupied(target)) 
+	    {
+	        System.err.println("La posizione " + target + " è già occupata da un altro personaggio.");
+	        return;
+	    }
+
+	    // Aggiorna la mappa con la nuova posizione
+	    this.characterMap.put(character, target);
+
+	    // Rimuove l'immagine dal bottone corrente
+	    JButton currentButton = this.gridPanel.getGridButtons()[currentPosition.getX()][currentPosition.getY()];
+	    currentButton.setIcon(null);
+
+	    // Imposta l'immagine nel nuovo bottone
+	    JButton targetButton = this.gridPanel.getGridButtons()[target.getX()][target.getY()];
+	    targetButton.setIcon(new ImageIcon(character.getImage()));
+	    
+
+	    System.out.println("\nPersonaggio " + character.getClass().getSimpleName() + " spostato con successo.");
 	}
+
 	
 	//rimuova dalla mappe il personaggio 
 	public void removeCharacter(Character character, Point target) {
@@ -303,43 +347,61 @@ public abstract class AbstractMap
 	}
 	
 	
-	public void updateMap() 
+	public void updateMap()
 	{
-	    // Ottieni le strutture dati dalla classe
 	    Map<JButton, Point> imageButtonList = this.gridPanel.getImageButtonList();
-	    JButton[][] buttonGrid               = this.gridPanel.getGridButtons();
+	    JButton[][] buttonGrid = this.gridPanel.getGridButtons();
 
-	    // 1) Rimuove immagini dai bottoni che non hanno più un personaggio
-	    for (Map.Entry<JButton, Point> entry : imageButtonList.entrySet()) {
+	    System.out.println("Grid dimensioni: " + buttonGrid.length + " righe, " + buttonGrid[0].length + " colonne");
+
+	    // Crea un set delle posizioni occupate per efficienza O(1) lookup
+	    Set<Point> occupiedPositions = this.characterMap.values().stream()
+	        .filter(Objects::nonNull)
+	        .collect(Collectors.toSet());
+
+	    // 1) Rimuove le immagini dai bottoni che non hanno più un personaggio
+	    for (Map.Entry<JButton, Point> entry : imageButtonList.entrySet())
+	    {
 	        JButton button = entry.getKey();
-	        Point point    = entry.getValue();
+	        Point point = entry.getValue();
 
-	        boolean pointOccupato = this.characterMap.values().stream()
-					                    .filter(Objects::nonNull)
-					                    .anyMatch(p -> p.equals(point));
-
-
-	        if (!pointOccupato) {
-	            button.setIcon(null); // Rimuove immagine
+	        if (!occupiedPositions.contains(point))
+	        {
+	            button.setIcon(null);
 	        }
 	    }
 
-	    // 2) Aggiunge immagini a bottoni dove è presente un personaggio ma non c'è immagine
-	    for (Map.Entry<Character, Point> entry : this.characterMap.entrySet()) {
+	    // 2) Aggiunge immagini a bottoni dove è presente un personaggio
+	    for (Map.Entry<Character, Point> entry : this.characterMap.entrySet())
+	    {
 	        Character character = entry.getKey();
-	        Point point         = entry.getValue();
+	        Point point = entry.getValue();
 
-	        if (point == null) {
-	            System.err.println("ERRORE: Personaggio " + character.getClass().getSimpleName() + " ha posizione null");
+	        if (point == null)
+	        {
+	            System.err.println("ERRORE: Personaggio " +
+	                character.getClass().getSimpleName() + " ha posizione null");
 	            continue;
 	        }
 
-	        JButton button = buttonGrid[point.getY()][point.getX()];
+	        // CORREZIONE: Usa x per righe e y per colonne per essere consistente
+	        int row = point.getX();  // x rappresenta la riga
+	        int col = point.getY();  // y rappresenta la colonna
 
-	        if (button.getIcon() == null) {
+	        // Controllo bounds dell'array
+	        if (row < 0 || row >= buttonGrid.length || col < 0 || col >= buttonGrid[0].length)
+	        {
+	            System.err.println("ERRORE: Coordinate fuori dai limiti per " +
+	                character.getClass().getSimpleName() + ": " + point + 
+	                " (Grid: " + buttonGrid.length + "x" + buttonGrid[0].length + ")");
+	            continue;
+	        }
+
+	        JButton button = buttonGrid[row][col];
+	        if (button.getIcon() == null)
+	        {
 	            button.setIcon(character.getIcon());
 	        }
 	    }
-
 	}
 }

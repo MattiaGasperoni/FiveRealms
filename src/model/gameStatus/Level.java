@@ -2,8 +2,8 @@ package model.gameStatus;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 
 import model.characters.Character;
 import model.gameStatus.saveSystem.GameStateManager;
@@ -13,200 +13,290 @@ import controller.*;
 
 public class Level 
 {
+	// Stati del livello
     private enum LevelPhase 
     {
         BATTLE, UPDATE_MAP, CHECK_END, DONE 
     }
     
-    private LevelPhase currentPhase;              // Status corrente del livello
-    private List<Character> enemiesList;          // Lista dei nemici del livello
-    private List<Character> alliesList;           // Lista dei personaggi con cui giochiamo il livello
-    private boolean levelCompleted;               // Flag che indica se il livello è completato
-    private boolean levelFailed;                  // Flag che indica se il livello è fallito
-    private boolean combatPhaseInitiated;		  // Flag che indica se la fase di combattimento è già iniziata
-        
-    private final LevelMap levelMap;                    // Mappa del livello
-    private final BattlePhaseView movementPhaseManager; // Gestisce l'interazione con la mappa, i personaggi e l'utente nella fase BATTLE
+    // Stati della fase BATTLE
+    private enum BattleState 
+    {
+        INITIALIZING,           // Preparando la battaglia
+        WAITING_FOR_MOVEMENT,   // Aspettando che l'utente scelga dove muoversi
+        WAITING_FOR_TARGET,     // Aspettando che l'utente scelga il bersaglio
+        PROCESSING_TURN,        // Elaborando il turno (AI o dopo input utente)
+        TURN_COMPLETED          // Turno completato, pronto per il prossimo
+    }
     
+    private LevelPhase currentLevelPhase;
+    private BattleState currentBattleState;
     
+    private List<Character> enemiesList;
+    private List<Character> alliesList;
+    
+    private boolean levelCompleted;
+    private boolean levelFailed;
+    
+    private PriorityQueue<Character> currentTurnOrder;
+    private Character currentAttacker;
+       
+    private final LevelMap levelMap;
+    private final BattlePhaseView movementPhaseManager;
 
     public Level(LevelMap map, GameController controller) 
     {
-        // Inizializzazione Oggetti Grafici
         this.levelMap = map;
         this.movementPhaseManager = new BattlePhaseView(this.levelMap, controller);
 
-        // Inizializzazione delle liste di personaggi
-        this.enemiesList      = this.levelMap.getEnemiesList();
-        this.alliesList       = this.levelMap.getAlliesList();
+        this.enemiesList = this.levelMap.getEnemiesList();
+        this.alliesList  = this.levelMap.getAlliesList();
         
         this.levelCompleted = false;
-        this.levelFailed = false;
-        this.combatPhaseInitiated = false;
+        this.levelFailed    = false;
     }
 
-    
     public void play() throws IOException 
     {
-	    // Faccio comparire la mappa del livello
         this.levelMap.start();
-       
-    	System.out.print(" Start level ->");
-    	
-    	// Spawn dei personaggi
-    	this.levelMap.spawnCharacter(this.enemiesList);
-
-    	this.levelMap.spawnCharacter(this.alliesList);
-    	
-    	// Partiamo dalla fase di movimento
-        this.currentPhase = LevelPhase.BATTLE;  
-
+        System.out.print(" Start level ->");
+        
+        this.levelMap.spawnCharacter(this.enemiesList);
+        this.levelMap.spawnCharacter(this.alliesList);
+        
+        this.currentLevelPhase  = LevelPhase.BATTLE;
+        this.currentBattleState = BattleState.INITIALIZING;
     }
 
-    // Metodo che viene invocato dal Timer
+    // Metodo che aggiorna lo stato del livello
     public void update() 
     {
-        switch (this.currentPhase) 
+        switch (this.currentLevelPhase) 
         {
             case BATTLE:
-            	if(!combatPhaseInitiated)
-            		handleMovementAttackPhase();
+                this.handleBattlePhase();
                 break;
             case UPDATE_MAP:
-            	this.combatPhaseInitiated = false;
-                handleUpdateMap();
+            	this.handleUpdateMap();
+                break;
             case CHECK_END:
-                handleEndCheck();
+            	this.handleEndCheck();
                 break;
             case DONE:
+                // Livello completato, non fare nulla
                 break;
             default:
-                throw new IllegalStateException("Unknown phase: " + currentPhase);
+                throw new IllegalStateException("Fase Sconosciuta: " + this.currentLevelPhase);
+        }
+    }
+    
+    // Metodo che aggiorna lo stato delle fase BATTLE
+    private void handleBattlePhase() 
+    {
+        switch (this.currentBattleState) 
+        {
+            case INITIALIZING:
+                this.initializeBattleRound();
+                break;
+            case WAITING_FOR_MOVEMENT:
+            case WAITING_FOR_TARGET:
+                // Non fare nulla, aspetta input dell'utente
+                // Gli ActionListener gestiranno il resto
+                break;
+            case TURN_COMPLETED:
+                this.moveToNextTurn();
+                break;
+            default:
+                throw new IllegalStateException("Fase Sconosciuta: " + this.currentBattleState);
+        }
+    }
+    
+    // Inizializza un nuovo round
+    private void initializeBattleRound() 
+    {
+        System.out.println("\n=== INIZIALIZZANDO UN NUOVO ROUND ===");
+        
+        this.currentTurnOrder = getTurnOrder(this.alliesList, this.enemiesList);
+        
+        System.out.println("Ordine turni: " + currentTurnOrder.stream()
+            .map(c -> c.getClass().getSimpleName() + "(speed:" + c.getSpeed() + ")")
+            .collect(Collectors.joining(", ")));
+            
+        if (this.hasRemainingAttackers(currentTurnOrder)) 
+        {
+        	this.moveToNextTurn();
+        } 
+        else 
+        {
+            System.out.println("Nessun attaccante rimasto, fine round");
+            currentLevelPhase = LevelPhase.UPDATE_MAP;
         }
     }
     
     
-
-
-
-	private void handleMovementAttackPhase() 
-    {   
-		// Bisogna sbiscenare questo metodo privato in piu metodi, finche non selezioni un blocco dove spostarti ti continua
-		// a rimandare in quella fase del gioco 
-    	// Ottieni l'ordine del round
-    	PriorityQueue<Character> characterTurnOrder = this.getTurnOrder(this.alliesList, this.enemiesList);
-    	
-    	if (this.hasRemainingAttackers(characterTurnOrder))
-    	{
-    		this.combatPhaseInitiated = true;
-        	// Estrai il personaggio più veloce e lo rimuove dalla coda essedo il primo che attacca
-            Character attacker = characterTurnOrder.poll(); 
+    
+    
+    // Il turno del personaggio corrente è finito, passiamo al prossimo
+    private void moveToNextTurn() 
+    {
+    	// Controlla se questo era l'ultimo personaggio che doveva attaccare, se sì, il round è finito
+        if (currentTurnOrder.isEmpty()) 
+        {
+            System.out.println("Round completato!");
+            currentLevelPhase = LevelPhase.UPDATE_MAP;
+            return;
+        }
+        
+        // Trova il prossimo personaggio vivo
+        Character nextAttacker = null;
+        
+        while (!currentTurnOrder.isEmpty()) 
+        {
+            Character candidate = currentTurnOrder.poll();
             
-            // Se è morto, salta il turno e passa al prossimo
-            if (!attacker.isAlive()) 
+            if (candidate.isAlive()) 
             {
-            	characterTurnOrder.poll();
-            }
-
-            // Fase di spostamento del personaggio nella mappa e scelta del nemico da attaccare
-            // se attacker e' un alleato chiede all'utente dove vuole spostarsi e chi vuole attaccare, 
-            // se e' un nemico l'A.I. decide dove spostarlo e chi attaccare
-            if(attacker.isAllied()) 
-            {
-            	System.out.println("Fase di movimento");
-            	this.movementPhaseManager.movementPhase(attacker, alliesList, enemiesList, () -> 
-            	{
-            	    this.movementPhaseManager.chooseTarget(this.enemiesList, attacker);
-            	});
-
+                nextAttacker = candidate;
+                break;
             }
             else 
             {
-            	System.out.print("Bot non implementato");
-            }           
-                             
-            // Ricostruisci la coda dell'ordine di attacco senza i personaggi morti
-            // Combat manager non flagga i personaggi morti, quindi devo controllare io dalle liste!!!!
-            characterTurnOrder = new PriorityQueue<>(characterTurnOrder.comparator());
-            characterTurnOrder.addAll(
-                Stream.concat(alliesList.stream(), enemiesList.stream())
-                      .filter(Character::isAlive)
-                      .toList()
-            );   		
-    	}
-        else 
+                System.out.println("Il personaggio "+candidate.getClass().getSimpleName()+" non è vivo, salto al prossimo.");
+            }
+        }
+        
+        // Se non ci sono personaggi vivi, termina il round
+        if (nextAttacker == null) 
         {
-            //Finito il round, passiamo alla fase di aggiornamento della mappa
-            currentPhase = LevelPhase.UPDATE_MAP;
+            System.out.println("Nessun personaggio vivo rimasto, fine round");
+            currentLevelPhase = LevelPhase.UPDATE_MAP;
+            return;
+        }
+        
+        // Se ci sono personaggi vivi, impostiamo il nuovo attaccante e iniziamo il turno
+        this.currentAttacker = nextAttacker;
+        System.out.println("\n=== TURNO DI: " + currentAttacker.getClass().getSimpleName() + " ===");
+        
+        if (currentAttacker.isAllied())
+        {
+            startPlayerTurn();
+        } 
+        else
+        {
+            startAITurn();
         }
     }
-	
+    
+    // Inizia il turno del giocatore alleato
+    private void startPlayerTurn() 
+    {
+        currentBattleState = BattleState.WAITING_FOR_MOVEMENT;
+        System.out.println("In attesa del movimento di " + currentAttacker.getClass().getSimpleName());
+        // Configura il movimento con callback
+        this.movementPhaseManager.movementPhase(currentAttacker, alliesList, enemiesList, () -> 
+        {
+            System.out.println("Movimento completato, passando alla scelta bersaglio");
+            this.onMovementCompleted();
+        });
+    }
+    
+    // Questo metodo viene chiamato quando il movimento è completato
+    private void onMovementCompleted() 
+    {
+        currentBattleState = BattleState.WAITING_FOR_TARGET;
+        
+        this.movementPhaseManager.chooseTarget(enemiesList, currentAttacker, () -> {
+            System.out.println("Attacco completato!");
+            this.onAttackCompleted();
+        });
+    }
+    
+    // Questo metodo viene chiamato quando l'attacco è completato
+    private void onAttackCompleted() 
+    {
+        System.out.println("Turno giocatore completato");
+        currentBattleState = BattleState.TURN_COMPLETED;
+        
+        // Rimuovi personaggi morti dalle liste
+        this.cleanupDeadCharacters();
+    }
+    
+    // Metod che gestisce il turno dell'AI
+    private void startAITurn()
+    {
+        System.out.println("Turno AI - non ancora implementato");
+        currentBattleState = BattleState.TURN_COMPLETED;
+    }
+    
+    // Rimuove personaggi morti
+    private void cleanupDeadCharacters() 
+    {
+        int deadAllies  = (int) alliesList.stream().filter(c -> !c.isAlive()).count();
+        int deadEnemies = (int) enemiesList.stream().filter(c -> !c.isAlive()).count();
+        
+        alliesList.removeIf(c -> !c.isAlive());
+        enemiesList.removeIf(c -> !c.isAlive());
+        
+        if (deadAllies > 0 || deadEnemies > 0) {
+            System.out.println("Rimossi " + deadAllies + " alleati e " + deadEnemies + " nemici morti");
+        }
+    }
+    
     private void handleUpdateMap() 
     {
-    	this.levelMap.updateMap();
-    	// Passiamo alla fase di controllo 
-    	currentPhase = LevelPhase.CHECK_END;
-	}
-    
-    
+        System.out.println("=== AGGIORNAMENTO MAPPA ===");
+        this.levelMap.updateMap();
+        currentLevelPhase = LevelPhase.CHECK_END;
+    }
 
     private void handleEndCheck()
     {
-        // Controlla se il livello è stato completato o se è fallito
+        System.out.println("=== CONTROLLO FINE LIVELLO ===");
+        
         if (this.alliesList.isEmpty()) 
         {
             this.levelFailed = true;
             System.out.println("Tutti i tuoi personaggi sono morti. Game Over.");
+            currentLevelPhase = LevelPhase.DONE;
             return;
         } 
         else if (this.enemiesList.isEmpty()) 
         {
             this.levelCompleted = true;
-            System.out.println("Hai sconfitto tutti i nemici. La porta per il prossimo livello è aperta.");
-            currentPhase = LevelPhase.DONE;
+            System.out.println("Hai sconfitto tutti i nemici. Livello completato!");
+            currentLevelPhase = LevelPhase.DONE;
             return;
-
         }
 
-        // Se il livello non è completato e non è fallito, torniamo alla fase di combattimento
-        currentPhase = LevelPhase.BATTLE;
+        // Continua la battaglia
+        System.out.println("Livello in corso, nuovo round...");
+        currentLevelPhase = LevelPhase.BATTLE;
+        currentBattleState = BattleState.INITIALIZING;
     }
 
-    
-    
-    // Metodo per verificare l'ordine di attacco dei personaggi in un turno
     private PriorityQueue<Character> getTurnOrder(List<Character> allies, List<Character> enemies) 
     {
         PriorityQueue<Character> queue = new PriorityQueue<>((a, b) -> Integer.compare(b.getSpeed(), a.getSpeed()));
-    
-        queue.addAll(allies);
-        queue.addAll(enemies);
-    
+        queue.addAll(allies.stream().filter(Character::isAlive).toList());
+        queue.addAll(enemies.stream().filter(Character::isAlive).toList());
         return queue;
     }
-    
 
-    public List<Character> getEnemies() {
-        return this.enemiesList;
-    }
-
-    public List<Character> getAllies() {
-        return this.alliesList;
-    }
-    
-
-    // Verifica se ci sono attaccanti rimanenti
     private boolean hasRemainingAttackers(PriorityQueue<Character> attackTurnOrder) {
-        return !attackTurnOrder.isEmpty();
+        return attackTurnOrder.stream().anyMatch(Character::isAlive);
     }
+
+    // Getters
+    public List<Character> getEnemies() { return this.enemiesList; }
+    public List<Character> getAllies() { return this.alliesList; }
+    public boolean isCompleted() { return this.levelCompleted; }
+    public boolean isFailed() { return this.levelFailed; }
     
-    public boolean isCompleted() {
-        return this.levelCompleted;
+    // ✅ Metodo per debug dello stato
+    public void printCurrentState() {
+        System.out.println("Fase: " + currentLevelPhase + ", Stato Battaglia: " + currentBattleState);
+        if (currentAttacker != null) {
+            System.out.println("Attaccante corrente: " + currentAttacker.getClass().getSimpleName());
+        }
     }
-
-    public boolean isFailed() {
-        return this.levelFailed;
-    }
-
-
 }

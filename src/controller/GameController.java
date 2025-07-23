@@ -180,7 +180,12 @@ public class GameController
      * @param character The character to be moved.
      * @param point The destination point on the map.
      */
-    public void move(AbstractMap map, Character character, Point point) {
+    public void move(AbstractMap map, Character character, Point point) 
+    {
+		if (map == null || character == null || point == null) 
+		{
+			throw new IllegalArgumentException("Map, character, and point must not be null");
+		}		
         map.moveCharacter(character, point);  // Move the character on the map
         character.moveTo(point);  // Update the character's position
         map.updateMap();  // Refresh the map to reflect the new position
