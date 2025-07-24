@@ -86,7 +86,7 @@ public class Game
 		}
 
         // Creo e istanzio l'oggetto tutorial
-        Tutorial tutorial = new Tutorial(new TutorialMap(tutorialEnemies, tutorialAllies), this.controller);
+        Tutorial tutorial = new Tutorial(new TutorialMap(tutorialEnemies, tutorialAllies, this.controller), this.controller);
 
         // Gioco il Tutorial
         return tutorial.play();
@@ -250,11 +250,11 @@ public class Game
         // rappresenta.
         
 		// Inizializzo i livelli        
-        this.gameLevels.add(new Level(new LevelMap(level1Enemies, this.selectedAllies, 1), this.controller));
-        this.gameLevels.add(new Level(new LevelMap(level2Enemies, this.selectedAllies, 2), this.controller));
-        this.gameLevels.add(new Level(new LevelMap(level3Enemies, this.selectedAllies, 3), this.controller));
-        this.gameLevels.add(new Level(new LevelMap(level4Enemies, this.selectedAllies, 4), this.controller));
-        this.gameLevels.add(new Level(new LevelMap(level5Enemies, this.selectedAllies, 5), this.controller));
+        this.gameLevels.add(new Level(new LevelMap(level1Enemies, this.selectedAllies, 1, this.controller), this.controller));
+        this.gameLevels.add(new Level(new LevelMap(level2Enemies, this.selectedAllies, 2, this.controller), this.controller));
+        this.gameLevels.add(new Level(new LevelMap(level3Enemies, this.selectedAllies, 3, this.controller), this.controller));
+        this.gameLevels.add(new Level(new LevelMap(level4Enemies, this.selectedAllies, 4, this.controller), this.controller));
+        this.gameLevels.add(new Level(new LevelMap(level5Enemies, this.selectedAllies, 5, this.controller), this.controller));
     }
 
 

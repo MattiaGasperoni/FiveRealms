@@ -1,6 +1,9 @@
 package view.map;
 
 import javax.swing.*;
+
+import controller.GameController;
+
 import java.awt.*;
 import java.util.List;
 import model.characters.Character;
@@ -11,8 +14,8 @@ import model.point.Point;
  */
 public class TutorialMap extends LevelMap {
 
-    public TutorialMap(List<Character> enemiesList, List<Character> alliesList) {
-        super(enemiesList, alliesList, 0);
+    public TutorialMap(List<Character> enemiesList, List<Character> alliesList, GameController controller) {
+        super(enemiesList, alliesList, 0, controller);
     }
 
     public void startPopUpTutorial() {

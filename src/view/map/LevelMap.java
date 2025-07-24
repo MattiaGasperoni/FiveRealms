@@ -7,14 +7,16 @@ import model.point.Point;
 
 import javax.swing.*;
 
+import controller.GameController;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class LevelMap extends AbstractMap{
 	
-	public LevelMap(List<Character> enemiesList, List<Character> alliesList, int numLevel) {
-		super(enemiesList, alliesList, numLevel);
+	public LevelMap(List<Character> enemiesList, List<Character> alliesList, int numLevel, GameController controller) {
+		super(enemiesList, alliesList, numLevel, controller);
 	}
 	
 	/*public static void main(String[] args) 

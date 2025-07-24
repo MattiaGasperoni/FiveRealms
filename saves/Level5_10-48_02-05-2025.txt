@@ -1,9 +1,0 @@
-Level: 5
-Allies:
-barbarian,16,10,36,127,0
-archer,16,4,45,75,0
-barbarian,14,7,41,137,0
-Enemies:
-barbarian,6,7,30,139,0
-archer,4,10,18,66,0
-barbarian,4,4,34,137,0

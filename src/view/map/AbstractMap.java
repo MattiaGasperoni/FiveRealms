@@ -58,11 +58,12 @@ public abstract class AbstractMap
      * @param alliesList Lista degli alleati nel livello corrente.
      * @param numLevel Numero del livello corrente.
      */
-    public AbstractMap(List<Character> enemiesList, List<Character> alliesList, int numLevel) 
+    public AbstractMap(List<Character> enemiesList, List<Character> alliesList, int numLevel, GameController controller) 
     {
         this.enemiesList      = enemiesList;
         this.alliesList       = alliesList;
         this.numLevel         = numLevel;
+        this.controller		  = controller;
         
         this.characterMap = new HashMap<>();
         this.alliesPositionList = new ArrayList<>();
@@ -601,7 +602,7 @@ public abstract class AbstractMap
 	    
 	    // Header con nome del personaggio
 	    JLabel nameLabel = new JLabel(character.getClass().getSimpleName(), JLabel.CENTER);
-	    nameLabel.setFont(new Font("Serif", Font.BOLD, 14));
+	    nameLabel.setFont(new Font("Serif", Font.BOLD, 16));
 	    nameLabel.setForeground(new Color(139, 69, 19));
 	    nameLabel.setBorder(BorderFactory.createEmptyBorder(8, 8, 5, 8));
 	    
@@ -693,10 +694,10 @@ public abstract class AbstractMap
 	    leftPanel.setOpaque(false);
 	    
 	    JLabel iconLabel = new JLabel(icon);
-	    iconLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
+	    iconLabel.setFont(new Font("Dialog", Font.PLAIN, 14));
 	    
 	    JLabel labelText = new JLabel(label);
-	    labelText.setFont(new Font("Serif", Font.BOLD, 10));
+	    labelText.setFont(new Font("Serif", Font.BOLD, 12));
 	    labelText.setForeground(new Color(101, 67, 33));
 	    
 	    leftPanel.add(iconLabel);
@@ -704,7 +705,7 @@ public abstract class AbstractMap
 	    
 	    // Label per il valore
 	    JLabel valueLabel = new JLabel(value);
-	    valueLabel.setFont(new Font("Serif", Font.BOLD, 10));
+	    valueLabel.setFont(new Font("Serif", Font.BOLD, 12));
 	    valueLabel.setForeground(valueColor);
 	    valueLabel.setOpaque(true);
 	    valueLabel.setBackground(new Color(255, 255, 255, 60));
