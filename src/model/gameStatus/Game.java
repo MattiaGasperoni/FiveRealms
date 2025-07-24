@@ -2,6 +2,10 @@ package model.gameStatus;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import model.characters.*;
 import model.characters.Character;
 import model.characters.bosses.*;
@@ -9,6 +13,8 @@ import model.gameStatus.saveSystem.GameStateManager;
 import view.*;
 import view.map.*;
 import controller.*;
+
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 
@@ -26,6 +32,8 @@ public class Game
     
     private Timer gameTimer;
     private int currentLevelIndex;
+    private ScheduledExecutorService gameExecutor;
+
 
     // Oggetti Grafici
     private MainMenu graphicsMenu;
@@ -100,60 +108,75 @@ public class Game
 	
     public void startLevel() 
     {
-    	// Inizializza i livelli di gioco
-    	this.initializeGameLevels(); 
-    	
-        // Inizializza il timer con delay 100ms
-        this.gameTimer = new Timer(100, e -> updateGame());
-
-        // Avvia il primo livello
+        this.initializeGameLevels(); 
         this.startCurrentLevel();
 
-        this.gameTimer.start(); // parte il loop
-
+        // Avvia un thread separato per la logica di gioco
+        this.gameExecutor = Executors.newSingleThreadScheduledExecutor();
+        
+        this.gameExecutor.scheduleAtFixedRate(() -> 
+        {
+            try 
+            {
+                this.updateGameSafe(); // logica separata
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }, 0, 100, TimeUnit.MILLISECONDS); // ogni 100 ms
     }
     
     private void startCurrentLevel() 
     {
         try 
         {
-            Level livello = gameLevels.get(currentLevelIndex);
-            livello.play(); 
+            Level livello = this.gameLevels.get(currentLevelIndex);
+            livello.play(); // inizializza nemici, fasi ecc.
         } 
         catch (IOException e) 
         {
             System.err.println("Errore durante il livello " + currentLevelIndex + ": " + e.getMessage());
             e.printStackTrace();
-            gameTimer.stop();
+            stopGameLoop();
         }
     }
     
-    private void updateGame() 
+    private void updateGameSafe() 
     {
         Level livello = gameLevels.get(currentLevelIndex);
-        livello.update();
+        livello.update(); // esegue logica
 
-        if (livello.isCompleted())
+        if (livello.isCompleted()) 
         {
-            System.out.println("Livello " + currentLevelIndex + " completato.");
-            checkAndReplaceDeadAllies(this.selectedAllies);
+            SwingUtilities.invokeLater(() -> {
+                System.out.println("Livello " + currentLevelIndex + " completato.");
+                checkAndReplaceDeadAllies(this.selectedAllies);
 
-            currentLevelIndex++;
-
-            if (currentLevelIndex >= Game.TOTAL_LEVEL) 
-            {
-                System.out.println("Tutti i livelli completati!");
-                gameTimer.stop();
-            } 
-            else 
-            {
-                startCurrentLevel();
-            }
+                currentLevelIndex++;
+                if (currentLevelIndex >= Game.TOTAL_LEVEL) 
+                {
+                    System.out.println("Tutti i livelli completati!");
+                    stopGameLoop();
+                } 
+                else 
+                {
+                    startCurrentLevel();
+                }
+            });
         } 
-        else if (livello.isFailed())
+        else if (livello.isFailed()) 
         {
-            System.out.println("Il livello " + currentLevelIndex + " è fallito. Uscita.");
-            gameTimer.stop();
+            SwingUtilities.invokeLater(() -> {
+                System.out.println("Il livello " + currentLevelIndex + " è fallito. Uscita.");
+                stopGameLoop();
+            });
+        }
+    }
+
+    private void stopGameLoop() 
+    {
+        if (gameExecutor != null && !gameExecutor.isShutdown()) 
+        {
+            gameExecutor.shutdownNow();
         }
     }
 

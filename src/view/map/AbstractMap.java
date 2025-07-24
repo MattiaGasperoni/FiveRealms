@@ -118,21 +118,18 @@ public abstract class AbstractMap
         //TODO: Da studiare il metodo getContentPane() per settare dinamicamente la size del JLayeredPane rispetto al frame
         
         
-        // layer 0. Background 
+        // layer 0. Immagine di Background 
         this.initializeBackgroundMap();
         
-        // layer 1. Griglia di bottoni trasparente
+        // layer 1. Griglia di bottoni 
         this.initializeButtonGrid();
         
         // layer 2. Banner di gioco
         this.initializeBanner();
         
         // layer 3. Menu di Pausa
-        //this.initializePauseMenu();
         PauseMenu pauseMenu = new PauseMenu(this.frame, this.layeredPanel, enemiesList, alliesList, numLevel, this.controller);
         pauseMenu.initializePauseMenu();
-
-        
     }
     
 
@@ -170,7 +167,8 @@ public abstract class AbstractMap
             this.layeredPanel.revalidate();
             this.layeredPanel.repaint();
         } 
-        else {
+        else 
+        {
             System.err.println("Errore: immagine di background non trovata per il livello " + numLevel);
         }
     }
@@ -367,9 +365,6 @@ public abstract class AbstractMap
 	        throw new IllegalArgumentException("Character and target point must not be null");
 	    }
 
-	    System.out.println("\nTentativo di spostare il personaggio: " + character.getClass().getSimpleName() +
-	                       " da " + character.getPosition() + " a " + target);
-
 	    if (!this.characterMap.containsKey(character)) 
 	    {
 	        System.err.println("Character not found in the map: " + character.getClass().getSimpleName());
@@ -410,7 +405,7 @@ public abstract class AbstractMap
 	    showCharacterTooltip(character, targetButton);
 	    
 
-	    System.out.println("\nPersonaggio " + character.getClass().getSimpleName() + " spostato con successo.");
+	    System.out.println("Personaggio " + character.getClass().getSimpleName() + " spostato con successo da " + character.getPosition() + " a " + target);
 	}
 
 	
@@ -478,7 +473,6 @@ public abstract class AbstractMap
 	public void updateMap() {
 		Map<JButton, Point> imageButtonList = this.gridPanel.getImageButtonList();
 	    JButton[][] buttonGrid = this.gridPanel.getGridButtons();
-	    System.out.println("Grid dimensioni: " + buttonGrid.length + " righe, " + buttonGrid[0].length + " colonne");
 
 	    // SOLUZIONE 1: Raccogli prima i personaggi da rimuovere, poi rimuovili
 	    /*List<Map.Entry<Character, Point>> charactersToRemove = new ArrayList<>();
@@ -548,7 +542,17 @@ public abstract class AbstractMap
 	    }
 	}
 	
-	public void showCharacterTooltip(Character character, JButton button) {
+	public void showCharacterTooltip(Character character, JButton button)
+	{
+		// Controlla se il thread corrente è l'Event Dispatch Thread (EDT)
+	    // Se non lo è, usa invokeLater per eseguire il codice nell'EDT
+		if (!SwingUtilities.isEventDispatchThread()) {
+	        SwingUtilities.invokeLater(() -> showCharacterTooltip(character, button));
+	        return;
+	    }
+		
+		
+		
 	    JWindow tooltipWindow = new JWindow();
 	    
 	    // Panel principale con bordo arrotondato
@@ -665,6 +669,8 @@ public abstract class AbstractMap
 	    });
 	}
 
+	
+	
 	// Metodo helper per creare le righe delle statistiche
 	private JPanel createStatRow(String icon, String label, String value, Color valueColor) {
 	    JPanel row = new JPanel() {

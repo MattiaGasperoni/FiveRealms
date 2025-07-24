@@ -28,20 +28,31 @@ public class BannerPanel extends JPanel {
         this.add(messageLabel, BorderLayout.CENTER);
 
         this.setVisible(false); // inizialmente nascosto
+        
+        resetTimer = new Timer(3000, e -> this.setVisible(false));
+        resetTimer.setRepeats(false);
     }
 
-    public void showMessage(String text) {
-        messageLabel.setText(text);
-        this.setVisible(true); // mostra il banner
-
-        if (resetTimer != null && resetTimer.isRunning()) {
-            resetTimer.stop();
+    public void showMessage(String text) 
+    {
+        if (!SwingUtilities.isEventDispatchThread()) 
+        {
+            SwingUtilities.invokeLater(() -> showMessage(text));
+            return;
         }
 
-        resetTimer = new Timer(100000, e -> {
-            this.setVisible(false); // nasconde il banner
-        });
-        resetTimer.setRepeats(false);
-        resetTimer.start();
+        messageLabel.setText(text);
+        
+        this.setVisible(true);
+
+        if (resetTimer.isRunning()) 
+        {
+            resetTimer.restart();
+        } 
+        else
+        {
+            resetTimer.start();
+        }
     }
+
 }

@@ -186,7 +186,6 @@ public class GameController
 		{
 			throw new IllegalArgumentException("Map, character, and point must not be null");
 		}		
-		System.out.println("Moving character: " + character.getClass().getSimpleName()+"for "+character.getDistanceInSquares(point) + " to point: " + point);
         map.moveCharacter(character, point);  // Move the character on the map
         character.moveTo(point);  // Update the character's position
         map.updateMap();  // Refresh the map to reflect the new position

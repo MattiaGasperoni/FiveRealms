@@ -5,6 +5,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.swing.SwingUtilities;
+
 import model.characters.AbstractCharacter;
 import model.characters.Character;
 import model.gameStatus.saveSystem.GameStateManager;
@@ -95,21 +97,20 @@ public class Level
     // Metodo che aggiorna lo stato delle fase BATTLE
     private void handleBattlePhase() 
     {
+    	
+    	if (this.currentBattleState == BattleState.WAITING_FOR_MOVEMENT ||
+    	        this.currentBattleState == BattleState.WAITING_FOR_TARGET) 
+    	{
+    		return; // Non fare nulla, stai aspettando l'utente
+    	}
+    	
         switch (this.currentBattleState) 
         {
-            case INITIALIZING:
-                this.initializeBattleRound();
-                break;
-            case WAITING_FOR_MOVEMENT:
-            case WAITING_FOR_TARGET:
-                // Non fare nulla, aspetta input dell'utente
-                // Gli ActionListener gestiranno il resto
-                break;
-            case TURN_COMPLETED:
-                this.moveToNextTurn();
-                break;
-            default:
-                throw new IllegalStateException("Fase Sconosciuta: " + this.currentBattleState);
+            case INITIALIZING: this.initializeBattleRound(); break;
+
+            case TURN_COMPLETED: this.moveToNextTurn(); break;
+            
+            default: throw new IllegalStateException("Fase Sconosciuta: " + this.currentBattleState);
         }
     }
     
@@ -121,11 +122,11 @@ public class Level
         
         this.currentTurnOrder = getTurnOrder(this.alliesList, this.enemiesList);
         
-        System.out.println("Ordine turni: " + currentTurnOrder.stream()
+        System.out.println("Ordine turni: " + this.currentTurnOrder.stream()
             .map(c -> c.getClass().getSimpleName() + "(speed:" + c.getSpeed() + ")")
             .collect(Collectors.joining(", ")));
             
-        if (this.hasRemainingAttackers(currentTurnOrder)) 
+        if (this.hasRemainingAttackers(this.currentTurnOrder)) 
         {
         	this.moveToNextTurn();
         } 
@@ -143,11 +144,22 @@ public class Level
     private void moveToNextTurn() 
     {
     	// Controlla se questo era l'ultimo personaggio che doveva attaccare, se sì, il round è finito
-    	this.levelMap.updateMap(); // Aggiorna stats
-        if (currentTurnOrder.isEmpty()) 
+    	
+        if (SwingUtilities.isEventDispatchThread()) 
+        {
+            // Sei nel thread giusto
+        	this.levelMap.updateMap();
+        } 
+        else
+        {
+            // Sei in un thread separato: usa invokeLater
+        	SwingUtilities.invokeLater(() -> {this.levelMap.updateMap();});
+        }
+    	
+        if (this.currentTurnOrder.isEmpty()) 
         {
             System.out.println("Round completato!");
-            currentLevelPhase = LevelPhase.UPDATE_MAP;
+            this.currentLevelPhase = LevelPhase.UPDATE_MAP;
             return;
         }
         
@@ -181,7 +193,7 @@ public class Level
         this.currentAttacker = nextAttacker;
         System.out.println("\n=== TURNO DI: " + currentAttacker.getClass().getSimpleName() + " ===");
         
-        if (currentAttacker.isAllied())
+        if (this.currentAttacker.isAllied())
         {
             startPlayerTurn();
         } 
@@ -196,13 +208,33 @@ public class Level
     {
         currentBattleState = BattleState.WAITING_FOR_MOVEMENT;
         System.out.println("In attesa del movimento di " + currentAttacker.getClass().getSimpleName());
-        this.levelMap.updateBannerMessage("In attesa del movimento di: "+ currentAttacker.getClass().getSimpleName());
-
+        
+        if (SwingUtilities.isEventDispatchThread()) 
+        {
+            // Sei nel thread giusto
+        	this.levelMap.updateBannerMessage("In attesa del movimento di: "+ currentAttacker.getClass().getSimpleName());
+        } 
+        else
+        {
+            // Sei in un thread separato: usa invokeLater
+        	SwingUtilities.invokeLater(() -> {this.levelMap.updateBannerMessage("In attesa del movimento di: "+ currentAttacker.getClass().getSimpleName());});
+        }
+        
+        
         // Configura il movimento con callback
         this.movementPhaseManager.movementPhase(currentAttacker, alliesList, enemiesList, () -> 
         {
-        	this.levelMap.updateBannerMessage("Movimento completato, "+currentAttacker.getClass().getSimpleName()+" scegli un  bersaglio");
-            System.out.println("Movimento completato, passando alla scelta bersaglio");
+            if (SwingUtilities.isEventDispatchThread()) 
+            {
+                // Sei nel thread giusto
+            	this.levelMap.updateBannerMessage("Movimento completato, "+currentAttacker.getClass().getSimpleName()+" scegli un  bersaglio");
+            } 
+            else
+            {
+                // Sei in un thread separato: usa invokeLater
+            	SwingUtilities.invokeLater(() -> {this.levelMap.updateBannerMessage("Movimento completato, "+currentAttacker.getClass().getSimpleName()+" scegli un  bersaglio");});
+            }
+        	
             this.onMovementCompleted();
         });
     }
@@ -210,24 +242,15 @@ public class Level
     // Questo metodo viene chiamato quando il movimento è completato
     private void onMovementCompleted() 
     {
-        currentBattleState = BattleState.WAITING_FOR_TARGET;
+        this.currentBattleState = BattleState.WAITING_FOR_TARGET;
         
-        this.movementPhaseManager.chooseTarget(enemiesList, currentAttacker, () -> {
-            System.out.println("Fase di Attacco completato!");
-            this.onAttackCompleted();
+        this.movementPhaseManager.chooseTarget(this.enemiesList, this.currentAttacker, () -> 
+        {
+            this.currentBattleState = BattleState.TURN_COMPLETED;
         });
     }
     
-    // Questo metodo viene chiamato quando l'attacco è completato
-    private void onAttackCompleted() 
-    {
-        System.out.println("Turno giocatore completato");
-        currentBattleState = BattleState.TURN_COMPLETED;
-        
-        // Rimuovi personaggi morti dalle liste
-        //this.cleanupDeadCharacters();
-    }
-    
+       
     // Metod che gestisce il turno dell'AI
     private void startAITurn()
     {
@@ -282,25 +305,22 @@ public class Level
         currentBattleState = BattleState.TURN_COMPLETED;
     }
     
-    // Rimuove personaggi morti SAREBBE DA RIMUOVERE? (RINDONDANTE, VIENE FATTO DENTRO FIGHT DI CHARACTER, O SI RIMUOVE QUESTO O SI RIMUOVE DA FIGHT)
-    /*private void cleanupDeadCharacters() 
-    {
-        int deadAllies  = (int) alliesList.stream().filter(c -> !c.isAlive()).count();
-        int deadEnemies = (int) enemiesList.stream().filter(c -> !c.isAlive()).count();
-        
-        alliesList.removeIf(c -> !c.isAlive());
-        enemiesList.removeIf(c -> !c.isAlive());
-        
-        if (deadAllies > 0 || deadEnemies > 0) {
-            System.out.println("Rimossi " + deadAllies + " alleati e " + deadEnemies + " nemici morti");
-        }
-    }*/
-    
     private void handleUpdateMap() 
-    {
-        System.out.println("=== AGGIORNAMENTO MAPPA ===");
-        this.levelMap.updateMap();
-        currentLevelPhase = LevelPhase.CHECK_END;
+    {    
+		System.out.println("=== AGGIORNAMENTO MAPPA ===");
+		
+        if (SwingUtilities.isEventDispatchThread()) 
+        {
+            // Sei nel thread giusto
+        	this.levelMap.updateMap();
+        } 
+        else
+        {
+            // Sei in un thread separato: usa invokeLater
+        	SwingUtilities.invokeLater(() -> {this.levelMap.updateMap();});
+        }
+        
+        this.currentLevelPhase = LevelPhase.CHECK_END;
     }
 
     private void handleEndCheck()
