@@ -394,11 +394,7 @@ public abstract class AbstractMap
 	    /*for(ActionListener al : currentButton.getActionListeners() ) {
 	    	currentButton.removeActionListener(al);
 	    }*/
-	    MouseListener[] mouseListeners = currentButton.getMouseListeners();
-	    for (MouseListener listener : mouseListeners) {
-	    	currentButton.removeMouseListener(listener);
-	    }
-
+	    this.removeCharacterTooltip(currentButton);
 	    // Imposta l'immagine nel nuovo bottone
 	    JButton targetButton = this.gridPanel.getGridButtons()[target.getX()][target.getY()];
 	    targetButton.setIcon(new ImageIcon(character.getImage()));
@@ -441,10 +437,7 @@ public abstract class AbstractMap
 	    /*for(ActionListener al : targetButton.getActionListeners() ) {
 	    	targetButton.removeActionListener(al);
 	    }*/
-	    MouseListener[] mouseListeners = targetButton.getMouseListeners();
-	    for (MouseListener listener : mouseListeners) {
-	    	targetButton.removeMouseListener(listener);
-	    }
+	    this.removeCharacterTooltip(targetButton);
 
 	    System.out.println("Personaggio " + character.getClass().getSimpleName() + 
 	            " rimosso con successo dalla posizione " + target);
@@ -736,7 +729,25 @@ public abstract class AbstractMap
 	    return row;
 	}
 
-
+	public void removeCharacterTooltip(JButton button) {
+	    // First, trigger mouseExited on all listeners to hide any active tooltips
+	    MouseListener[] mouseListeners = button.getMouseListeners();
+	    MouseEvent exitEvent = new MouseEvent(button, MouseEvent.MOUSE_EXITED, 
+	                                        System.currentTimeMillis(), 0, 0, 0, 0, false);
+	    
+	    for (MouseListener listener : mouseListeners) {
+	        try {
+	            listener.mouseExited(exitEvent);
+	        } catch (Exception e) {
+	            // Ignore any exceptions from other listeners
+	        }
+	    }
+	    
+	    // Now remove all mouse listeners from the button
+	    for (MouseListener listener : mouseListeners) {
+	        button.removeMouseListener(listener);
+	    }
+	}
 	
 	
 }
