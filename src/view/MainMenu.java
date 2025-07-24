@@ -76,5 +76,13 @@ public class MainMenu
 
         this.frame.add(backgroundLabel);
     }
+    
+    public void setLoadButtonEnabled(boolean enabled) {
+        this.loadButton.setEnabled(enabled);
+    }
+
+    public void setLoadButtonVisible(boolean visible) {
+        this.loadButton.setVisible(visible);
+    }
 }
 

@@ -38,14 +38,18 @@ public class GameController
  
     public GameController(Game game, GameStateManager gameStateManager, MainMenu mainMenu, TutorialMenu tutorialMenu, CharacterSelectionMenu characterSelectionMenu) 
     {
-		this.game = game;
-		this.gameStateManager = gameStateManager;
-		this.mainMenuView = mainMenu;
-		this.tutorialMenuView = tutorialMenu;
-		this.characterSelectionMenuView = characterSelectionMenu;
-		
+        this.game = game;
+        this.gameStateManager = gameStateManager;
+        this.mainMenuView = mainMenu;
+        this.tutorialMenuView = tutorialMenu;
+        this.characterSelectionMenuView = characterSelectionMenu;
+
+        // Controlla se esistono salvataggi e abilita/disabilita il pulsante
+        boolean hasSave = this.gameStateManager.hasSaved();
+        this.mainMenuView.setLoadButtonEnabled(hasSave);
+
         this.setupMainMenuListeners();
-    }    
+    }   
     
     private void setupMainMenuListeners() 
     {
@@ -67,7 +71,7 @@ public class GameController
         {
             System.out.println(" You chose to load a game.");
             this.mainMenuView.close();
-            //new LoadGameMenu();
+            new LoadGameMenu();
             /*
              * * Qui dovrei implementare il caricamento del gioco
              */

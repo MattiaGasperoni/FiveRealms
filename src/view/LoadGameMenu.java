@@ -1,9 +1,7 @@
 package view;
 
 import javax.swing.*;
-
 import model.gameStatus.saveSystem.GameStateManager;
-
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -19,7 +17,7 @@ public class LoadGameMenu {
 
         JFrame frame = new JFrame("Load Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 800);
+        frame.setSize(800, 800);  // mantieni grande
         frame.setLocationRelativeTo(null);
         frame.setResizable(true);
 
@@ -27,30 +25,71 @@ public class LoadGameMenu {
         backgroundLabel.setLayout(new GridBagLayout());
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.gridy = 0;
 
-        // Aggiunge il pulsante solo se esiste un salvataggio
+        // Riga vuota sopra (spinge il contenuto in basso)
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;  // peso verticale per spingere in basso
+        backgroundLabel.add(Box.createGlue(), gbc);
+
+        // Titolo
+        gbc.gridy = 1;
+        gbc.weighty = 0;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.insets = new Insets(20, 10, 20, 10);
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+
+        JLabel info = new JLabel("Select the appropriate save File", SwingConstants.CENTER);
+        info.setFont(new Font("Arial", Font.BOLD, 20));
+        info.setForeground(Color.WHITE);
+        backgroundLabel.add(info, gbc);
+
+        // Pulsanti load game
+        gbc.gridy = 2;
+        gbc.gridwidth = 1;
+        gbc.insets = new Insets(10, 10, 10, 10);
+
         if (manager.hasSaved()) {
-            String lastSave = manager.getSaveFile(1);
-            if (lastSave != null) {
-                JButton loadGameButton = createButton(manager.getSaveFile(1), e -> {
-                    System.out.println("Loading saved game: " + manager.getSaveFile(1));
+            File[] saveFiles = manager.getSaveFiles();
+            int row = gbc.gridy;
+            for (File saveFile : saveFiles) {
+                String fileName = saveFile.getName();
+                int dotIndex = fileName.lastIndexOf('.');
+                if (dotIndex > 0) fileName = fileName.substring(0, dotIndex);
+
+                JButton loadGameButton = createButton(fileName, e -> {
+                    System.out.println("Loading saved game: " + saveFile.getAbsolutePath());
                     frame.dispose();
-                    // Caricamento del salvataggio può avvenire qui
+                    // caricamento del file saveFile.getAbsolutePath()
                 });
+
+                gbc.gridy = row++;
+                gbc.gridx = 0;
+                gbc.gridwidth = GridBagConstraints.REMAINDER;
+                gbc.anchor = GridBagConstraints.CENTER;
                 backgroundLabel.add(loadGameButton, gbc);
-                gbc.gridy++;
             }
+            gbc.gridy = row;
         }
 
-        // Il pulsante "Exit" è sempre presente
+        // Bottone Exit
+        gbc.gridy++;
         JButton exitButton = createButton("Exit", e -> System.exit(0));
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.anchor = GridBagConstraints.CENTER;
         backgroundLabel.add(exitButton, gbc);
+
+        // Riga vuota sotto (spinge il contenuto in alto)
+        gbc.gridy++;
+        gbc.weighty = 1.0;
+        backgroundLabel.add(Box.createGlue(), gbc);
 
         frame.add(backgroundLabel);
         frame.setVisible(true);
     }
+
 
     private JButton createButton(String text, ActionListener action) {
         JButton button = new JButton(text);
@@ -63,5 +102,4 @@ public class LoadGameMenu {
         button.addActionListener(action);
         return button;
     }
-
 }

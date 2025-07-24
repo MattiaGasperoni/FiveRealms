@@ -1,0 +1,9 @@
+Type,Class,X,Y,Health,Power,Defence,Speed,Weapon
+Level,1
+Ally,Archer     Pos:(16, 4) | HP:  97 | Pow:  64 | Def:  39 | Spd:  81 | Wpn: LongBow        
+Ally,Knight     Pos:(16,10) | HP: 115 | Pow: 101 | Def:  69 | Spd:  64 | Wpn: Spear          
+Ally,Juggernaut Pos:(14, 7) | HP: 107 | Pow:  70 | Def: 119 | Spd:  23 | Wpn: ShortSword     
+Enemy,KnightBoss Pos:( 6, 4) | HP: 105 | Pow: 102 | Def:  63 | Spd:  55 | Wpn: Spear          
+Enemy,Knight     Pos:( 2,12) | HP:  88 | Pow:  80 | Def:  61 | Spd:  40 | Wpn: LongSword      
+Enemy,Knight     Pos:( 3, 7) | HP:  82 | Pow:  84 | Def:  59 | Spd:  42 | Wpn: LongSword      
+Enemy,Barbarian  Pos:( 5,10) | HP: 132 | Pow:  91 | Def:  36 | Spd:  26 | Wpn: LongSword      
