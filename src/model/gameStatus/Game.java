@@ -184,6 +184,7 @@ public class Game
     
     private void checkAndReplaceDeadAllies(List<Character> selectedAllies) 
 	{
+    	/*
 		// Implementa la logica per controllare e sostituire gli alleati morti
 		// Ad esempio, puoi rimuovere gli alleati morti dalla lista e aggiungere nuovi alleati
 		// ...
@@ -200,7 +201,9 @@ public class Game
             // alliesToChange);
 
             // Aggiungi i nuovi alleati
-            // this.selectedAllies.addAll(newAllies);
+            // this.selectedAllies.addAll(newAllies);*/
+        this.controller.startSelectionCharacter();
+    	
 	}
 
     public List<Character> createAllies() 
@@ -225,12 +228,12 @@ public class Game
    		}
 	}
     
-    /*private void initializeGameLevels() {
+    private void initializeGameLevels() {
         // Popolo le liste di nemici dei livelli principali
         List<Character> level1Enemies = new ArrayList<>();
-        level1Enemies.add(new KnightBoss()); //KnightBoss
+        //level1Enemies.add(new KnightBoss()); //KnightBoss
         level1Enemies.add(new Knight());
-        level1Enemies.add(new Knight());
+        //level1Enemies.add(new Knight());
         level1Enemies.add(new Barbarian());
 
         List<Character> level2Enemies = new ArrayList<>();
@@ -278,64 +281,7 @@ public class Game
         this.gameLevels.add(new Level(new LevelMap(level3Enemies, this.selectedAllies, 3, this.controller), this.controller));
         this.gameLevels.add(new Level(new LevelMap(level4Enemies, this.selectedAllies, 4, this.controller), this.controller));
         this.gameLevels.add(new Level(new LevelMap(level5Enemies, this.selectedAllies, 5, this.controller), this.controller));
-    }*/
-    // Con personaggi random ogni volta
-    private void initializeGameLevels() {
-        Random rand = new Random();
-
-        // Creo liste di nemici casuali per ogni livello
-        List<Character> level1Enemies = new ArrayList<>();
-        for (int i = 0; i < 2; i++) { // livello 1: 2 nemici
-            level1Enemies.add(getRandomEnemy(rand));
-        }
-
-        List<Character> level2Enemies = new ArrayList<>();
-        for (int i = 0; i < 3; i++) { // livello 2: 3 nemici
-            level2Enemies.add(getRandomEnemy(rand));
-        }
-
-        List<Character> level3Enemies = new ArrayList<>();
-        for (int i = 0; i < 4; i++) { // livello 3: 4 nemici
-            level3Enemies.add(getRandomEnemy(rand));
-        }
-
-        List<Character> level4Enemies = new ArrayList<>();
-        for (int i = 0; i < 5; i++) { // livello 4: 5 nemici
-            level4Enemies.add(getRandomEnemy(rand));
-        }
-
-        List<Character> level5Enemies = new ArrayList<>();
-        for (int i = 0; i < 6; i++) { // livello 5: 6 nemici
-            level5Enemies.add(getRandomEnemy(rand));
-        }
-
-        // Inizializzo i livelli come facevi tu
-        this.gameLevels.add(new Level(new LevelMap(level1Enemies, this.selectedAllies, 1, this.controller), this.controller));
-        this.gameLevels.add(new Level(new LevelMap(level2Enemies, this.selectedAllies, 2, this.controller), this.controller));
-        this.gameLevels.add(new Level(new LevelMap(level3Enemies, this.selectedAllies, 3, this.controller), this.controller));
-        this.gameLevels.add(new Level(new LevelMap(level4Enemies, this.selectedAllies, 4, this.controller), this.controller));
-        this.gameLevels.add(new Level(new LevelMap(level5Enemies, this.selectedAllies, 5, this.controller), this.controller));
     }
-
-    /**
-     * Restituisce un nemico casuale tra quelli disponibili.
-     */
-    private Character getRandomEnemy(Random rand) {
-        int enemyType = rand.nextInt(7); // 0-6 inclusi (7 tipi di nemici)
-
-        switch (enemyType) {
-            case 0: return new Knight();
-            case 1: return new Barbarian();
-            case 2: return new Archer();
-            case 3: return new Juggernaut();
-            case 4: return new Wizard();
-            case 5: return new KnightBoss();
-            case 6: return new BarbarianBoss();
-            // aggiungi altri boss se necessario
-            default: return new Knight(); // fallback
-        }
-    }
-
 
 
 }

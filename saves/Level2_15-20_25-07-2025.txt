@@ -1,0 +1,8 @@
+Type,Class,X,Y,Health,Power,Defence,Speed,Weapon
+Level,2
+Ally,Barbarian  Pos:(12,10) | HP: 167 | Pow: 109 | Def:  34 | Spd:  40 | Wpn: Axe            
+Ally,Archer     Pos:( 7, 7) | HP: -103 | Pow:  80 | Def:  34 | Spd:  79 | Wpn: ShortBow       
+Ally,Wizard     Pos:( 6, 4) | HP:  22 | Pow:  88 | Def:  32 | Spd:  60 | Wpn: SingleShotWand 
+Enemy,KnightBoss Pos:( 2, 7) | HP: 111 | Pow: 111 | Def:  83 | Spd:  50 | Wpn: LongSword      
+Enemy,Barbarian  Pos:( 6, 7) | HP: 122 | Pow: 104 | Def:  24 | Spd:  37 | Wpn: Axe            
+Enemy,Archer     Pos:( 7, 8) | HP:  25 | Pow:  61 | Def:  38 | Spd:  67 | Wpn: ShortBow       

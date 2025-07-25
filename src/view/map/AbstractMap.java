@@ -219,7 +219,7 @@ public abstract class AbstractMap
     }
 
     
-    public void colourPositionAvailable(List<Point> availableMoves) 
+    public void colourPositionAvailable(List<Point> availableMoves, String colour) 
     {
         if (availableMoves == null || availableMoves.isEmpty()) 
         {
@@ -241,10 +241,15 @@ public abstract class AbstractMap
             if (y >= 0 && y < rows && x >= 0 && x < cols) 
             {
                 JButton button = buttonGrid[y][x];
+                Color semiTransparentGray;
 
-                Color semiTransparentGray = new Color(200, 200, 200, 100);
+                if(colour.equals("red")) {
+                    semiTransparentGray = new Color(255, 0, 0, 100);
+                }else {
+                    semiTransparentGray = new Color(200, 200, 200, 100);
+                }
 
-                // Per rendere la trasparenza visibile bisogna disegnare su un componente non opaco
+				// Per rendere la trasparenza visibile bisogna disegnare su un componente non opaco
                 button.setBackground(semiTransparentGray);
                 button.setOpaque(true);                 // Importante: deve essere false!
                 button.setContentAreaFilled(true);       // Importante: true per disegnare il colore
@@ -372,7 +377,8 @@ public abstract class AbstractMap
 	    }
 
 	    Point currentPosition = character.getPosition();
-
+	    
+	    
 	    if (currentPosition.equals(target)) 
 	    {
 	        System.out.println("Il personaggio è già nella posizione target: " + target);
@@ -386,7 +392,7 @@ public abstract class AbstractMap
 	    }
 
 	    // Aggiorna la mappa con la nuova posizione
-	    this.characterMap.put(character, target);
+	    this.characterMap.replace(character, target);
 
 	    // Rimuove l'immagine dal bottone corrente
 	    JButton currentButton = this.gridPanel.getGridButtons()[currentPosition.getX()][currentPosition.getY()];
@@ -428,9 +434,13 @@ public abstract class AbstractMap
 	        return;
 	    }
 
+	    System.out.println("Dimensione mappa: "+this.characterMap.size());
 	    // Rimuove il personaggio dalla mappa
 	    this.characterMap.remove(character);
 
+	    System.out.println("Ho rimosso il personaggio: "+character.getClass().getSimpleName());
+	    System.out.println("Dimensione mappa: "+this.characterMap.size());
+	    
 	    // Rimuove l'immagine dal bottone
 	    JButton targetButton = this.gridPanel.getGridButtons()[target.getX()][target.getY()];
 	    targetButton.setIcon(null);

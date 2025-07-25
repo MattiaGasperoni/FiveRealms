@@ -74,7 +74,7 @@ public class BattlePhaseView
             
             // Evidenzia i movimenti validi
             //button.setBackground(Color.GRAY);
-            this.levelMap.colourPositionAvailable(availableMoves);
+            this.levelMap.colourPositionAvailable(availableMoves,"gray");
             
             // Crea il listener per questa specifica posizione
             ActionListener moveListener = click -> 
@@ -127,23 +127,28 @@ public class BattlePhaseView
     	System.out.println(attacker.getClass().getSimpleName() + " sta valutando i bersagli nel raggio...");
 
     	List<Character> reachableEnemies = new ArrayList<>();
-
+    	List<Point> availablePosition = new ArrayList<>();
+    	
     	for (Character enemy : enemiesList) {
     	    int distance = attacker.getPosition().distanceFrom(enemy.getPosition());
     	    int range = attacker.getWeapon().getRange();
 
     	    if (distance <= range) {
     	        reachableEnemies.add(enemy);
+    	        availablePosition.add(enemy.getPosition());
     	        System.out.println(" - " + enemy.getClass().getSimpleName() + " (distanza: " + distance + ")");
     	    }
+    	    
     	}
 
     	if (reachableEnemies.isEmpty()) {
+    		
     	    System.out.println("Nessun nemico nel raggio d'attacco. Attacco annullato.");
     	    onAttackCompleted.run();
     	    return;
     	}
-
+    	this.levelMap.colourPositionAvailable(availablePosition, "red");
+    	
     	System.out.println("Seleziona il bersaglio da attaccare.");
 
         List<JButton> enemyButtons = new ArrayList<>();
@@ -159,6 +164,7 @@ public class BattlePhaseView
 
             if (distance <= range) 
             {
+            	System.out.println("Entrato qui dentro!!");
                 enemyButton.setEnabled(true);
                 enemyButton.addActionListener(new ActionListener() 
                 {
@@ -175,6 +181,7 @@ public class BattlePhaseView
                             }
                             // b.setEnabled(false); // Scommenta se vuoi disabilitare anche visivamente
                         }
+                    	System.out.println("Entrato qui dentro2!!");
 
                         // Esegui l'attacco
                         System.out.println(attacker.getClass().getSimpleName() + " (HP: " + attacker.getCurrentHealth() + ", DMG: " + attacker.getPower() + 

@@ -3,13 +3,11 @@ package model.gameStatus;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.swing.SwingUtilities;
 
 import model.characters.AbstractCharacter;
 import model.characters.Character;
-import model.gameStatus.saveSystem.GameStateManager;
 import model.point.Point;
 import view.*;
 import view.map.LevelMap;
@@ -63,10 +61,13 @@ public class Level
     public void play() throws IOException 
     {
         this.levelMap.start();
+    	//SwingUtilities.invokeLater(() -> {this.levelMap.start();});
+
         System.out.print(" Start level ->");
         
         this.levelMap.spawnCharacter(this.enemiesList);
         this.levelMap.spawnCharacter(this.alliesList);
+
         
         this.currentLevelPhase  = LevelPhase.BATTLE;
         this.currentBattleState = BattleState.INITIALIZING;
@@ -88,6 +89,7 @@ public class Level
                 break;
             case DONE:
                 // Livello completato, non fare nulla
+            	this.levelMap.closeWindow();
                 break;
             default:
                 throw new IllegalStateException("Fase Sconosciuta: " + this.currentLevelPhase);
@@ -106,9 +108,20 @@ public class Level
     	
         switch (this.currentBattleState) 
         {
-            case INITIALIZING: this.initializeBattleRound(); break;
+            case INITIALIZING: 
+            	System.out.println("INITIALIZING: Nemici:"+this.enemiesList.size());
+            	System.out.println("Alleati:"+this.alliesList.size());
+            	
+            	this.initializeBattleRound(); 
+            	break;
 
-            case TURN_COMPLETED: this.moveToNextTurn(); break;
+            
+            case TURN_COMPLETED:
+            	System.out.println("TURN_COMPLETED, Nemici:"+this.enemiesList.size());
+            	System.out.println("Alleati:"+this.alliesList.size());
+            	
+            	this.moveToNextTurn();
+            	break;
             
             default: throw new IllegalStateException("Fase Sconosciuta: " + this.currentBattleState);
         }
@@ -145,16 +158,9 @@ public class Level
     {
     	// Controlla se questo era l'ultimo personaggio che doveva attaccare, se sì, il round è finito
     	
-        if (SwingUtilities.isEventDispatchThread()) 
-        {
-            // Sei nel thread giusto
-        	this.levelMap.updateMap();
-        } 
-        else
-        {
-            // Sei in un thread separato: usa invokeLater
-        	SwingUtilities.invokeLater(() -> {this.levelMap.updateMap();});
-        }
+    	SwingUtilities.invokeLater(() -> {this.levelMap.updateMap();});
+    	
+    	this.handleEndCheck();
     	
         if (this.currentTurnOrder.isEmpty()) 
         {
@@ -209,31 +215,16 @@ public class Level
         currentBattleState = BattleState.WAITING_FOR_MOVEMENT;
         System.out.println("In attesa del movimento di " + currentAttacker.getClass().getSimpleName());
         
-        if (SwingUtilities.isEventDispatchThread()) 
-        {
-            // Sei nel thread giusto
-        	this.levelMap.updateBannerMessage("In attesa del movimento di: "+ currentAttacker.getClass().getSimpleName());
-        } 
-        else
-        {
-            // Sei in un thread separato: usa invokeLater
-        	SwingUtilities.invokeLater(() -> {this.levelMap.updateBannerMessage("In attesa del movimento di: "+ currentAttacker.getClass().getSimpleName());});
-        }
-        
+
+    	SwingUtilities.invokeLater(() -> {this.levelMap.updateBannerMessage("In attesa del movimento di: "+ currentAttacker.getClass().getSimpleName());});
         
         // Configura il movimento con callback
         this.movementPhaseManager.movementPhase(currentAttacker, alliesList, enemiesList, () -> 
         {
-            if (SwingUtilities.isEventDispatchThread()) 
-            {
-                // Sei nel thread giusto
-            	this.levelMap.updateBannerMessage("Movimento completato, "+currentAttacker.getClass().getSimpleName()+" scegli un  bersaglio");
-            } 
-            else
-            {
-                // Sei in un thread separato: usa invokeLater
-            	SwingUtilities.invokeLater(() -> {this.levelMap.updateBannerMessage("Movimento completato, "+currentAttacker.getClass().getSimpleName()+" scegli un  bersaglio");});
-            }
+
+
+        	SwingUtilities.invokeLater(() -> {this.levelMap.updateBannerMessage("Movimento completato, "+currentAttacker.getClass().getSimpleName()+" scegli un  bersaglio");});
+            
         	
             this.onMovementCompleted();
         });
@@ -277,16 +268,6 @@ public class Level
         alliesList.stream().forEach(character -> occupiedPositions.add(character.getPosition()));
         enemiesList.stream().forEach(character -> occupiedPositions.add(character.getPosition()));
         
-        alliesList.stream().forEach(character -> System.out.println(character.getPosition()));        
-        System.out.println("BEFORE FILTERING BY OCCUPIED POSITIONS");
-        System.out.println(availablePositions.stream()
-				.filter(point -> currentAttacker.getDistanceInSquares(point) <= (currentAttacker.getSpeed() / AbstractCharacter.SPEED_TO_MOVEMENT))
-				.toList());
-        System.out.println(availablePositions.stream()
-				.filter(point -> currentAttacker.getDistanceInSquares(point) <= (currentAttacker.getSpeed() / AbstractCharacter.SPEED_TO_MOVEMENT))
-				.filter(point -> !occupiedPositions.contains(point)).toList());
-        System.out.println("AFTER FILTERING BY OCCUPIED POSITIONS");
-        
         movementPhaseManager.graphicMovementCharacterToPoint(currentAttacker, availablePositions.stream()
 				.filter(point -> currentAttacker.getDistanceInSquares(point) <= (currentAttacker.getSpeed() / AbstractCharacter.SPEED_TO_MOVEMENT))
 				.filter(point -> !occupiedPositions.contains(point)) //supposed to filter out already-occupied positions...
@@ -306,19 +287,13 @@ public class Level
     }
     
     private void handleUpdateMap() 
-    {    
+    {   
+    	//Ridondante 
 		System.out.println("=== AGGIORNAMENTO MAPPA ===");
 		
-        if (SwingUtilities.isEventDispatchThread()) 
-        {
-            // Sei nel thread giusto
-        	this.levelMap.updateMap();
-        } 
-        else
-        {
-            // Sei in un thread separato: usa invokeLater
-        	SwingUtilities.invokeLater(() -> {this.levelMap.updateMap();});
-        }
+
+    	SwingUtilities.invokeLater(() -> {this.levelMap.updateMap();});
+        
         
         this.currentLevelPhase = LevelPhase.CHECK_END;
     }
