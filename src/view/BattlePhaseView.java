@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.JButton;
+import javax.swing.SwingUtilities;
+
 import controller.GameController;
 import model.characters.Character;
 import model.point.Point;
@@ -34,7 +36,7 @@ public class BattlePhaseView
         // Se non ci sono mosse disponibili, completa immediatamente la fase
         if (availableMoves.isEmpty()) 
         {
-            System.out.println("Nessuna posizione disponibile per " + character.getClass().getSimpleName());
+            System.out.print(" Nessuna posizione disponibile per " + character.getClass().getSimpleName());
             if (onMovementCompleted != null) 
             {
                 onMovementCompleted.run();
@@ -72,8 +74,6 @@ public class BattlePhaseView
         {
             JButton button = this.levelMap.getButtonAt(validPoint.getX(), validPoint.getY());
             
-            // Evidenzia i movimenti validi
-            //button.setBackground(Color.GRAY);
             this.levelMap.colourPositionAvailable(availableMoves,"gray");
             
             // Crea il listener per questa specifica posizione
@@ -124,33 +124,36 @@ public class BattlePhaseView
     
     public void chooseTarget(List<Character> enemiesList, Character attacker, Runnable onAttackCompleted) 
     {
-    	System.out.println(attacker.getClass().getSimpleName() + " sta valutando i bersagli nel raggio...");
+    	System.out.print("\n"+attacker.getClass().getSimpleName() + " (HP: " + attacker.getCurrentHealth() + ", DMG: " + attacker.getPower() + 
+        	    ") seleziona chi vuoi attaccare -> ");
 
     	List<Character> reachableEnemies = new ArrayList<>();
     	List<Point> availablePosition = new ArrayList<>();
     	
-    	for (Character enemy : enemiesList) {
+    	for (Character enemy : enemiesList) 
+    	{
     	    int distance = attacker.getPosition().distanceFrom(enemy.getPosition());
     	    int range = attacker.getWeapon().getRange();
 
-    	    if (distance <= range) {
+    	    if (distance <= range) 
+    	    {
     	        reachableEnemies.add(enemy);
     	        availablePosition.add(enemy.getPosition());
-    	        System.out.println(" - " + enemy.getClass().getSimpleName() + " (distanza: " + distance + ")");
+    	        //System.out.println(" - " + enemy.getClass().getSimpleName() + " (distanza: " + distance + ")");
     	    }
     	    
     	}
 
-    	if (reachableEnemies.isEmpty()) {
+    	if (reachableEnemies.isEmpty()) 
+    	{
     		
-    	    System.out.println("Nessun nemico nel raggio d'attacco. Attacco annullato.");
+    	    System.out.print(" Nessun nemico nel raggio d'attacco. Fase di attacco annullata.");
     	    onAttackCompleted.run();
     	    return;
     	}
+    	
     	this.levelMap.colourPositionAvailable(availablePosition, "red");
     	
-    	System.out.println("Seleziona il bersaglio da attaccare.");
-
         List<JButton> enemyButtons = new ArrayList<>();
 
         for (Character enemy : enemiesList) 
@@ -164,7 +167,6 @@ public class BattlePhaseView
 
             if (distance <= range) 
             {
-            	System.out.println("Entrato qui dentro!!");
                 enemyButton.setEnabled(true);
                 enemyButton.addActionListener(new ActionListener() 
                 {
@@ -181,11 +183,10 @@ public class BattlePhaseView
                             }
                             // b.setEnabled(false); // Scommenta se vuoi disabilitare anche visivamente
                         }
-                    	System.out.println("Entrato qui dentro2!!");
 
-                        // Esegui l'attacco
-                        System.out.println(attacker.getClass().getSimpleName() + " (HP: " + attacker.getCurrentHealth() + ", DMG: " + attacker.getPower() + 
-                        	    ") ha selezionato " + enemy.getClass().getSimpleName() + " (HP: " + enemy.getCurrentHealth() + ", DEF: " + enemy.getDefence() + ")");
+                        System.out.print(" ha selezioanto"+enemy.getClass().getSimpleName() + " (HP: " + enemy.getCurrentHealth() + ", DEF: " + enemy.getDefence() + ")");
+                        /*System.out.println(attacker.getClass().getSimpleName() + " (HP: " + attacker.getCurrentHealth() + ", DMG: " + attacker.getPower() + 
+                        	    ") ha selezionato " + enemy.getClass().getSimpleName() + " (HP: " + enemy.getCurrentHealth() + ", DEF: " + enemy.getDefence() + ")");*/
 
 	        	        
                         Character deadCharacter = attacker.fight(enemy, levelMap.getAlliesList(), enemiesList);

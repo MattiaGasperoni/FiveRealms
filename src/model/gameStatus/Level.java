@@ -109,39 +109,41 @@ public class Level
         switch (this.currentBattleState) 
         {
             case INITIALIZING: 
-            	System.out.println("INITIALIZING: Nemici:"+this.enemiesList.size());
-            	System.out.println("Alleati:"+this.alliesList.size());
-            	
+            	//System.out.println("INITIALIZING: Nemici:"+this.enemiesList.size());
+            	//System.out.println("Alleati:"+this.alliesList.size());
             	this.initializeBattleRound(); 
             	break;
 
             
             case TURN_COMPLETED:
-            	System.out.println("TURN_COMPLETED, Nemici:"+this.enemiesList.size());
-            	System.out.println("Alleati:"+this.alliesList.size());
-            	
-            	this.moveToNextTurn();
+            	//System.out.println("TURN_COMPLETED, Nemici:"+this.enemiesList.size());
+            	//System.out.println("Alleati:"+this.alliesList.size());
+            	this.startNextTurn();
             	break;
             
             default: throw new IllegalStateException("Fase Sconosciuta: " + this.currentBattleState);
         }
     }
     
-    // Inizializza un nuovo round
+    // Questo metodo viene chiamato quando inizia un nuovo round di movimento/attacco
     private void initializeBattleRound() 
     {
-        System.out.println("\n=== INIZIALIZZANDO UN NUOVO ROUND ===");
+        System.out.println("\n\n=== FASE DI INIZIALIZZAZIONE DEL ROUND ===");
         
+        //Otteniamo l'ordine di movimento/attacco del round 
+        this.currentTurnOrder = this.getTurnOrder(this.alliesList, this.enemiesList);
         
-        this.currentTurnOrder = getTurnOrder(this.alliesList, this.enemiesList);
-        
-        System.out.println("Ordine turni: " + this.currentTurnOrder.stream()
+        // Stampa a console l'ordine di movimento e attacco dei personaggi
+        /*System.out.println("Ordine turni: " + this.currentTurnOrder.stream()
             .map(c -> c.getClass().getSimpleName() + "(speed:" + c.getSpeed() + ")")
-            .collect(Collectors.joining(", ")));
-            
+            .collect(Collectors.joining(", ")));*/
+         
+        
+        
+        //Controllo inutile non dovrebbe fai esserci una coda dei turni vuota a inizio round
         if (this.hasRemainingAttackers(this.currentTurnOrder)) 
         {
-        	this.moveToNextTurn();
+        	this.startNextTurn();
         } 
         else 
         {
@@ -153,14 +155,13 @@ public class Level
     
     
     
-    // Il turno del personaggio corrente è finito, passiamo al prossimo
-    private void moveToNextTurn() 
+    // Inizia il turno di un personaggio 
+    private void startNextTurn() 
     {
-    	// Controlla se questo era l'ultimo personaggio che doveva attaccare, se sì, il round è finito
+    	// Controlla se tutti gli alleati sono morti o se tutti i nemici sono sconfitti
+    	this.endTurnCheck();
     	
     	SwingUtilities.invokeLater(() -> {this.levelMap.updateMap();});
-    	
-    	this.handleEndCheck();
     	
         if (this.currentTurnOrder.isEmpty()) 
         {
@@ -213,7 +214,7 @@ public class Level
     private void startPlayerTurn() 
     {
         currentBattleState = BattleState.WAITING_FOR_MOVEMENT;
-        System.out.println("In attesa del movimento di " + currentAttacker.getClass().getSimpleName());
+        System.out.print("In attesa del movimento di " + currentAttacker.getClass().getSimpleName()+" -> ");
         
 
     	SwingUtilities.invokeLater(() -> {this.levelMap.updateBannerMessage("In attesa del movimento di: "+ currentAttacker.getClass().getSimpleName());});
@@ -241,7 +242,6 @@ public class Level
         });
     }
     
-       
     // Metod che gestisce il turno dell'AI
     private void startAITurn()
     {
@@ -297,29 +297,55 @@ public class Level
         
         this.currentLevelPhase = LevelPhase.CHECK_END;
     }
-
-    private void handleEndCheck()
+    
+    private void endTurnCheck()
     {
-        System.out.println("=== CONTROLLO FINE LIVELLO ===");
+        System.out.print("\n\n=== CONTROLLO STATUS DEL TURNO  -> ");
         
         if (this.alliesList.isEmpty()) 
         {
             this.levelFailed = true;
-            System.out.println("Tutti i tuoi personaggi sono morti. Game Over.");
+            System.out.println("Tutti i tuoi personaggi sono morti. Game Over.\n");
             currentLevelPhase = LevelPhase.DONE;
             return;
         } 
         else if (this.enemiesList.isEmpty()) 
         {
             this.levelCompleted = true;
-            System.out.println("Hai sconfitto tutti i nemici. Livello completato!");
-            currentLevelPhase = LevelPhase.DONE;
+            System.out.println("Hai sconfitto tutti i nemici. Livello completato!\n");
+            this.currentLevelPhase = LevelPhase.DONE;
             return;
         }
 
-        // Continua la battaglia
-        System.out.println("Livello in corso, nuovo round...");
-        currentLevelPhase = LevelPhase.BATTLE;
+        // Nemici e alleati ancora in vita si continua 
+        System.out.print("Tutto bene si continua\n");
+        currentLevelPhase  = LevelPhase.BATTLE;
+        currentBattleState = BattleState.INITIALIZING;
+    }
+
+    
+    private void handleEndCheck()
+    {
+        System.out.println("\n=== CONTROLLO STATUS LIVELLO ===");
+        
+        if (this.alliesList.isEmpty()) 
+        {
+            this.levelFailed = true;
+            System.out.println("Tutti i tuoi personaggi sono morti. Game Over.\n");
+            currentLevelPhase = LevelPhase.DONE;
+            return;
+        } 
+        else if (this.enemiesList.isEmpty()) 
+        {
+            this.levelCompleted = true;
+            System.out.println("Hai sconfitto tutti i nemici. Livello completato!\n");
+            this.currentLevelPhase = LevelPhase.DONE;
+            return;
+        }
+
+        // Nemici e alleati ancora in vita si continua 
+        System.out.println("Livello ancora in corso, inizia un nuovo round...\n");
+        currentLevelPhase  = LevelPhase.BATTLE;
         currentBattleState = BattleState.INITIALIZING;
     }
 
@@ -341,7 +367,7 @@ public class Level
     public boolean isCompleted() { return this.levelCompleted; }
     public boolean isFailed() { return this.levelFailed; }
     
-    // ✅ Metodo per debug dello stato
+    // Metodo per debug dello stato
     public void printCurrentState() {
         System.out.println("Fase: " + currentLevelPhase + ", Stato Battaglia: " + currentBattleState);
         if (currentAttacker != null) {

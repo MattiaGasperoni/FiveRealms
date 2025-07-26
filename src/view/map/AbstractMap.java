@@ -407,7 +407,7 @@ public abstract class AbstractMap
 	    showCharacterTooltip(character, targetButton);
 	    
 
-	    System.out.println("Personaggio " + character.getClass().getSimpleName() + " spostato con successo da " + character.getPosition() + " a " + target);
+	    System.out.print(" "+ character.getClass().getSimpleName() + " spostato con successo da " + character.getPosition() + " a " + target);
 	}
 
 	
