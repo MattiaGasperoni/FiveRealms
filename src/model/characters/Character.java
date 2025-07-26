@@ -46,6 +46,6 @@ public interface Character {
 	public String getImagePath();
 	public Image getImage();
 	
-	public Character fight(Character attackedCharacter, List<Character> alliedList, List<Character> enemyList) throws IllegalArgumentException;
+	public Character fight(Character attackedCharacter) throws IllegalArgumentException;
 	
 }

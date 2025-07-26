@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.swing.JButton;
+import javax.swing.SwingUtilities;
 
 import model.characters.Character;
 import model.gameStatus.Game;
@@ -193,6 +194,30 @@ public class GameController
         map.moveCharacter(character, point);  // Move the character on the map
         character.moveTo(point);  // Update the character's position
         map.updateMap();  // Refresh the map to reflect the new position
+    }
+    
+    public void remove(AbstractMap map, Character deadCharacter, Point point, List<Character> listOfTheDead) 
+    {
+		if (map == null || deadCharacter == null || point == null || listOfTheDead == null) 
+		{
+			throw new IllegalArgumentException("Map, deadCharacter, point and listOfTheDead must not be null");
+		}		
+    	SwingUtilities.invokeLater(() -> {map.removeCharacter(deadCharacter);});
+        //map.removeCharacter(deadCharacter);  // remove the character on the map
+        listOfTheDead.remove(deadCharacter);
+    	SwingUtilities.invokeLater(() -> {map.updateMap();});
+        //map.updateMap();  // Refresh the map to reflect the new position
+    }
+    
+    
+    public void fight(Character attackingCharacter, Character attackedCharacter, List<Character> alliedList, List<Character> enemyList, AbstractMap levelMap) 
+    {
+    	Character deadCharacter = attackingCharacter.fight(attackedCharacter);
+    	
+    	if(deadCharacter != null)
+    	{
+    		this.remove(levelMap, deadCharacter, deadCharacter.getPosition(), (deadCharacter.isAllied()? alliedList : enemyList));
+    	}
     }
     
     

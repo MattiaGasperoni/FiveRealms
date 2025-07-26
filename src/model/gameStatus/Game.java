@@ -147,8 +147,8 @@ public class Game
 
         if (livello.isCompleted()) 
         {
-            SwingUtilities.invokeLater(() -> {
-                System.out.println("Livello " + currentLevelIndex + " completato.");
+           /*SwingUtilities.invokeLater(() -> {
+                System.out.println("Livello " + currentLevelIndex+1 + " completato.");
                 checkAndReplaceDeadAllies(this.selectedAllies);
 
                 currentLevelIndex++;
@@ -161,7 +161,20 @@ public class Game
                 {
                     startCurrentLevel();
                 }
-            });
+            });*/
+        	System.out.println("Livello " + (currentLevelIndex+1) + " completato.");
+            //checkAndReplaceDeadAllies(this.selectedAllies);
+
+            currentLevelIndex++;
+            if (currentLevelIndex >= Game.TOTAL_LEVEL) 
+            {
+                System.out.println("Tutti i livelli completati!");
+                stopGameLoop();
+            } 
+            else 
+            {
+                startCurrentLevel();
+            }
         } 
         else if (livello.isFailed()) 
         {

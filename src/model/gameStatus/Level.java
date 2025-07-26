@@ -2,16 +2,14 @@ package model.gameStatus;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import javax.swing.SwingUtilities;
-
+import controller.*;
 import model.characters.AbstractCharacter;
 import model.characters.Character;
 import model.point.Point;
 import view.*;
 import view.map.LevelMap;
-import controller.*;
 
 public class Level 
 {
@@ -45,11 +43,13 @@ public class Level
        
     private final LevelMap levelMap;
     private final BattlePhaseView movementPhaseManager;
+    private final GameController controller;
 
     public Level(LevelMap map, GameController controller) 
     {
         this.levelMap = map;
-        this.movementPhaseManager = new BattlePhaseView(this.levelMap, controller);
+        this.controller = controller;
+        this.movementPhaseManager = new BattlePhaseView(this.levelMap, this.controller);
 
         this.enemiesList = this.levelMap.getEnemiesList();
         this.alliesList  = this.levelMap.getAlliesList();
@@ -61,7 +61,6 @@ public class Level
     public void play() throws IOException 
     {
         this.levelMap.start();
-    	//SwingUtilities.invokeLater(() -> {this.levelMap.start();});
 
         System.out.print(" Start level ->");
         
@@ -79,16 +78,20 @@ public class Level
         switch (this.currentLevelPhase) 
         {
             case BATTLE:
+            	
                 this.handleBattlePhase();
                 break;
             case UPDATE_MAP:
+            	System.out.println("4.");
             	this.handleUpdateMap();
                 break;
             case CHECK_END:
+            	System.out.println("5.");
             	this.handleEndCheck();
                 break;
             case DONE:
                 // Livello completato, non fare nulla
+            	System.out.println("6.");
             	this.levelMap.closeWindow();
                 break;
             default:
@@ -100,17 +103,20 @@ public class Level
     private void handleBattlePhase() 
     {
     	
+    	
     	if (this.currentBattleState == BattleState.WAITING_FOR_MOVEMENT ||
     	        this.currentBattleState == BattleState.WAITING_FOR_TARGET) 
     	{
     		return; // Non fare nulla, stai aspettando l'utente
     	}
-    	
+    	System.out.println("1.");
         switch (this.currentBattleState) 
         {
             case INITIALIZING: 
             	//System.out.println("INITIALIZING: Nemici:"+this.enemiesList.size());
             	//System.out.println("Alleati:"+this.alliesList.size());
+            	System.out.println("2.");
+            	//Entriamo qua solo quando inizia un nuovo round
             	this.initializeBattleRound(); 
             	break;
 
@@ -118,6 +124,7 @@ public class Level
             case TURN_COMPLETED:
             	//System.out.println("TURN_COMPLETED, Nemici:"+this.enemiesList.size());
             	//System.out.println("Alleati:"+this.alliesList.size());
+            	System.out.println("3.");
             	this.startNextTurn();
             	break;
             
@@ -213,6 +220,8 @@ public class Level
     // Inizia il turno del giocatore alleato
     private void startPlayerTurn() 
     {
+    	
+
         currentBattleState = BattleState.WAITING_FOR_MOVEMENT;
         System.out.print("In attesa del movimento di " + currentAttacker.getClass().getSimpleName()+" -> ");
         
@@ -245,8 +254,13 @@ public class Level
     // Metod che gestisce il turno dell'AI
     private void startAITurn()
     {
-    	Character deadCharacter = null;
-        System.out.println("Turno AI");
+    	
+    	try {
+			Thread.sleep(1500);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}System.out.println("Turno AI");
 		Character victim = alliesList.stream()
 				   .min(Comparator.comparing(charac -> charac.getDistanceInSquares(currentAttacker.getPosition()))) //NOTE: If that's the wrong order (hard to test right now), put .reversed() on it. Picks closest enemy.
 				   .orElse(null);
@@ -275,12 +289,12 @@ public class Level
 				.orElse(currentAttacker.getPosition()));
         
         try {
-        	deadCharacter = currentAttacker.fight(victim, alliesList, enemiesList);
-        	if(deadCharacter != null)
-        		this.levelMap.removeCharacter(deadCharacter, deadCharacter.getPosition());
+        	this.controller.fight(currentAttacker, victim, alliesList, enemiesList, levelMap);
+        	
 		} catch (IllegalArgumentException e) { //to handle the case where: even the closest enemy is still out of attack range after movement
-			System.out.println("Character " + this.getClass().getSimpleName() + " cannot find an enemy to fight, ERROR: " + e); //for debug purposes
-			System.out.println("Attempted to attack " + victim.getClass().getSimpleName() + " in position: " + victim.getPosition() + " but self was in position: " + currentAttacker.getPosition()); //for debug purposes
+			//System.out.println("Character " + currentAttacker.getClass().getSimpleName() + " cannot find an enemy to fight, ERROR: " + e); //for debug purposes
+			//System.out.println("Attempted to attack " + victim.getClass().getSimpleName() + " in position: " + victim.getPosition() + " but self was in position: " + currentAttacker.getPosition()); //for debug purposes
+			System.out.print(" Nessun nemico nel raggio d'attacco. Fase di attacco annullata.");
 		}
         
         currentBattleState = BattleState.TURN_COMPLETED;
@@ -307,14 +321,14 @@ public class Level
             this.levelFailed = true;
             System.out.println("Tutti i tuoi personaggi sono morti. Game Over.\n");
             currentLevelPhase = LevelPhase.DONE;
-            return;
+            this.levelMap.closeWindow();
         } 
         else if (this.enemiesList.isEmpty()) 
         {
             this.levelCompleted = true;
             System.out.println("Hai sconfitto tutti i nemici. Livello completato!\n");
             this.currentLevelPhase = LevelPhase.DONE;
-            return;
+            this.levelMap.closeWindow();
         }
 
         // Nemici e alleati ancora in vita si continua 

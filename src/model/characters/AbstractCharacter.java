@@ -116,7 +116,7 @@ public abstract class AbstractCharacter implements Character, Serializable {
 	//used only to create the playable characters basically
 	@Override
 	public void becomeHero() {
-		double heroStatIncreasePercentage = 0.30;
+		double heroStatIncreasePercentage = 20000;
 
 		if(!this.isAllied) {
 			this.isAllied = true;
@@ -138,7 +138,7 @@ public abstract class AbstractCharacter implements Character, Serializable {
 
 	//If someone dies, returns their Character, otherwise returns null
 	@Override
-	public Character fight(Character attackedCharacter, List<Character> alliedList, List<Character> enemyList) throws IllegalArgumentException {
+	public Character fight(Character attackedCharacter) throws IllegalArgumentException {
 		Character deadCharacter = null;
 		
 		if(this.isAllied() == attackedCharacter.isAllied())
@@ -146,64 +146,41 @@ public abstract class AbstractCharacter implements Character, Serializable {
 		if (!this.isWithinAttackRange(this, attackedCharacter))
 			throw new IllegalArgumentException("You cannot attack someone outside of your weapon's attack range!");
 
-		if (this.getWeapon() instanceof ZoneShotWand) { //AOE
-			List<Character> relevantList;
-			if(this.isAllied()) {
-				relevantList = enemyList;
-			} else {
-				relevantList = alliedList;
-			}
+		attackedCharacter.reduceCurrentHealth(this.getPower() - attackedCharacter.getDefence()); // start of combat
 
-			relevantList.stream()
-			.filter(charact -> charact.getDistanceInSquares(attackedCharacter.getPosition()) <= ZoneShotWand.BLAST_ATTACK_RADIUS)
-			.forEach(charact -> charact.reduceCurrentHealth(this.getPower())); //AOE victims can't counterattack
-		} else {
-			attackedCharacter.reduceCurrentHealth(this.getPower() - attackedCharacter.getDefence()); // start of combat
+		if (attackedCharacter.isAlive() && this.isWithinAttackRange(attackedCharacter, this)) // //if attacked character is still alive and his weapon can reach you, it counterattacks
+			this.reduceCurrentHealth(attackedCharacter.getPower() - this.getDefence());
 
-			if (attackedCharacter.isAlive() && this.isWithinAttackRange(attackedCharacter, this)) // //if attacked character is still alive and his weapon can reach you, it counterattacks
-				this.reduceCurrentHealth(attackedCharacter.getPower() - this.getDefence());
-
-			if (!attackedCharacter.isAlive()) {
-				deadCharacter = attackedCharacter;
-				this.gainExperience(AbstractCharacter.EXP_LEVELUP_THRESHOLD/3);
-				//random potion drop on kill
-				switch(rand.nextInt(0,9)) { //50% chance of getting a potion, if so get one of the four randomly
-				case 5:
-					this.setPotion(new PotionHealth());
-					break;
-				case 6:
-					this.setPotion(new PotionDefence());
-					break;
-				case 7:
-					this.setPotion(new PotionPower());
-					break;
-				case 8:
-					this.setPotion(new PotionSpeed());
-					break;				
-				}
-			}
-
-			if (!this.isAlive()) {
-				deadCharacter = this;
-				attackedCharacter.gainExperience(AbstractCharacter.EXP_LEVELUP_THRESHOLD/3);
+		if (!attackedCharacter.isAlive()) {
+			deadCharacter = attackedCharacter;
+			this.gainExperience(AbstractCharacter.EXP_LEVELUP_THRESHOLD/3);
+			//random potion drop on kill
+			switch(rand.nextInt(0,9)) { //50% chance of getting a potion, if so get one of the four randomly
+			case 5:
+				this.setPotion(new PotionHealth());
+				break;
+			case 6:
+				this.setPotion(new PotionDefence());
+				break;
+			case 7:
+				this.setPotion(new PotionPower());
+				break;
+			case 8:
+				this.setPotion(new PotionSpeed());
+				break;				
 			}
 		}
-		
-		if(deadCharacter != null)
-			this.removeDeadCharacterFromList(deadCharacter, alliedList, enemyList);
 
+		if (!this.isAlive()) {
+			deadCharacter = this;
+			attackedCharacter.gainExperience(AbstractCharacter.EXP_LEVELUP_THRESHOLD/3);
+		}
+		
 		return deadCharacter;
 	}
 
 	private boolean isWithinAttackRange(Character attackingCharacter, Character attackedCharacter) {
 		return attackingCharacter.getDistanceInSquares(attackedCharacter.getPosition()) <= attackingCharacter.getRange();
-	}
-
-	private void removeDeadCharacterFromList(Character deadCharacter, List<Character> alliedList, List<Character> enemyList) {
-		if (!this.isAllied())
-			enemyList.remove(deadCharacter);
-		else
-			alliedList.remove(deadCharacter);
 	}
 
 	protected void increaseMaxHealth(double percentage) {		

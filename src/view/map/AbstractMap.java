@@ -88,7 +88,6 @@ public abstract class AbstractMap
     }
     
     
-    
     /**
      * Initializes the main frame and layout.
      */
@@ -132,8 +131,6 @@ public abstract class AbstractMap
         pauseMenu.initializePauseMenu();
     }
     
-
-
 	/**
 	 * Initializes the background map for the current level.
 	 */
@@ -218,7 +215,6 @@ public abstract class AbstractMap
         }
     }
 
-    
     public void colourPositionAvailable(List<Point> availableMoves, String colour) 
     {
         if (availableMoves == null || availableMoves.isEmpty()) 
@@ -397,10 +393,12 @@ public abstract class AbstractMap
 	    // Rimuove l'immagine dal bottone corrente
 	    JButton currentButton = this.gridPanel.getGridButtons()[currentPosition.getX()][currentPosition.getY()];
 	    currentButton.setIcon(null);
-	    /*for(ActionListener al : currentButton.getActionListeners() ) {
+	    for(ActionListener al : currentButton.getActionListeners() ) 
+	    {
 	    	currentButton.removeActionListener(al);
-	    }*/
+	    }
 	    this.removeCharacterTooltip(currentButton);
+	    
 	    // Imposta l'immagine nel nuovo bottone
 	    JButton targetButton = this.gridPanel.getGridButtons()[target.getX()][target.getY()];
 	    targetButton.setIcon(new ImageIcon(character.getImage()));
@@ -412,41 +410,39 @@ public abstract class AbstractMap
 
 	
 	//rimuova dalla mappe il personaggio 
-	public void removeCharacter(Character character, Point target) {
+	public void removeCharacter(Character character) 
+	{
+		Point target = character.getPosition();
+		
 	    if (character == null || target == null) {
 	        throw new IllegalArgumentException("Character and target point must not be null");
 	    }
 
 	    System.out.println("\nTentativo di rimuovere il personaggio: " + character.getClass().getSimpleName() +
-	            " dalla posizione " + target + " Esso ha salute: " + character.getCurrentHealth());
+	            " dalla posizione " + target + ", esso ha salute: " + character.getCurrentHealth());
 
 	    if (!this.characterMap.containsKey(character)) {
 	        System.err.println("Character not found in the map: " + character.getClass().getSimpleName());
 	        return;
-	    }
+	    }	    
+	   
 
-	    Point characterPosition = this.characterMap.get(character);
-	    
-	    if (!characterPosition.equals(target)) {
-	        System.err.println("Il personaggio " + character.getClass().getSimpleName() + 
-	                " non si trova nella posizione specificata " + target + 
-	                ". Posizione attuale: " + characterPosition);
-	        return;
-	    }
-
-	    System.out.println("Dimensione mappa: "+this.characterMap.size());
+	    //System.out.println("Dimensione mappa: "+this.characterMap.size());
 	    // Rimuove il personaggio dalla mappa
 	    this.characterMap.remove(character);
 
 	    System.out.println("Ho rimosso il personaggio: "+character.getClass().getSimpleName());
-	    System.out.println("Dimensione mappa: "+this.characterMap.size());
+	    //System.out.println("Dimensione mappa: "+this.characterMap.size());
 	    
 	    // Rimuove l'immagine dal bottone
 	    JButton targetButton = this.gridPanel.getGridButtons()[target.getX()][target.getY()];
 	    targetButton.setIcon(null);
-	    /*for(ActionListener al : targetButton.getActionListeners() ) {
+	    
+	    for(ActionListener al : targetButton.getActionListeners() ) 
+	    {
 	    	targetButton.removeActionListener(al);
-	    }*/
+	    }
+	    
 	    this.removeCharacterTooltip(targetButton);
 
 	    System.out.println("Personaggio " + character.getClass().getSimpleName() + 

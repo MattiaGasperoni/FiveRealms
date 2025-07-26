@@ -189,9 +189,7 @@ public class BattlePhaseView
                         	    ") ha selezionato " + enemy.getClass().getSimpleName() + " (HP: " + enemy.getCurrentHealth() + ", DEF: " + enemy.getDefence() + ")");*/
 
 	        	        
-                        Character deadCharacter = attacker.fight(enemy, levelMap.getAlliesList(), enemiesList);
-                        if(deadCharacter != null)
-                    		levelMap.removeCharacter(deadCharacter, deadCharacter.getPosition());
+                        controller.fight(attacker, enemy, levelMap.getAlliesList(), enemiesList, levelMap);
                         
                         System.out.println("\nPost Attacco "+enemy.getClass().getSimpleName()+" ha "+ enemy.getCurrentHealth()+" di vita");
 

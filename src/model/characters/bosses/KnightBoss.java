@@ -25,8 +25,8 @@ public class KnightBoss extends Knight{
 	}
 
 	@Override
-	public Character fight(Character attackedCharacter, List<Character> alliedList, List<Character> enemyList) throws IllegalArgumentException {
-		Character deadCharacter = super.fight(attackedCharacter, alliedList, enemyList);
+	public Character fight(Character attackedCharacter) throws IllegalArgumentException {
+		Character deadCharacter = super.fight(attackedCharacter);
 		super.increaseCurrentHealth(this.HEALING_PERCENTAGE);
 		return deadCharacter;
 	}
