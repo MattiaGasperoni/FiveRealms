@@ -19,6 +19,7 @@ import view.MainMenu;
 import view.PauseMenu;
 import view.TutorialMenu;
 import view.map.AbstractMap;
+import view.map.TutorialMap;
 
 /**
  * Controller class that coordinates user actions with the game logic.
@@ -27,16 +28,15 @@ import view.map.AbstractMap;
  */
 public class GameController 
 {
-
-	
-	private MainMenu mainMenuView;
+    
+    private MainMenu mainMenuView;
     private Game game;
     private TutorialMenu tutorialMenuView;
     private CharacterSelectionMenu characterSelectionMenuView;
     private GameStateManager gameStateManager;
-    
+    private TutorialMap currentTutorialMap; // Aggiunto per tenere riferimento alla mappa tutorial
+    private boolean isTutorialMode = false; // Flag per sapere se siamo in modalità tutorial
 
- 
     public GameController(Game game, GameStateManager gameStateManager, MainMenu mainMenu, TutorialMenu tutorialMenu, CharacterSelectionMenu characterSelectionMenu) 
     {
         this.game = game;
@@ -88,44 +88,63 @@ public class GameController
     
     public void startNewGame() 
     {
-    	this.tutorialMenuView.show();
+        this.tutorialMenuView.show();
 
-    	this.tutorialMenuView.addYesListener(event -> 
-    	{
-    		this.tutorialMenuView.close();
+        this.tutorialMenuView.addYesListener(event -> 
+        {
+            this.tutorialMenuView.close();
             System.out.println(" Yes, start play the tutorial");
-
+            
+            this.isTutorialMode = true;
+            
+            // Avvia il tutorial ma NON la selezione dei personaggi
+            // La selezione avverrà solo quando i popup del tutorial saranno completati
             boolean tutorialSuccess = this.game.startTutorial(); 
             
-            if (tutorialSuccess) 
-            {
-                this.game.startSelectionCharacter();
-                
-            } 
-            else
+            if (!tutorialSuccess) 
             {
                 System.out.println(" You failed the tutorial");
                 /*
                  * Qui voglio un PopUp a schermo che dice "Tutorial fallito, e mi chiede se voglio riprovare o uscire"
                  */
             }
+            // NON chiamare startSelectionCharacter() qui - sarà chiamato da onTutorialPopupsCompleted()
         });
 
-    	this.tutorialMenuView.addNoListener(event -> 
-    	{
-    		this.tutorialMenuView.close();
+        this.tutorialMenuView.addNoListener(event -> 
+        {
+            this.tutorialMenuView.close();
             System.out.println(" No, Tutorial skipped");
+            this.isTutorialMode = false;
             this.game.startSelectionCharacter();
         });
 
-    	this.tutorialMenuView.addExitListener(event -> 
-    	{
+        this.tutorialMenuView.addExitListener(event -> 
+        {
             System.out.println("Exited game from tutorial menu");
             this.tutorialMenuView.close();
             System.exit(0);
         });
     }
     
+    /**
+     * Metodo chiamato dalla TutorialMap quando tutti i popup sono completati
+     * Ora può mostrare il menu di selezione dei personaggi
+     */
+    public void onTutorialPopupsCompleted() {
+        System.out.println("Popup del tutorial completati, mostro il menu di selezione...");
+        
+        // Ora avvia la selezione dei personaggi
+        this.game.startSelectionCharacter();
+    }
+    
+    /**
+     * Metodo per impostare il riferimento alla mappa tutorial
+     * Deve essere chiamato dal Game quando crea la TutorialMap
+     */
+    public void setTutorialMap(TutorialMap tutorialMap) {
+        this.currentTutorialMap = tutorialMap;
+    }
     
     public void startSelectionCharacter()
     {
@@ -144,9 +163,16 @@ public class GameController
             this.game.setSelectedCharacters(characterSelected);
             
             this.characterSelectionMenuView.close();
-            this.game.startLevel();
+            
+            // Se siamo in modalità tutorial, riavvia la mappa tutorial con i personaggi selezionati
+            if (this.isTutorialMode && this.currentTutorialMap != null) {
+                this.currentTutorialMap.restartWithSelectedCharacters(characterSelected);
+                System.out.println("Tutorial riavviato con personaggi selezionati!");
+            } else {
+                // Altrimenti avvia il livello normale
+                this.game.startLevel();
+            }
         });
-
     }
     
     private List<Character> transformList(List<Character> allAllies, List<String> selectedCharacters)
@@ -156,7 +182,7 @@ public class GameController
             .collect(Collectors.toList());
     }
      
-	/**
+    /**
      * Saves the current game state, including allies, enemies, and the level.
      * @param allies List of ally characters.
      * @param enemies List of enemy characters.
@@ -187,10 +213,10 @@ public class GameController
      */
     public void move(AbstractMap map, Character character, Point point) 
     {
-		if (map == null || character == null || point == null) 
-		{
-			throw new IllegalArgumentException("Map, character, and point must not be null");
-		}		
+        if (map == null || character == null || point == null) 
+        {
+            throw new IllegalArgumentException("Map, character, and point must not be null");
+        }        
         map.moveCharacter(character, point);  // Move the character on the map
         character.moveTo(point);  // Update the character's position
         map.updateMap();  // Refresh the map to reflect the new position
@@ -198,26 +224,26 @@ public class GameController
     
     public void remove(AbstractMap map, Character deadCharacter, Point point, List<Character> listOfTheDead) 
     {
-		if (map == null || deadCharacter == null || point == null || listOfTheDead == null) 
-		{
-			throw new IllegalArgumentException("Map, deadCharacter, point and listOfTheDead must not be null");
-		}		
-    	SwingUtilities.invokeLater(() -> {map.removeCharacter(deadCharacter);});
+        if (map == null || deadCharacter == null || point == null || listOfTheDead == null) 
+        {
+            throw new IllegalArgumentException("Map, deadCharacter, point and listOfTheDead must not be null");
+        }        
+        SwingUtilities.invokeLater(() -> {map.removeCharacter(deadCharacter);});
         //map.removeCharacter(deadCharacter);  // remove the character on the map
         listOfTheDead.remove(deadCharacter);
-    	SwingUtilities.invokeLater(() -> {map.updateMap();});
+        SwingUtilities.invokeLater(() -> {map.updateMap();});
         //map.updateMap();  // Refresh the map to reflect the new position
     }
     
     
     public void fight(Character attackingCharacter, Character attackedCharacter, List<Character> alliedList, List<Character> enemyList, AbstractMap levelMap) 
     {
-    	Character deadCharacter = attackingCharacter.fight(attackedCharacter);
-    	
-    	if(deadCharacter != null)
-    	{
-    		this.remove(levelMap, deadCharacter, deadCharacter.getPosition(), (deadCharacter.isAllied()? alliedList : enemyList));
-    	}
+        Character deadCharacter = attackingCharacter.fight(attackedCharacter);
+        
+        if(deadCharacter != null)
+        {
+            this.remove(levelMap, deadCharacter, deadCharacter.getPosition(), (deadCharacter.isAllied()? alliedList : enemyList));
+        }
     }
     
     
@@ -250,12 +276,4 @@ public class GameController
             System.exit(0);
         });
     }*/
-
-    
-    
-     
 }
-
-
-
-

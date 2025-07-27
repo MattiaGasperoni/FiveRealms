@@ -40,8 +40,8 @@ public abstract class AbstractMap
     private JLayeredPane layeredPanel;   // Gestisce i vari layer del frame
     private BannerPanel banner;          // Banner di gioco per messaggi
 
-    private List<Character> enemiesList; // Lista dei nemici
-    private List<Character> alliesList;  // Lista degli alleati
+    protected List<Character> enemiesList; // Lista dei nemici
+    protected List<Character> alliesList;  // Lista degli alleati
     private final int numLevel;          // Numero del livello
     
     private Map<Character, Point> characterMap;
@@ -50,7 +50,7 @@ public abstract class AbstractMap
     
     private Random random;
     
-    private GameController controller;
+    protected GameController controller;
 
     /**
      * Costruttore
