@@ -75,6 +75,7 @@ public class BattlePhaseView
         // Coloriamo le posizioni in cui ci possiamo spostare
         this.levelMap.colourPositionAvailable(availableMoves,"gray");
         
+            
         // FASE 2: Associamo ai bottoni delle posizioni libere un ActionLister
         for (Point validPoint : availableMoves)
         {
@@ -87,7 +88,7 @@ public class BattlePhaseView
             ActionListener moveListener = click ->
             {
                 if (movementDone.compareAndSet(false, true))
-                {
+                {	
                     this.controller.move(levelMap, character, targetPoint);
                     
                     this.clearActionListenersAtPositions(availableMoves, this.movementListeners);
@@ -96,13 +97,19 @@ public class BattlePhaseView
                     if (onMovementCompleted != null) onMovementCompleted.run();
                 }
             };
+            // Rimuovi eventuali vecchi listener
+            for (ActionListener al : button.getActionListeners()) {
+                button.removeActionListener(al);
+            }
             
             // Aggiungiamo l'ActionLister e il punto della mappa in cui si trova nella mappa di ActionLister
             this.movementListeners.put(validPoint, moveListener);
             
             // Aggiungiamo l'ActionLister al bottone i-esimo
             button.addActionListener(moveListener);
+            button.setEnabled(true);
         }
+        
     }
     
     /**
@@ -141,29 +148,38 @@ public class BattlePhaseView
 
         for (Character enemy : enemiesList) 
         {
-            Point enemyPosition = enemy.getPosition();
-            
-            JButton button = levelMap.getButtonAt(enemyPosition.getX(), enemyPosition.getY());
-
-            ActionListener attackListener = click -> 
-            {
-                System.out.println(" ha selezionato " + enemy.getClass().getSimpleName() +
-                                   " (HP: " + enemy.getCurrentHealth() + ", DEF: " + enemy.getDefence() + ")");
-
-                this.controller.fight(attacker, enemy, levelMap.getAlliesList(), enemiesList, levelMap);
-
-                System.out.println("\nPost Attacco " + enemy.getClass().getSimpleName() +
-                                   " ha " + enemy.getCurrentHealth() + " di vita");
+        	synchronized (this.attackListeners) {
+                Point enemyPosition = enemy.getPosition();
                 
-                this.clearActionListenersAtPositions(enemyPositions, this.attackListeners);
+                JButton button = levelMap.getButtonAt(enemyPosition.getX(), enemyPosition.getY());
 
-                // Sblocchiamo il flusso d'esecuzione
-                if (onAttackCompleted != null) onAttackCompleted.run();
-            };
+                ActionListener attackListener = click -> 
+                {
+                    System.out.println(" ha selezionato " + enemy.getClass().getSimpleName() +
+                                       " (HP: " + enemy.getCurrentHealth() + ", DEF: " + enemy.getDefence() + ")");
+                    
+                    this.controller.fight(attacker, enemy, levelMap.getAlliesList(), enemiesList, levelMap);
 
-            this.attackListeners.put(enemyPosition, attackListener);
-            button.addActionListener(attackListener);
-            button.setEnabled(true);
+                    System.out.println("\nPost Attacco " + enemy.getClass().getSimpleName() +
+                                       " ha " + enemy.getCurrentHealth() + " di vita");
+                    
+                    this.clearActionListenersAtPositions(enemyPositions, this.attackListeners);
+
+                    // Sblocchiamo il flusso d'esecuzione
+                    if (onAttackCompleted != null) onAttackCompleted.run();
+                };
+
+                // Rimuovi eventuali vecchi listener
+                for (ActionListener al : button.getActionListeners()) {
+                    button.removeActionListener(al);
+                }
+                
+                this.attackListeners.put(enemyPosition, attackListener);
+
+                button.addActionListener(attackListener);
+                button.setEnabled(true);
+			}
+
         }
     }
     
@@ -198,17 +214,20 @@ public class BattlePhaseView
 
     private void clearActionListenersAtPositions(List<Point> positions, Map<Point, ActionListener> listenerMap) 
     {
-        for (Point point : positions) 
-        {
-            ActionListener aL = listenerMap.get(point);
-            
-            if (aL != null) 
-            {
-                this.levelMap.getButtonAt(point.getX(), point.getY()).removeActionListener(aL);
-            }
-        }
-        listenerMap.clear();
-        this.levelMap.resetGridColors();
+    	synchronized (this.attackListeners) 
+    	{
+	        for (Point point : positions) 
+	        {
+	            ActionListener aL = listenerMap.get(point);
+	            
+	            if (aL != null) 
+	            {
+	                this.levelMap.getButtonAt(point.getX(), point.getY()).removeActionListener(aL);
+	            }
+	        }
+	        listenerMap.clear();
+	        this.levelMap.resetGridColors();
+    	}
     }
 
 }

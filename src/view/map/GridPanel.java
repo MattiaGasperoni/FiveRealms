@@ -47,13 +47,12 @@ public class GridPanel extends JPanel
                 int col = j;
                 
                 JButton button = new JButton(); // Create button
-                
-                // Rendi il bottone invisibile ma cliccabile
-                
+                                
                 button.setContentAreaFilled(false);
                 button.setBorderPainted(false);
                 
-                button.addActionListener(e -> showButtonCoordinates(row, col));
+                // Genera l'effeto grafico buggato quando uccidi un nemico
+                //button.addActionListener(e -> showButtonCoordinates(row, col));
                 
                 this.gridButtons[i][j] = button;
                 

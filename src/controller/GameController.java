@@ -228,11 +228,9 @@ public class GameController
         {
             throw new IllegalArgumentException("Map, deadCharacter, point and listOfTheDead must not be null");
         }        
-        SwingUtilities.invokeLater(() -> {map.removeCharacter(deadCharacter);});
-        //map.removeCharacter(deadCharacter);  // remove the character on the map
+        map.removeCharacter(deadCharacter); 
         listOfTheDead.remove(deadCharacter);
-        SwingUtilities.invokeLater(() -> {map.updateMap();});
-        //map.updateMap();  // Refresh the map to reflect the new position
+        map.updateMap();                     
     }
     
     

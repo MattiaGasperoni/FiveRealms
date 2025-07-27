@@ -16,6 +16,7 @@ import controller.GameController;
 import model.characters.Character;
 import model.point.Point;
 import view.BannerPanel;
+import view.CharacterTooltipManager;
 import view.PauseMenu;
 
 /**
@@ -41,6 +42,8 @@ public abstract class AbstractMap
     private List<Point> alliesPositionList;	// per lo spawn
     private List<Point> enemiesPositionList; // per lo spawn
     
+    CharacterTooltipManager tooltipManager;
+
     private Random random;
     
     private GameController controller;
@@ -63,6 +66,9 @@ public abstract class AbstractMap
         this.enemiesPositionList = new ArrayList<>();
         this.random = new Random();
         this.initializePositionList();
+        
+        this.tooltipManager = new CharacterTooltipManager();
+
     }
     
     
@@ -195,7 +201,7 @@ public abstract class AbstractMap
 
         this.banner = new BannerPanel(width, height);
 
-        // Aggiungilo sopra tutti gli altri componenti (layer 10)
+        // Aggiungilo sopra tutti gli altri componenti
         this.layeredPanel.add(this.banner, Integer.valueOf(2));
 
         this.layeredPanel.revalidate();
@@ -381,22 +387,24 @@ public abstract class AbstractMap
 	    }
 
 	    // Aggiorna la mappa con la nuova posizione
-	    this.characterMap.replace(character, target);
-
+	    this.characterMap.remove(character, currentPosition);
+	    this.characterMap.put(character, target);
+	    
 	    // Rimuove l'immagine dal bottone corrente
 	    JButton currentButton = this.gridPanel.getGridButtons()[currentPosition.getX()][currentPosition.getY()];
 	    currentButton.setIcon(null);
-	    for(ActionListener al : currentButton.getActionListeners() ) 
-	    {
-	    	currentButton.removeActionListener(al);
-	    }
-	    this.removeCharacterTooltip(currentButton);
+	    
+	    //this.removeCharacterTooltip(currentButton);
+	    // Rimuovi un tooltip di un bottone specifico
+	    this.tooltipManager.removeCharacterTooltip(currentButton);
 	    
 	    // Imposta l'immagine nel nuovo bottone
 	    JButton targetButton = this.gridPanel.getGridButtons()[target.getX()][target.getY()];
 	    targetButton.setIcon(new ImageIcon(character.getImage()));
-	    showCharacterTooltip(character, targetButton);
-	    
+
+	    //this.showCharacterTooltip(character, targetButton);
+	    this.tooltipManager.showCharacterTooltip(character, targetButton);
+
 
 	    System.out.print(" "+ character.getClass().getSimpleName() + " spostato con successo da " + character.getPosition() + " a " + target);
 	}
@@ -419,24 +427,18 @@ public abstract class AbstractMap
 	        return;
 	    }	    
 	   
-
-	    //System.out.println("Dimensione mappa: "+this.characterMap.size());
 	    // Rimuove il personaggio dalla mappa
 	    this.characterMap.remove(character);
-
-	    System.out.println("Ho rimosso il personaggio: "+character.getClass().getSimpleName());
-	    //System.out.println("Dimensione mappa: "+this.characterMap.size());
 	    
 	    // Rimuove l'immagine dal bottone
 	    JButton targetButton = this.gridPanel.getGridButtons()[target.getX()][target.getY()];
 	    targetButton.setIcon(null);
+
 	    
-	    for(ActionListener al : targetButton.getActionListeners() ) 
-	    {
-	    	targetButton.removeActionListener(al);
-	    }
-	    
-	    this.removeCharacterTooltip(targetButton);
+	    //BECCATO!!!!!!!!!!!!!!!
+	    //this.removeCharacterTooltip(targetButton);
+	    this.tooltipManager.removeCharacterTooltip(targetButton);
+
 
 	    System.out.println("Personaggio " + character.getClass().getSimpleName() + 
 	            " rimosso con successo dalla posizione " + target);
@@ -529,12 +531,13 @@ public abstract class AbstractMap
 	        JButton button = buttonGrid[row][col];
 	        if (button.getIcon() == null) {
 	            //button.setIcon(new ImageIcon(character.getImage()));
-	            showCharacterTooltip(character, button);
+	            //showCharacterTooltip(character, button);
+	    	    this.tooltipManager.showCharacterTooltip(character, button);
 	        }
 	    }
 	}
 	
-	public void showCharacterTooltip(Character character, JButton button)
+	/*public void showCharacterTooltip(Character character, JButton button)
 	{
 		// Controlla se il thread corrente è l'Event Dispatch Thread (EDT)
 	    // Se non lo è, usa invokeLater per eseguire il codice nell'EDT
@@ -748,5 +751,5 @@ public abstract class AbstractMap
 	    }
 	}
 	
-	
+	*/
 }

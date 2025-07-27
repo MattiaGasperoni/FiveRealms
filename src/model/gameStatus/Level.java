@@ -287,7 +287,8 @@ public class Level
 				.min(Comparator.comparing(point -> victim.getDistanceInSquares(point)))
 				.orElse(currentAttacker.getPosition()));
         
-        try {
+        try 
+        {
         	this.controller.fight(currentAttacker, victim, alliesList, enemiesList, levelMap);
         	
 		} catch (IllegalArgumentException e) { //to handle the case where: even the closest enemy is still out of attack range after movement
