@@ -1,13 +1,14 @@
 package view;
 
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
-import javax.swing.JButton;
-import javax.swing.SwingUtilities;
+import java.util.stream.Collectors;
 
+import javax.swing.JButton;
 import controller.GameController;
 import model.characters.Character;
 import model.point.Point;
@@ -18,33 +19,29 @@ public class BattlePhaseView
 
 	private LevelMap levelMap;
     private GameController controller;
+    private Map<Point, ActionListener> movementListeners = new HashMap<>();
+    private Map<Point, ActionListener> attackListeners   = new HashMap<>(); 
     
     public BattlePhaseView(LevelMap map, GameController controll) 
-    {
+    { 
 		this.levelMap       = map;
 		this.controller		= controll;
+		
+		this.movementListeners = new HashMap<>();
+		this.attackListeners   = new HashMap<>();
 	}
 
-	// Gestisce la fase di movimento, mostra la griglia delle possibili posizioni in cui il personaggio può spostarsi
-    // e cliccando sulla posizione della griglia ti sposta in quel punto
-    public void movementPhase(Character character, List<Character> alliesList, List<Character> enemiesList, Runnable onMovementCompleted)
-    {
-        // Ottieni le posizioni in cui possiamo spostarci
-        List<Point> availableMoves = this.getAvailablePositions(character, onMovementCompleted);
-        
-        
-        // Se non ci sono mosse disponibili, completa immediatamente la fase
-        if (availableMoves.isEmpty()) 
-        {
-            System.out.print(" Nessuna posizione disponibile per " + character.getClass().getSimpleName());
-            if (onMovementCompleted != null) 
-            {
-                onMovementCompleted.run();
-            }
-        }
-    }
-
-    private List<Point> getAvailablePositions(Character character, Runnable onMovementCompleted)
+    /**
+     * Starts the movement phase for the given character.
+     * <p>
+     * Highlights all valid tiles the character can move to, colors the grid accordingly,
+     * and attaches listeners to allow movement. Once the movement is completed
+     * (or if no valid positions are available), the {@code onMovementCompleted} callback is executed.
+     *
+     * @param character           the character whose movement phase is being processed
+     * @param onMovementCompleted callback to execute once the movement phase is finished
+     */
+    public void movementPhase(Character character, Runnable onMovementCompleted)
     {
         List<Point> availableMoves = new ArrayList<>();
         int moveRange = character.getSpeed() / 10;
@@ -53,160 +50,165 @@ public class BattlePhaseView
         // Per prevenire click multipli
         AtomicBoolean movementDone = new AtomicBoolean(false);
         
-        // Prima fase: identifica le posizioni valide
+        // FASE 1: identifica le posizioni in cui possiamo spostarci e le colora di grigio
         for (int row = 0; row < buttonGrid.length; row++) 
         {
             for (int col = 0; col < buttonGrid[row].length; col++)
             {
                 Point point = new Point(row, col);
                 
-                if (point.distanceFrom(character.getPosition()) <= moveRange && 
-                    !this.levelMap.isPositionOccupied(point) &&
-                    !point.equals(character.getPosition())) // Evita la posizione corrente
+                if (this.isValidMovementPosition(point, character, moveRange))
                 {
                     availableMoves.add(point);
                 }
             }
         }
-
-        // Seconda fase: configura i bottoni solo per le posizioni valide
+        
+        // Nessuna posizione trovata -> fase finita
+        if (availableMoves.isEmpty()) 
+        {
+            System.out.print(" Nessuna posizione disponibile per " + character.getClass().getSimpleName());
+            if (onMovementCompleted != null) onMovementCompleted.run();
+            return;
+        }
+        
+        // Coloriamo le posizioni in cui ci possiamo spostare
+        this.levelMap.colourPositionAvailable(availableMoves,"gray");
+        
+        // FASE 2: Associamo ai bottoni delle posizioni libere un ActionLister
         for (Point validPoint : availableMoves)
         {
             JButton button = this.levelMap.getButtonAt(validPoint.getX(), validPoint.getY());
             
-            this.levelMap.colourPositionAvailable(availableMoves,"gray");
-            
-            // Crea il listener per questa specifica posizione
-            ActionListener moveListener = click -> 
+            // Crea il listener per i-esima posizione libera
+            Point targetPoint = validPoint;
+
+            // Definiamo cosa accade quando premiamo un bottone con una posizione valida
+            ActionListener moveListener = click ->
             {
-                // Assicura che il movimento venga eseguito solo una volta
-                if (movementDone.compareAndSet(false, true)) 
-                {                    
-                    // Esegui il movimento
-                    this.controller.move(levelMap, character, validPoint);
+                if (movementDone.compareAndSet(false, true))
+                {
+                    this.controller.move(levelMap, character, targetPoint);
                     
-                    // Cleanup: rimuove i listener e resetta i colori
-                    cleanupMovementUI(availableMoves);
+                    this.clearActionListenersAtPositions(availableMoves, this.movementListeners);
                     
-                    // Chiama il callback
-                    if (onMovementCompleted != null) 
-                    {
-                        onMovementCompleted.run();
-                    }
+                    // Sblocchiamo il flusso d'esecuzione
+                    if (onMovementCompleted != null) onMovementCompleted.run();
                 }
             };
             
+            // Aggiungiamo l'ActionLister e il punto della mappa in cui si trova nella mappa di ActionLister
+            this.movementListeners.put(validPoint, moveListener);
+            
+            // Aggiungiamo l'ActionLister al bottone i-esimo
             button.addActionListener(moveListener);
-        }
-
-        return availableMoves;
-    }
-
-    // Metodo helper per pulire l'interfaccia dopo il movimento
-    private void cleanupMovementUI(List<Point> availableMoves) 
-    {
-        for (Point p : availableMoves) 
-        {
-            JButton button = this.levelMap.getButtonAt(p.getX(), p.getY());
-            
-            // Rimuove tutti gli ActionListener dal bottone
-            ActionListener[] listeners = button.getActionListeners();
-            
-            for (ActionListener listener : listeners)
-            {
-                button.removeActionListener(listener);
-            }
-            
-            // Reset del colore di sfondo
-            this.levelMap.resetGridColors();
         }
     }
     
+    /**
+     * Allows the given character to choose a target from the list of candidates.
+     * <p>
+     * Highlights all valid targets within range, assigns click listeners to allow selection,
+     * and invokes the {@code onTargetChosen} callback with the selected target.
+     * If no valid targets are available, the callback is invoked with {@code null}.
+     *
+     * @param character       the character selecting a target
+     * @param targets         the list of potential targets (e.g., enemies)
+     * @param onTargetChosen  callback invoked with the selected target or {@code null} if none was chosen
+     */
     public void chooseTarget(List<Character> enemiesList, Character attacker, Runnable onAttackCompleted) 
     {
-    	System.out.print("\n"+attacker.getClass().getSimpleName() + " (HP: " + attacker.getCurrentHealth() + ", DMG: " + attacker.getPower() + 
-        	    ") seleziona chi vuoi attaccare -> ");
-
-    	List<Character> reachableEnemies = new ArrayList<>();
-    	List<Point> availablePosition = new ArrayList<>();
-    	
-    	for (Character enemy : enemiesList) 
-    	{
-    	    int distance = attacker.getPosition().distanceFrom(enemy.getPosition());
-    	    int range = attacker.getWeapon().getRange();
-
-    	    if (distance <= range) 
-    	    {
-    	        reachableEnemies.add(enemy);
-    	        availablePosition.add(enemy.getPosition());
-    	        //System.out.println(" - " + enemy.getClass().getSimpleName() + " (distanza: " + distance + ")");
-    	    }
-    	    
-    	}
-
-    	if (reachableEnemies.isEmpty()) 
-    	{
-    		
-    	    System.out.print(" Nessun nemico nel raggio d'attacco. Fase di attacco annullata.");
-    	    onAttackCompleted.run();
-    	    return;
-    	}
-    	
-    	this.levelMap.colourPositionAvailable(availablePosition, "red");
-    	
-        List<JButton> enemyButtons = new ArrayList<>();
+        System.out.println("\n" + attacker.getClass().getSimpleName() + " (HP: " + attacker.getCurrentHealth() + ", DMG: " + attacker.getPower() + 
+                ") seleziona chi vuoi attaccare -> ");
+		
+        // Otteniamo i nemici che possiamo attaccare
+		List<Character> reachableEnemies = getEnemiesInRange(attacker, enemiesList);
+		
+		if (reachableEnemies.isEmpty()) 
+		{
+			 System.out.println(" Nessun nemico nel raggio d'attacco. Fase di attacco annullata.");
+			 if (onAttackCompleted != null) onAttackCompleted.run();
+			 return;
+		}
+		
+		// Otteniamo le posizioni dei nemici che possiamo attaccare
+		List<Point> enemyPositions = reachableEnemies.stream()
+		                                           .map(Character::getPosition)
+		                                           .collect(Collectors.toList());
+		
+		// Evidenziamo di rosso i nemici attaccabili
+		levelMap.colourPositionAvailable(enemyPositions, "red");
 
         for (Character enemy : enemiesList) 
         {
-            Point enemyPos = enemy.getPosition();
-            JButton enemyButton = this.levelMap.getButtonAt(enemyPos.getX(), enemyPos.getY());
-            enemyButtons.add(enemyButton);
+            Point enemyPosition = enemy.getPosition();
+            
+            JButton button = levelMap.getButtonAt(enemyPosition.getX(), enemyPosition.getY());
 
-            int distance = attacker.getPosition().distanceFrom(enemyPos);
-            int range = attacker.getWeapon().getRange();
-
-            if (distance <= range) 
+            ActionListener attackListener = click -> 
             {
-                enemyButton.setEnabled(true);
-                enemyButton.addActionListener(new ActionListener() 
-                {
-                    @Override
-                    public void actionPerformed(ActionEvent e) 
-                    {
-                        
+                System.out.println(" ha selezionato " + enemy.getClass().getSimpleName() +
+                                   " (HP: " + enemy.getCurrentHealth() + ", DEF: " + enemy.getDefence() + ")");
 
-                        // Disabilita tutti i bottoni e rimuove i listener
-                        for (JButton b : enemyButtons) 
-                        {
-                            for (ActionListener al : b.getActionListeners()) {
-                                b.removeActionListener(al);
-                            }
-                            // b.setEnabled(false); // Scommenta se vuoi disabilitare anche visivamente
-                        }
+                this.controller.fight(attacker, enemy, levelMap.getAlliesList(), enemiesList, levelMap);
 
-                        System.out.print(" ha selezioanto"+enemy.getClass().getSimpleName() + " (HP: " + enemy.getCurrentHealth() + ", DEF: " + enemy.getDefence() + ")");
-                        /*System.out.println(attacker.getClass().getSimpleName() + " (HP: " + attacker.getCurrentHealth() + ", DMG: " + attacker.getPower() + 
-                        	    ") ha selezionato " + enemy.getClass().getSimpleName() + " (HP: " + enemy.getCurrentHealth() + ", DEF: " + enemy.getDefence() + ")");*/
+                System.out.println("\nPost Attacco " + enemy.getClass().getSimpleName() +
+                                   " ha " + enemy.getCurrentHealth() + " di vita");
+                
+                this.clearActionListenersAtPositions(enemyPositions, this.attackListeners);
 
-	        	        
-                        controller.fight(attacker, enemy, levelMap.getAlliesList(), enemiesList, levelMap);
-                        
-                        System.out.println("\nPost Attacco "+enemy.getClass().getSimpleName()+" ha "+ enemy.getCurrentHealth()+" di vita");
+                // Sblocchiamo il flusso d'esecuzione
+                if (onAttackCompleted != null) onAttackCompleted.run();
+            };
 
-
-                        // Callback completamento
-                        if (onAttackCompleted != null) 
-                        {
-                            onAttackCompleted.run();
-                        }
-                    }
-                });
-            }
+            this.attackListeners.put(enemyPosition, attackListener);
+            button.addActionListener(attackListener);
+            button.setEnabled(true);
         }
     }
     
-    public void graphicMovementCharacterToPoint (Character character, Point validPoint) 
+    
+    public void graphicMovementCharacterToPoint(Character character, Point validPoint) 
     {
     	this.controller.move(levelMap, character, validPoint);
     }
+
+    
+    /*===============*/
+    /* Metodi Helper */
+    /*===============*/
+    
+    private boolean isValidMovementPosition(Point point, Character character, int moveRange) 
+    {
+        return point.distanceFrom(character.getPosition()) <= moveRange &&
+               !this.levelMap.isPositionOccupied(point) &&
+               !point.equals(character.getPosition());
+    }
+    
+    private List<Character> getEnemiesInRange(Character attacker, List<Character> enemies) 
+    {
+        int range = attacker.getWeapon().getRange();
+        
+        Point attackerPos = attacker.getPosition();
+
+        return enemies.stream()
+                      .filter(enemy -> attackerPos.distanceFrom(enemy.getPosition()) <= range)
+                      .collect(Collectors.toList());
+    }
+
+    private void clearActionListenersAtPositions(List<Point> positions, Map<Point, ActionListener> listenerMap) 
+    {
+        for (Point point : positions) 
+        {
+            ActionListener aL = listenerMap.get(point);
+            
+            if (aL != null) 
+            {
+                this.levelMap.getButtonAt(point.getX(), point.getY()).removeActionListener(aL);
+            }
+        }
+        listenerMap.clear();
+        this.levelMap.resetGridColors();
+    }
+
 }

@@ -6,20 +6,13 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.RoundRectangle2D;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Random;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import javax.swing.*;
-
 import controller.GameController;
-import model.characters.AbstractCharacter;
 import model.characters.Character;
 import model.point.Point;
 import view.BannerPanel;
@@ -40,8 +33,8 @@ public abstract class AbstractMap
     private JLayeredPane layeredPanel;   // Gestisce i vari layer del frame
     private BannerPanel banner;          // Banner di gioco per messaggi
 
-    protected List<Character> enemiesList; // Lista dei nemici
-    protected List<Character> alliesList;  // Lista degli alleati
+    private List<Character> enemiesList; // Lista dei nemici
+    private List<Character> alliesList;  // Lista degli alleati
     private final int numLevel;          // Numero del livello
     
     private Map<Character, Point> characterMap;
@@ -50,7 +43,7 @@ public abstract class AbstractMap
     
     private Random random;
     
-    protected GameController controller;
+    private GameController controller;
 
     /**
      * Costruttore

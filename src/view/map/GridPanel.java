@@ -1,22 +1,18 @@
 package view.map;
 
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
 import javax.swing.JButton;
 import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import model.characters.Character;
 import model.point.Point;
 
 public class GridPanel extends JPanel 
 {
 
-    private JButton[][] gridButtons; // 2D array for grid buttons
+    private JButton[][] gridButtons;  // 2D array for grid buttons
     private JLayeredPane layeredPane; // Riferimento al JLayeredPane
 
     /**
@@ -39,11 +35,14 @@ public class GridPanel extends JPanel
     /**
      * Initializes the grid panel with buttons, setting up their properties and adding them to the panel.
      */
-    private void initializeGrid() {
+    private void initializeGrid() 
+    {
         this.removeAll(); // Clear all components
 
-        for (int i = 0; i < AbstractMap.GRID_SIZE_WIDTH; i++) {
-            for (int j = 0; j < AbstractMap.GRID_SIZE_HEIGHT; j++) {
+        for (int i = 0; i < AbstractMap.GRID_SIZE_WIDTH; i++) 
+        {
+            for (int j = 0; j < AbstractMap.GRID_SIZE_HEIGHT; j++) 
+            {
                 int row = i;
                 int col = j;
                 
@@ -54,7 +53,7 @@ public class GridPanel extends JPanel
                 button.setContentAreaFilled(false);
                 button.setBorderPainted(false);
                 
-                button.addActionListener(e -> showButtonCoordinates(row, col)); //QUi dopo sarà tipo l'attacco
+                button.addActionListener(e -> showButtonCoordinates(row, col));
                 
                 this.gridButtons[i][j] = button;
                 
@@ -73,8 +72,7 @@ public class GridPanel extends JPanel
      * @param row The row index of the button.
      * @param col The column index of the button.
      */
-    // Quando siamo nella fase di spostamento deve spostarsi
-    private void showButtonCoordinates(int row, int col) {
+     private void showButtonCoordinates(int row, int col) {
         JOptionPane.showMessageDialog(layeredPane, "Position: [" + row + ", " + col + "]");
     }
     

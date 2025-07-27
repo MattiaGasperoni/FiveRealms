@@ -11,12 +11,18 @@ import model.point.Point;
  * Tutorial con struttura sequenziale e uso esclusivo delle costanti.
  * Versione modificata per mostrare prima i popup, poi il menu di selezione.
  */
-public class TutorialMap extends LevelMap {
+public class TutorialMap extends AbstractMap {
     
     private boolean popupsCompleted = false;
+	private List<Character> alliesList;
+	private List<Character> enemiesList;
+	private GameController controller;
     
     public TutorialMap(List<Character> enemiesList, List<Character> alliesList, GameController controller) {
         super(enemiesList, alliesList, 0, controller);
+        this.alliesList  = alliesList;
+        this.enemiesList = enemiesList;
+        this.controller  = controller;
     }
     
     /**

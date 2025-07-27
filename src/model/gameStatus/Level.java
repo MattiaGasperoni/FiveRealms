@@ -229,7 +229,7 @@ public class Level
     	SwingUtilities.invokeLater(() -> {this.levelMap.updateBannerMessage("In attesa del movimento di: "+ currentAttacker.getClass().getSimpleName());});
         
         // Configura il movimento con callback
-        this.movementPhaseManager.movementPhase(currentAttacker, alliesList, enemiesList, () -> 
+        this.movementPhaseManager.movementPhase(currentAttacker, () -> 
         {
 
 
@@ -258,7 +258,6 @@ public class Level
     	try {
 			Thread.sleep(1500);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}System.out.println("Turno AI");
 		Character victim = alliesList.stream()
