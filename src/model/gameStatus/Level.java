@@ -60,6 +60,7 @@ public class Level
 
     public void play() throws IOException 
     {
+    	
         this.levelMap.start();
 
         System.out.print(" Start level ->");
@@ -226,14 +227,14 @@ public class Level
         System.out.print("In attesa del movimento di " + currentAttacker.getClass().getSimpleName()+" -> ");
         
 
-    	SwingUtilities.invokeLater(() -> {this.levelMap.updateBannerMessage("In attesa del movimento di: "+ currentAttacker.getClass().getSimpleName());});
+    	SwingUtilities.invokeLater(() -> {this.levelMap.updateBannerMessage("In attesa del movimento di: "+ currentAttacker.getClass().getSimpleName(), false);});
         
         // Configura il movimento con callback
         this.movementPhaseManager.movementPhase(currentAttacker, () -> 
         {
 
 
-        	SwingUtilities.invokeLater(() -> {this.levelMap.updateBannerMessage("Movimento completato, "+currentAttacker.getClass().getSimpleName()+" scegli un  bersaglio");});
+        	SwingUtilities.invokeLater(() -> {this.levelMap.updateBannerMessage("Movimento completato, "+currentAttacker.getClass().getSimpleName()+" scegli un  bersaglio", false);});
             
         	
             this.onMovementCompleted();
@@ -312,30 +313,45 @@ public class Level
         this.currentLevelPhase = LevelPhase.CHECK_END;
     }
     
-    private void endTurnCheck()
-    {
+    private void endTurnCheck() {
         System.out.print("\n\n=== CONTROLLO STATUS DEL TURNO  -> ");
-        
-        if (this.alliesList.isEmpty()) 
-        {
+
+        if (this.alliesList.isEmpty()) {
             this.levelFailed = true;
             System.out.println("Tutti i tuoi personaggi sono morti. Game Over.\n");
             currentLevelPhase = LevelPhase.DONE;
-            this.levelMap.closeWindow();
-        } 
-        else if (this.enemiesList.isEmpty()) 
-        {
+
+            //Banner 5 secondi
+            SwingUtilities.invokeLater(() -> {
+                this.levelMap.updateBannerMessage("Tutti i tuoi personaggi sono morti. Game Over.", true);
+                new javax.swing.Timer(5000, e -> this.levelMap.closeWindow()) {{
+                    setRepeats(false);
+                    start();
+                }};
+            });
+
+        } else if (this.enemiesList.isEmpty()) {
             this.levelCompleted = true;
             System.out.println("Hai sconfitto tutti i nemici. Livello completato!\n");
-            this.currentLevelPhase = LevelPhase.DONE;
-            this.levelMap.closeWindow();
-        }
+            currentLevelPhase = LevelPhase.DONE;
 
-        // Nemici e alleati ancora in vita si continua 
-        System.out.print("Tutto bene si continua\n");
-        currentLevelPhase  = LevelPhase.BATTLE;
-        currentBattleState = BattleState.INITIALIZING;
+            //Banner 5 secondi
+            SwingUtilities.invokeLater(() -> {
+                this.levelMap.updateBannerMessage("Hai sconfitto tutti i nemici. Livello Completato", true);
+                new javax.swing.Timer(5000, e -> this.levelMap.closeWindow()) {{
+                    setRepeats(false);
+                    start();
+                }};
+            });
+
+        } else {
+            // Nemici e alleati ancora in vita si continua 
+            System.out.print("Tutto bene si continua\n");
+            currentLevelPhase = LevelPhase.BATTLE;
+            currentBattleState = BattleState.INITIALIZING;
+        }
     }
+
 
     
     private void handleEndCheck()
@@ -388,4 +404,9 @@ public class Level
             System.out.println("Attaccante corrente: " + currentAttacker.getClass().getSimpleName());
         }
     }
+    
+    public LevelMap getLevelMap() {
+        return this.levelMap;
+    }
+
 }

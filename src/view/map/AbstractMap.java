@@ -207,10 +207,23 @@ public abstract class AbstractMap
         this.layeredPanel.revalidate();
         this.layeredPanel.repaint();
     }
+    
+    /*Modifiche effettuate per il banner*/
+    public int getWidth() {
+    	return this.layeredPanel.getWidth();
+    }
 
-    public void updateBannerMessage(String msg) {
+	public int getHeight() {
+		return this.layeredPanel.getHeight();
+	}
+
+    public void updateBannerMessage(String msg, boolean fullScreen) {
         if (this.banner != null) {
-            this.banner.showMessage(msg);
+            if (fullScreen) {
+                this.banner.showFullScreenMessage(msg, getWidth(), getHeight());
+            } else {
+                this.banner.showMessage(msg);
+            }
         }
     }
 

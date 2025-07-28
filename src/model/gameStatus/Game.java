@@ -12,6 +12,7 @@ import model.characters.bosses.*;
 import model.gameStatus.saveSystem.GameStateManager;
 import view.*;
 import view.map.*;
+import view.map.AbstractMap;
 import controller.*;
 
 import javax.swing.SwingUtilities;
@@ -108,6 +109,7 @@ public class Game
 	
     public void startLevel() 
     {
+    	
         this.initializeGameLevels(); 
         this.startCurrentLevel();
 
@@ -168,7 +170,18 @@ public class Game
             currentLevelIndex++;
             if (currentLevelIndex >= Game.TOTAL_LEVEL) 
             {
+            	//Modifica per banner a tutto schermo
+            	/* 
+            	 SwingUtilities.invokeLater(() -> {
+                    Level lastLevel = gameLevels.get(currentLevelIndex - 1);
+                    AbstractMap abstractMap = lastLevel.getLevelMap();
+                    abstractMap.updateBannerMessage("Tutti i livelli completati! Hai vinto!", true);
+                });*/
+            	
                 System.out.println("Tutti i livelli completati!");
+
+                
+                
                 stopGameLoop();
             } 
             else 
