@@ -33,12 +33,6 @@ public class BannerPanel extends JPanel {
 
     public void showMessage(String text) 
     {
-        if (!SwingUtilities.isEventDispatchThread()) 
-        {
-            SwingUtilities.invokeLater(() -> showMessage(text));
-            return;
-        }
-
         messageLabel.setText(text);
         
         this.setVisible(true);
@@ -52,14 +46,10 @@ public class BannerPanel extends JPanel {
             resetTimer.start();
         }
     }
+    
     /* Metodo per fare il banner a tutto schermo*/
     public void showFullScreenMessage(String text, int width, int height)
     {
-        if (!SwingUtilities.isEventDispatchThread()) 
-        {
-            SwingUtilities.invokeLater(() -> showFullScreenMessage(text, width, height));
-            return;
-        }
 
         this.setBounds(0, 0, width, height);
         this.setBackground(new Color(255, 150, 50)); // colore più acceso se vuoi

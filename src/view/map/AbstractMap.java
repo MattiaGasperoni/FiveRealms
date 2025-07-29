@@ -1,11 +1,6 @@
 package view.map;
 
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -74,7 +69,8 @@ public abstract class AbstractMap
     
 	public void start() 
     {
-		 if (this.numLevel == 0){
+		 if (this.numLevel == 0)
+		 {
 		        System.out.print(" Open Tutorial Frame ->");
 		 } 
 		 else{
@@ -111,10 +107,7 @@ public abstract class AbstractMap
         this.frame.setContentPane(this.layeredPanel);
         
         // Imposta le dimesioni del JLayeredPane
-        this.layeredPanel.setSize(width -13, height -35); 
-        
-        //TODO: Da studiare il metodo getContentPane() per settare dinamicamente la size del JLayeredPane rispetto al frame
-        
+        this.layeredPanel.setSize(width -13, height -35);         
         
         // layer 0. Immagine di Background 
         this.initializeBackgroundMap();
@@ -335,11 +328,12 @@ public abstract class AbstractMap
 
 	    for (int i = 0; i < spawnList.size(); i++) 
 	    {
-	        spawnCharacterHelper(spawnList.get(i), positionList);
+	        this.spawnCharacterHelper(spawnList.get(i), positionList);
 	    }
 	}
 
-	private void spawnCharacterHelper(Character character, List<Point> positionList) {
+	private void spawnCharacterHelper(Character character, List<Point> positionList) 
+	{
 	    int target = random.nextInt(positionList.size());
 	    Point chosenPosition = positionList.remove(target);
 	    character.setPosition(chosenPosition);
@@ -350,6 +344,9 @@ public abstract class AbstractMap
 	    JButton button = this.gridPanel.getGridButtons()[chosenPosition.getX()][chosenPosition.getY()];
 	    button.setIcon(new ImageIcon(character.getImage()));
 	    button.setContentAreaFilled(false);
+	    
+	    // Aggiungi al personaggio il suo ToolTip
+	    this.tooltipManager.showCharacterTooltip(character, button);
 	}
 
 	private void initializePositionList() 
@@ -419,7 +416,7 @@ public abstract class AbstractMap
 	    this.tooltipManager.showCharacterTooltip(character, targetButton);
 
 
-	    System.out.print(" "+ character.getClass().getSimpleName() + " spostato con successo da " + character.getPosition() + " a " + target);
+	    System.out.print(character.getClass().getSimpleName() + " spostato con successo da " + character.getPosition() + " a " + target);
 	}
 
 	
@@ -446,13 +443,11 @@ public abstract class AbstractMap
 	    // Rimuove l'immagine dal bottone
 	    JButton targetButton = this.gridPanel.getGridButtons()[target.getX()][target.getY()];
 	    targetButton.setIcon(null);
-
 	    
-	    //BECCATO!!!!!!!!!!!!!!!
-	    //this.removeCharacterTooltip(targetButton);
-	    this.tooltipManager.removeCharacterTooltip(targetButton);
-
-
+	    /* WIZARD BOSS SI BLOCCA QUA !!!*/
+	    
+	    this.tooltipManager.removeCharacterTooltip(targetButton);   
+	    
 	    System.out.println("Personaggio " + character.getClass().getSimpleName() + 
 	            " rimosso con successo dalla posizione " + target);
 	}
@@ -477,10 +472,11 @@ public abstract class AbstractMap
 	}
 	
 	
-	public void updateMap() {
-		Map<JButton, Point> imageButtonList = this.gridPanel.getImageButtonList();
-	    JButton[][] buttonGrid = this.gridPanel.getGridButtons();
-
+	public void updateMap() 
+	{		
+		//Map<JButton, Point> imageButtonList = this.gridPanel.getImageButtonList();
+	    //JButton[][] buttonGrid = this.gridPanel.getGridButtons();
+		
 	    // SOLUZIONE 1: Raccogli prima i personaggi da rimuovere, poi rimuovili
 	    /*List<Map.Entry<Character, Point>> charactersToRemove = new ArrayList<>();
 	    for (Map.Entry<Character, Point> entry : this.characterMap.entrySet()) {
@@ -519,7 +515,7 @@ public abstract class AbstractMap
 	    }
 	    */
 	    // 2) Aggiunge immagini a bottoni dove è presente un personaggio
-	    for (Map.Entry<Character, Point> entry : this.characterMap.entrySet()) {
+	    /*for (Map.Entry<Character, Point> entry : this.characterMap.entrySet()) {
 	        Character character = entry.getKey();
 	        Point point = entry.getValue();
 
@@ -547,222 +543,6 @@ public abstract class AbstractMap
 	            //showCharacterTooltip(character, button);
 	    	    this.tooltipManager.showCharacterTooltip(character, button);
 	        }
-	    }
+	    }*/
 	}
-	
-	/*public void showCharacterTooltip(Character character, JButton button)
-	{
-		// Controlla se il thread corrente è l'Event Dispatch Thread (EDT)
-	    // Se non lo è, usa invokeLater per eseguire il codice nell'EDT
-		if (!SwingUtilities.isEventDispatchThread()) {
-	        SwingUtilities.invokeLater(() -> showCharacterTooltip(character, button));
-	        return;
-	    }
-		
-		
-		
-	    JWindow tooltipWindow = new JWindow();
-	    
-	    // Panel principale con bordo arrotondato
-	    JPanel mainPanel = new JPanel() {
-	        @Override
-	        protected void paintComponent(Graphics g) {
-	            Graphics2D g2d = (Graphics2D) g.create();
-	            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-	            
-	            // Sfondo pergamena con gradiente
-	            GradientPaint gradient = new GradientPaint(
-	                0, 0, new Color(244, 228, 188),
-	                getWidth(), getHeight(), new Color(230, 211, 163)
-	            );
-	            g2d.setPaint(gradient);
-	            g2d.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
-	            
-	            // Bordo medievale
-	            g2d.setStroke(new BasicStroke(3));
-	            g2d.setColor(new Color(139, 69, 19));
-	            g2d.drawRoundRect(1, 1, getWidth()-3, getHeight()-3, 20, 20);
-	            
-	            // Bordo interno decorativo
-	            g2d.setStroke(new BasicStroke(1));
-	            g2d.setColor(new Color(139, 69, 19, 80));
-	            g2d.drawRoundRect(8, 8, getWidth()-17, getHeight()-17, 15, 15);
-	            
-	            // Ornamenti agli angoli
-	            drawCornerOrnaments(g2d);
-	            
-	            g2d.dispose();
-	        }
-	        
-	        private void drawCornerOrnaments(Graphics2D g2d) {
-	            g2d.setColor(new Color(139, 69, 19));
-	            int ornamentSize = 8;
-	            
-	            // Angolo superiore sinistro
-	            g2d.fillOval(5, 5, ornamentSize, ornamentSize);
-	            // Angolo superiore destro
-	            g2d.fillOval(getWidth() - ornamentSize - 5, 5, ornamentSize, ornamentSize);
-	            // Angolo inferiore sinistro
-	            g2d.fillOval(5, getHeight() - ornamentSize - 5, ornamentSize, ornamentSize);
-	            // Angolo inferiore destro
-	            g2d.fillOval(getWidth() - ornamentSize - 5, getHeight() - ornamentSize - 5, ornamentSize, ornamentSize);
-	        }
-	    };
-	    
-	    mainPanel.setLayout(new BorderLayout());
-	    mainPanel.setOpaque(false);
-	    
-	    // Header con nome del personaggio
-	    JLabel nameLabel = new JLabel(character.getClass().getSimpleName(), JLabel.CENTER);
-	    nameLabel.setFont(new Font("Serif", Font.BOLD, 16));
-	    nameLabel.setForeground(new Color(139, 69, 19));
-	    nameLabel.setBorder(BorderFactory.createEmptyBorder(8, 8, 5, 8));
-	    
-	    // Panel per le statistiche
-	    JPanel statsPanel = new JPanel();
-	    statsPanel.setLayout(new BoxLayout(statsPanel, BoxLayout.Y_AXIS));
-	    statsPanel.setOpaque(false);
-	    statsPanel.setBorder(BorderFactory.createEmptyBorder(3, 10, 8, 10));
-	    
-	    // Separatore decorativo
-	    JSeparator separator = new JSeparator();
-	    separator.setForeground(new Color(139, 69, 19));
-	    separator.setBackground(new Color(139, 69, 19));
-	    
-	    // Aggiunta delle statistiche con icone e colori
-	    statsPanel.add(createStatRow("❤", "HP", character.getCurrentHealth() + "/" + character.getMaxHealth(), new Color(220, 20, 60)));
-	    statsPanel.add(Box.createVerticalStrut(2));
-	    statsPanel.add(createStatRow("⚔", "ATT", String.valueOf(character.getPower()), new Color(255, 69, 0)));
-	    statsPanel.add(Box.createVerticalStrut(2));
-	    statsPanel.add(createStatRow("🛡", "DEF", String.valueOf(character.getDefence()), new Color(70, 130, 180)));
-	    statsPanel.add(Box.createVerticalStrut(2));
-	    statsPanel.add(createStatRow("⚡", "SPD", String.valueOf(character.getSpeed()), new Color(50, 205, 50)));
-	    statsPanel.add(Box.createVerticalStrut(2));
-	    statsPanel.add(createStatRow("🗡", "Arma", character.getWeapon().getClass().getSimpleName(), new Color(184, 134, 11)));
-	    
-	    mainPanel.add(nameLabel, BorderLayout.NORTH);
-	    mainPanel.add(separator, BorderLayout.CENTER);
-	    mainPanel.add(statsPanel, BorderLayout.SOUTH);
-	    
-	    tooltipWindow.add(mainPanel);
-	    tooltipWindow.pack();
-	    
-	    // Imposta la forma arrotondata della finestra
-	    tooltipWindow.setShape(new RoundRectangle2D.Double(0, 0, tooltipWindow.getWidth(), tooltipWindow.getHeight(), 20, 20));
-	    
-	    button.addMouseListener(new MouseAdapter() {
-	        @Override
-	        public void mouseEntered(MouseEvent e) {
-	            java.awt.Point locationOnScreen = button.getLocationOnScreen();
-	            int x = locationOnScreen.x + button.getWidth() + 10;
-	            int y = locationOnScreen.y;
-	            
-	            // Controlla se il tooltip esce dallo schermo
-	            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-	            if (x + tooltipWindow.getWidth() > screenSize.width) {
-	                x = locationOnScreen.x - tooltipWindow.getWidth() - 10;
-	            }
-	            if (y + tooltipWindow.getHeight() > screenSize.height) {
-	                y = screenSize.height - tooltipWindow.getHeight() - 10;
-	            }
-	            
-	            tooltipWindow.setLocation(x, y);
-	            tooltipWindow.setVisible(true);
-	        }
-	        
-	        @Override
-	        public void mouseExited(MouseEvent e) {
-	            tooltipWindow.setVisible(false);
-	        }
-	    });
-	}
-
-	
-	
-	// Metodo helper per creare le righe delle statistiche
-	private JPanel createStatRow(String icon, String label, String value, Color valueColor) {
-	    JPanel row = new JPanel() {
-	        @Override
-	        protected void paintComponent(Graphics g) {
-	            Graphics2D g2d = (Graphics2D) g.create();
-	            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-	            
-	            // Sfondo semitrasparente per la riga
-	            g2d.setColor(new Color(139, 69, 19, 20));
-	            g2d.fillRoundRect(0, 0, getWidth(), getHeight(), 8, 8);
-	            
-	            // Bordo sinistro decorativo
-	            g2d.setColor(new Color(139, 69, 19));
-	            g2d.fillRoundRect(0, 1, 3, getHeight()-2, 2, 2);
-	            
-	            g2d.dispose();
-	        }
-	    };
-	    
-	    row.setLayout(new BorderLayout());
-	    row.setOpaque(false);
-	    row.setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));
-	    
-	    // Panel per icona e label
-	    JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
-	    leftPanel.setOpaque(false);
-	    
-	    JLabel iconLabel = new JLabel(icon);
-	    iconLabel.setFont(new Font("Dialog", Font.PLAIN, 14));
-	    
-	    JLabel labelText = new JLabel(label);
-	    labelText.setFont(new Font("Serif", Font.BOLD, 12));
-	    labelText.setForeground(new Color(101, 67, 33));
-	    
-	    leftPanel.add(iconLabel);
-	    leftPanel.add(labelText);
-	    
-	    // Label per il valore
-	    JLabel valueLabel = new JLabel(value);
-	    valueLabel.setFont(new Font("Serif", Font.BOLD, 12));
-	    valueLabel.setForeground(valueColor);
-	    valueLabel.setOpaque(true);
-	    valueLabel.setBackground(new Color(255, 255, 255, 60));
-	    valueLabel.setBorder(BorderFactory.createEmptyBorder(1, 4, 1, 4));
-	    
-	    row.add(leftPanel, BorderLayout.WEST);
-	    row.add(valueLabel, BorderLayout.EAST);
-	    
-	    // Effetto hover
-	    row.addMouseListener(new MouseAdapter() {
-	        @Override
-	        public void mouseEntered(MouseEvent e) {
-	            row.repaint();
-	        }
-	        
-	        @Override
-	        public void mouseExited(MouseEvent e) {
-	            row.repaint();
-	        }
-	    });
-	    
-	    return row;
-	}
-
-	public void removeCharacterTooltip(JButton button) {
-	    // First, trigger mouseExited on all listeners to hide any active tooltips
-	    MouseListener[] mouseListeners = button.getMouseListeners();
-	    MouseEvent exitEvent = new MouseEvent(button, MouseEvent.MOUSE_EXITED, 
-	                                        System.currentTimeMillis(), 0, 0, 0, 0, false);
-	    
-	    for (MouseListener listener : mouseListeners) {
-	        try {
-	            listener.mouseExited(exitEvent);
-	        } catch (Exception e) {
-	            // Ignore any exceptions from other listeners
-	        }
-	    }
-	    
-	    // Now remove all mouse listeners from the button
-	    for (MouseListener listener : mouseListeners) {
-	        button.removeMouseListener(listener);
-	    }
-	}
-	
-	*/
 }

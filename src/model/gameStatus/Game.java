@@ -149,44 +149,27 @@ public class Game
 
         if (livello.isCompleted()) 
         {
-           /*SwingUtilities.invokeLater(() -> {
-                System.out.println("Livello " + currentLevelIndex+1 + " completato.");
-                checkAndReplaceDeadAllies(this.selectedAllies);
-
-                currentLevelIndex++;
-                if (currentLevelIndex >= Game.TOTAL_LEVEL) 
-                {
-                    System.out.println("Tutti i livelli completati!");
-                    stopGameLoop();
-                } 
-                else 
-                {
-                    startCurrentLevel();
-                }
-            });*/
         	System.out.println("Livello " + (currentLevelIndex+1) + " completato.");
             //checkAndReplaceDeadAllies(this.selectedAllies);
 
             currentLevelIndex++;
             if (currentLevelIndex >= Game.TOTAL_LEVEL) 
-            {
-            	//Modifica per banner a tutto schermo
-            	/* 
-            	 SwingUtilities.invokeLater(() -> {
-                    Level lastLevel = gameLevels.get(currentLevelIndex - 1);
-                    AbstractMap abstractMap = lastLevel.getLevelMap();
-                    abstractMap.updateBannerMessage("Tutti i livelli completati! Hai vinto!", true);
-                });*/
-            	
+            {           	
                 System.out.println("Tutti i livelli completati!");
-
-                
                 
                 stopGameLoop();
             } 
             else 
             {
-                startCurrentLevel();
+            	// Avvia un timer che attende 5 secondi (5000 ms) prima di avviare il livello
+            	/*Timer delayTimer = new Timer(5000, e -> {
+            	    System.out.println("Sono passati 5 secondi!");
+            	    
+            	});
+            	delayTimer.setRepeats(false);
+            	delayTimer.start();*/
+            	startCurrentLevel();
+            	
             }
         } 
         else if (livello.isFailed()) 
