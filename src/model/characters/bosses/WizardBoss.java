@@ -3,7 +3,6 @@ import model.characters.Wizard;
 import model.point.Point;
 
 public class WizardBoss extends Wizard{
-	private int unnaturalBodyCounter;
 
 	public WizardBoss() {
 		super();
@@ -12,18 +11,12 @@ public class WizardBoss extends Wizard{
 		super.increasePower(0.5);
 		super.increaseDefence(0.3);
 		super.increaseSpeed(0.2);
-		super.setWeapon(super.availableWeapons.get(1)); //always has the AOE wand
-		this.unnaturalBodyCounter = 0;
+		super.setWeapon(super.availableWeapons.get(1));
 	}
 	
-	//GIMMICK Unnatural Body: Only takes damage every fourth hit, ignoring each one before that.
+	//GIMMICK Unnatural Body: Takes halved damage from attacks
 	@Override
 	public void reduceCurrentHealth(int value) {
-		super.reduceCurrentHealth(value);
-		if(this.unnaturalBodyCounter < 3) {
-			this.unnaturalBodyCounter++;
-			super.increaseCurrentHealth((value / super.getMaxHealth())); //to get the correct percentage out of the integer value
-		} else
-			this.unnaturalBodyCounter = 0;
+		super.reduceCurrentHealth(value/2);
 	}
 }

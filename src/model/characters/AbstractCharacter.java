@@ -12,7 +12,7 @@ import model.equipment.potions.*;
 import model.equipment.weapons.Axe;
 import model.equipment.weapons.LongSword;
 import model.equipment.weapons.Weapon;
-import model.equipment.weapons.ZoneShotWand;
+import model.equipment.weapons.Staff;
 import model.point.Point;
 public abstract class AbstractCharacter implements Character, Serializable {
 	public static final int EXP_LEVELUP_THRESHOLD = 1000; //threshold at which you level up each time. placeholder value
@@ -146,9 +146,14 @@ public abstract class AbstractCharacter implements Character, Serializable {
 		if (!this.isWithinAttackRange(this, attackedCharacter))
 			throw new IllegalArgumentException("You cannot attack someone outside of your weapon's attack range!");
 
+		//use your potion IF: you have one, but NOT if it's an health potion and you're at max health (that would be useless)
+		if(this.hasPotion() && !(this.getPotion() instanceof PotionHealth && this.getCurrentHealth() == this.getMaxHealth())) { 
+			this.usePotion();
+		}
+		
 		attackedCharacter.reduceCurrentHealth(this.getPower() - attackedCharacter.getDefence()); // start of combat
 
-		if (attackedCharacter.isAlive() && this.isWithinAttackRange(attackedCharacter, this)) // //if attacked character is still alive and his weapon can reach you, it counterattacks
+		if (attackedCharacter.isAlive() && this.isWithinAttackRange(attackedCharacter, this)) //if attacked character is still alive and its weapon can reach you, it counterattacks
 			this.reduceCurrentHealth(attackedCharacter.getPower() - this.getDefence());
 
 		if (!attackedCharacter.isAlive()) {
@@ -218,12 +223,14 @@ public abstract class AbstractCharacter implements Character, Serializable {
 
 	@Override
 	public void setPotion(Potion potion) {
-		if(!this.hasPotion())
+		if(!this.hasPotion()) {
 			this.potion = potion;
+			System.out.println( this.getClass().getSimpleName() + " got a " + potion.getClass().getSimpleName() + " potion!");
+		}
 	}
 
 	protected void generateDefaultImage() {
-		this.setImagePath("images/characters/" + getClass().getSimpleName().toLowerCase() + "/" + getClass().getSimpleName().toLowerCase() + rand.nextInt(1,4) + ".png"); //not sure this is correct, needs testing
+		this.setImagePath("images/characters/" + this.getClass().getSimpleName().toLowerCase() + "/" + this.getClass().getSimpleName().toLowerCase() + this.rand.nextInt(1,4) + ".png");
 		this.icon = new ImageIcon(this.imagePath);
         this.image = this.icon.getImage().getScaledInstance(75, 45, Image.SCALE_AREA_AVERAGING); //Controls actual image size scaling on the map!!!
 	}
