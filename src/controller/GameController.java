@@ -219,7 +219,6 @@ public class GameController
         }        
         map.moveCharacter(character, point);  // Move the character on the map
         character.moveTo(point);  // Update the character's position
-        map.updateMap();  // Refresh the map to reflect the new position
     }
     
     public void remove(AbstractMap map, Character deadCharacter, Point point, List<Character> listOfTheDead) 
@@ -230,7 +229,6 @@ public class GameController
         }        
         map.removeCharacter(deadCharacter); 
         listOfTheDead.remove(deadCharacter);
-        map.updateMap();                     
     }
     
     

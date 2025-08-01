@@ -7,32 +7,29 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.RoundRectangle2D;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
+import model.characters.Character;
 
-public class CharacterTooltipManager {
-    
+public class CharacterTooltipManager 
+{
     // Mappa per tenere traccia dei listener associati ai tooltip per ogni bottone
     private final Map<JButton, TooltipListenerData> tooltipListeners = new ConcurrentHashMap<>();
     
     // Classe interna per contenere i dati del listener e della finestra tooltip
-    private static class TooltipListenerData {
+    private static class TooltipListenerData 
+    {
         final MouseListener mouseListener;
         final JWindow tooltipWindow;
         
-        TooltipListenerData(MouseListener listener, JWindow window) {
+        TooltipListenerData(MouseListener listener, JWindow window) 
+        {
             this.mouseListener = listener;
             this.tooltipWindow = window;
         }
     }
     
-    public void showCharacterTooltip(model.characters.Character character, JButton button) {
-        // Controlla se il thread corrente è l'Event Dispatch Thread (EDT)
-        if (!SwingUtilities.isEventDispatchThread()) {
-            SwingUtilities.invokeLater(() -> showCharacterTooltip(character, button));
-            return;
-        }
-        
+    public void showCharacterTooltip(Character character, JButton button) 
+    {
         // Se esiste già un tooltip per questo bottone, rimuovilo prima
         removeCharacterTooltip(button);
         
@@ -165,27 +162,30 @@ public class CharacterTooltipManager {
         tooltipListeners.put(button, new TooltipListenerData(tooltipMouseListener, tooltipWindow));
     }
     
-    public void removeCharacterTooltip(JButton button) {
+    public void removeCharacterTooltip(JButton button) 
+    {
         // Recupera i dati del tooltip per questo bottone
         TooltipListenerData tooltipData = tooltipListeners.get(button);
         
-        if (tooltipData != null) {
+        if (tooltipData != null) 
+        {
+        	System.out.println("Entro nell if, il tooltip non e' null");
             // Nascondi il tooltip se è visibile
-            if (tooltipData.tooltipWindow.isVisible()) {
+            if (tooltipData.tooltipWindow.isVisible()) 
+            {
                 tooltipData.tooltipWindow.setVisible(false);
             }
             
             // Rimuovi solo il MouseListener specifico del tooltip
             button.removeMouseListener(tooltipData.mouseListener);
-            
+            System.out.println("Rimuovo il Listener");
             // Pulisci la finestra tooltip
             tooltipData.tooltipWindow.dispose();
             tooltipData.tooltipWindow.getContentPane().removeAll();
+            System.out.println("Pulisco la finestra");
             // Rimuovi dalla mappa
             tooltipListeners.remove(button);
-            
-            
-
+            System.out.println("Rimuovo il tooltip dalla mappa");
         }
     }
     

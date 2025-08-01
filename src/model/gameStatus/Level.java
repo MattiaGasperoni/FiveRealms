@@ -277,9 +277,8 @@ public class Level
     
     
     private void handleUpdateMap() 
-    {   
-    	this.levelMap.updateMap();
-    	
+    {       	
+    	/*TODO rimuovere questo metodo e aggiornare RoundState.UPDATE_MAP con  RoundState.TURN_COMPLETED*/
     	this.currentTurnState = RoundState.TURN_COMPLETED;
     }
     

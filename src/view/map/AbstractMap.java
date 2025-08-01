@@ -444,9 +444,11 @@ public abstract class AbstractMap
 	    JButton targetButton = this.gridPanel.getGridButtons()[target.getX()][target.getY()];
 	    targetButton.setIcon(null);
 	    
-	    /* WIZARD BOSS SI BLOCCA QUA !!!*/
-	    
+	    /* PERSONAGGIO SI BLOCCA QUA !!!*/
+	    System.out.println("Tentativo di rimuovere il tooltip ");
 	    this.tooltipManager.removeCharacterTooltip(targetButton);   
+	    System.out.println("Tooltip rimosso con successo");
+
 	    
 	    System.out.println("Personaggio " + character.getClass().getSimpleName() + 
 	            " rimosso con successo dalla posizione " + target);
@@ -469,80 +471,5 @@ public abstract class AbstractMap
 	// Metodo che ti dice se è occupata gia la posizione di un personaggio
 	public boolean isPositionOccupied(Point point) {
 		return this.alliesList.stream().anyMatch(a -> a.getPosition().equals(point)) || this.enemiesList.stream().anyMatch(a -> a.getPosition().equals(point));
-	}
-	
-	
-	public void updateMap() 
-	{		
-		//Map<JButton, Point> imageButtonList = this.gridPanel.getImageButtonList();
-	    //JButton[][] buttonGrid = this.gridPanel.getGridButtons();
-		
-	    // SOLUZIONE 1: Raccogli prima i personaggi da rimuovere, poi rimuovili
-	    /*List<Map.Entry<Character, Point>> charactersToRemove = new ArrayList<>();
-	    for (Map.Entry<Character, Point> entry : this.characterMap.entrySet()) {
-	        Character character = entry.getKey();
-	        Point point = entry.getValue();
-	        if (character.getCurrentHealth() <= 0) {
-	            charactersToRemove.add(entry);
-	        }
-	    }
-
-	 // Ora rimuovi i personaggi morti senza interferire con l'iterazione
-	    for (Map.Entry<Character, Point> entry : charactersToRemove) {
-	        Character deadCharacter = entry.getKey();
-	        Point position = entry.getValue();
-
-	        // Rimuovi il personaggio dalla mappa PRIMA
-	        this.removeCharacter(deadCharacter, position);
-	    }
-	    
-	    // Crea un set delle posizioni occupate per efficienza O(1) lookup
-	    Set<Point> occupiedPositions = this.characterMap.values().stream()
-	            .filter(Objects::nonNull)
-	            .collect(Collectors.toSet());
-
-	    // 1) Rimuove le immagini dai bottoni che non hanno più un personaggio
-	    for (Map.Entry<JButton, Point> entry : imageButtonList.entrySet()) {
-	        JButton button = entry.getKey();
-	        Point point = entry.getValue();
-
-	        if (!occupiedPositions.contains(point)) {
-	            button.setIcon(null);
-	            for(ActionListener al : button.getActionListeners()) {
-	                button.removeActionListener(al);
-	            }
-	        }
-	    }
-	    */
-	    // 2) Aggiunge immagini a bottoni dove è presente un personaggio
-	    /*for (Map.Entry<Character, Point> entry : this.characterMap.entrySet()) {
-	        Character character = entry.getKey();
-	        Point point = entry.getValue();
-
-	        if (point == null) {
-	            System.err.println("ERRORE: Personaggio " +
-	                    character.getClass().getSimpleName() + " ha posizione null");
-	            continue;
-	        }
-
-	        // CORREZIONE: Usa x per righe e y per colonne per essere consistente
-	        int row = point.getX(); // x rappresenta la riga
-	        int col = point.getY(); // y rappresenta la colonna
-
-	        // Controllo bounds dell'array
-	        if (row < 0 || row >= buttonGrid.length || col < 0 || col >= buttonGrid[0].length) {
-	            System.err.println("ERRORE: Coordinate fuori dai limiti per " +
-	                    character.getClass().getSimpleName() + ": " + point +
-	                    " (Grid: " + buttonGrid.length + "x" + buttonGrid[0].length + ")");
-	            continue;
-	        }
-
-	        JButton button = buttonGrid[row][col];
-	        if (button.getIcon() == null) {
-	            //button.setIcon(new ImageIcon(character.getImage()));
-	            //showCharacterTooltip(character, button);
-	    	    this.tooltipManager.showCharacterTooltip(character, button);
-	        }
-	    }*/
 	}
 }

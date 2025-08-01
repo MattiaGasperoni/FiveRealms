@@ -85,10 +85,7 @@ public class TutorialMap extends AbstractMap {
         // Spawna i personaggi selezionati
         spawnCharacter(this.alliesList);
         spawnCharacter(this.enemiesList);
-        
-        // Aggiorna la mappa
-        updateMap();
-        
+                
         System.out.println("Tutorial riavviato con personaggi selezionati!");
     }
     
