@@ -209,45 +209,70 @@ public abstract class AbstractMap
         this.layeredPanel.repaint();
     }
     
-    private void addGameInfoLabels() {
+    private void addGameInfoLabels() 
+    {
         int paddingRight = 10;
         int paddingTop = 10;
-        int labelWidth = 200;  // più piccolo
+        int labelWidth = 220;  // più piccolo
         int labelHeight = 30;  // più piccolo
-        int spacing = 35;      // distanza verticale tra i label
 
-        this.levelLabel = createStyledLabel("Livello: " + this.numLevel);
-        this.alliesLabel = createStyledLabel("Alleati: " + this.alliesList.size());
-        this.enemiesLabel = createStyledLabel("Nemici: " + this.enemiesList.size());
-
+        this.levelLabel = createStyledLabel("🎯 Level: " + this.numLevel);
+        this.enemiesLabel = createStyledLabel("⚔️ Enemies Remaining: " + this.enemiesList.size());
+        
         // Posizioniamo a destra, quindi x = larghezza panel - larghezza label - paddingRight
         int xPos = layeredPanel.getWidth() - labelWidth - paddingRight;
 
         this.levelLabel.setBounds(100, paddingTop, labelWidth, labelHeight);
-        this.alliesLabel.setBounds(xPos, paddingTop, labelWidth, labelHeight);
-        this.enemiesLabel.setBounds(xPos, paddingTop + 35, labelWidth, labelHeight);
+        this.enemiesLabel.setBounds(xPos-60, paddingTop, labelWidth, labelHeight);
 
-        this.layeredPanel.add(levelLabel, Integer.valueOf(3));
-        this.layeredPanel.add(alliesLabel, Integer.valueOf(3));
-        this.layeredPanel.add(enemiesLabel, Integer.valueOf(3));
+        this.layeredPanel.add(levelLabel, Integer.valueOf(4));
+        this.layeredPanel.add(enemiesLabel, Integer.valueOf(4));
     }
 
 
 
     
-    private JLabel createStyledLabel(String text) {
+    private JLabel createStyledLabel(String text) 
+    {
         JLabel label = new JLabel(text);
-        label.setFont(new Font("Stencil", Font.BOLD, 28));
-        label.setForeground(Color.WHITE);
-        label.setBackground(new Color(34, 34, 34));
+        
+        // Font medievale/fantasy
+        label.setFont(new Font("Serif", Font.BOLD, 16));
+        label.setForeground(new Color(245, 230, 200)); // Beige chiaro come nel tuo menu
+        
+        // Sfondo marrone/arancione come i tuoi bottoni
+        label.setBackground(new Color(139, 69, 19)); // Marrone scuro
         label.setOpaque(true);
-        label.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 3));
+        
+        // Bordo che simula quello dei tuoi bottoni
+        label.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createRaisedBevelBorder(), // Effetto rilievo
+            BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(101, 67, 33), 2), // Bordo marrone scuro
+                BorderFactory.createEmptyBorder(4, 8, 4, 8) // Padding interno
+            )
+        ));
+        
         label.setHorizontalAlignment(SwingConstants.CENTER);
+        
         return label;
     }
 
 
     
+
+	
+	private void updateInfoLabels() 
+	{
+	    if (this.levelLabel != null) {
+	        this.levelLabel.setText("🎯 Level: " + this.numLevel);
+	    }
+
+	    if (this.enemiesLabel != null) {
+	        this.enemiesLabel.setText("⚔️ Enemies Remaining: " + this.enemiesList.size());
+	    }
+	}
+
     /*Modifiche effettuate per il banner*/
     public int getWidth() {
     	return this.layeredPanel.getWidth();
@@ -256,20 +281,6 @@ public abstract class AbstractMap
 	public int getHeight() {
 		return this.layeredPanel.getHeight();
 	}
-	
-	private void updateInfoLabels() {
-	    if (this.levelLabel != null) {
-	        this.levelLabel.setText("Livello: " + this.numLevel);
-	    }
-	    if (this.alliesLabel != null) {
-	        this.alliesLabel.setText("Alleati: " + this.alliesList.size());
-	    }
-	    if (this.enemiesLabel != null) {
-	        this.enemiesLabel.setText("Nemici: " + this.enemiesList.size());
-	    }
-	}
-
-
 
 
     public void updateBannerMessage(String msg, boolean fullScreen) {
@@ -309,7 +320,7 @@ public abstract class AbstractMap
                 if(colour.equals("red")) {
                     semiTransparentGray = new Color(255, 0, 0, 100);
                 }else {
-                    semiTransparentGray = new Color(200, 200, 200, 100);
+                	semiTransparentGray = new Color(80, 80, 80, 160); //Abbassare l ultimo valore per farlo piu trasparente
                 }
 
 				// Per rendere la trasparenza visibile bisogna disegnare su un componente non opaco
@@ -480,15 +491,14 @@ public abstract class AbstractMap
 
 
 	    System.out.print(character.getClass().getSimpleName() + " spostato con successo da " + character.getPosition() + " a " + target);
-
+	    
+	    this.updateInfoLabels();
 	}
 
 	
 	//rimuova dalla mappe il personaggio 
 	public void removeCharacter(Character character) 
 	{
-	    this.updateInfoLabels(); // Aggiorna le etichette delle informazioni
-
 		Point target = character.getPosition();
 		
 	    if (character == null || target == null) {
@@ -505,7 +515,6 @@ public abstract class AbstractMap
 	   
 	    // Rimuove il personaggio dalla mappa
 	    this.characterMap.remove(character);
-	    this.updateInfoLabels(); // Aggiorna le etichette delle informazioni
 
 	    // Rimuove l'immagine dal bottone
 	    JButton targetButton = this.gridPanel.getGridButtons()[target.getX()][target.getY()];

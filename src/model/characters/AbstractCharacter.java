@@ -79,7 +79,7 @@ public abstract class AbstractCharacter implements Character, Serializable {
 	}
 
 	private void levelUp() {
-		double statIncreasePercentage = 0.10;
+		double statIncreasePercentage = 0.10;  
 
 		this.increaseMaxHealth(statIncreasePercentage);
 		this.increasePower(statIncreasePercentage);
@@ -115,7 +115,7 @@ public abstract class AbstractCharacter implements Character, Serializable {
 	//used only to create the playable characters basically
 	@Override
 	public void becomeHero() {
-		double heroStatIncreasePercentage = 20000;
+		double heroStatIncreasePercentage = 0.90;   //Per debug metter 2000
 
 		if(!this.isAllied) {
 			this.isAllied = true;

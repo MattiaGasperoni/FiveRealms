@@ -226,9 +226,10 @@ public class GameController
         if (map == null || deadCharacter == null || point == null || listOfTheDead == null) 
         {
             throw new IllegalArgumentException("Map, deadCharacter, point and listOfTheDead must not be null");
-        }        
-        map.removeCharacter(deadCharacter); 
+        } 
         listOfTheDead.remove(deadCharacter);
+        map.removeCharacter(deadCharacter); 
+        
     }
     
     
