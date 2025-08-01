@@ -12,7 +12,6 @@ import model.equipment.potions.*;
 import model.equipment.weapons.Axe;
 import model.equipment.weapons.LongSword;
 import model.equipment.weapons.Weapon;
-import model.equipment.weapons.Staff;
 import model.point.Point;
 public abstract class AbstractCharacter implements Character, Serializable {
 	public static final int EXP_LEVELUP_THRESHOLD = 1000; //threshold at which you level up each time. placeholder value
