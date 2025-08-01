@@ -43,6 +43,11 @@ public abstract class AbstractMap
     
     private GameController controller;
 
+    private JLabel levelLabel;
+    private JLabel alliesLabel;
+    private JLabel enemiesLabel;
+
+
     /**
      * Costruttore
      * @param enemiesList Lista dei nemici nel livello corrente.
@@ -121,6 +126,9 @@ public abstract class AbstractMap
         // layer 3. Menu di Pausa
         PauseMenu pauseMenu = new PauseMenu(this.frame, this.layeredPanel, enemiesList, alliesList, numLevel, this.controller);
         pauseMenu.initializePauseMenu();
+        
+        // layer 4. Etichette di informazioni sul gioco
+        this.addGameInfoLabels();
     }
     
 	/**
@@ -201,6 +209,45 @@ public abstract class AbstractMap
         this.layeredPanel.repaint();
     }
     
+    private void addGameInfoLabels() {
+        int paddingRight = 10;
+        int paddingTop = 10;
+        int labelWidth = 200;  // più piccolo
+        int labelHeight = 30;  // più piccolo
+        int spacing = 35;      // distanza verticale tra i label
+
+        this.levelLabel = createStyledLabel("Livello: " + this.numLevel);
+        this.alliesLabel = createStyledLabel("Alleati: " + this.alliesList.size());
+        this.enemiesLabel = createStyledLabel("Nemici: " + this.enemiesList.size());
+
+        // Posizioniamo a destra, quindi x = larghezza panel - larghezza label - paddingRight
+        int xPos = layeredPanel.getWidth() - labelWidth - paddingRight;
+
+        this.levelLabel.setBounds(100, paddingTop, labelWidth, labelHeight);
+        this.alliesLabel.setBounds(xPos, paddingTop, labelWidth, labelHeight);
+        this.enemiesLabel.setBounds(xPos, paddingTop + 35, labelWidth, labelHeight);
+
+        this.layeredPanel.add(levelLabel, Integer.valueOf(3));
+        this.layeredPanel.add(alliesLabel, Integer.valueOf(3));
+        this.layeredPanel.add(enemiesLabel, Integer.valueOf(3));
+    }
+
+
+
+    
+    private JLabel createStyledLabel(String text) {
+        JLabel label = new JLabel(text);
+        label.setFont(new Font("Stencil", Font.BOLD, 28));
+        label.setForeground(Color.WHITE);
+        label.setBackground(new Color(34, 34, 34));
+        label.setOpaque(true);
+        label.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 3));
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        return label;
+    }
+
+
+    
     /*Modifiche effettuate per il banner*/
     public int getWidth() {
     	return this.layeredPanel.getWidth();
@@ -209,6 +256,21 @@ public abstract class AbstractMap
 	public int getHeight() {
 		return this.layeredPanel.getHeight();
 	}
+	
+	private void updateInfoLabels() {
+	    if (this.levelLabel != null) {
+	        this.levelLabel.setText("Livello: " + this.numLevel);
+	    }
+	    if (this.alliesLabel != null) {
+	        this.alliesLabel.setText("Alleati: " + this.alliesList.size());
+	    }
+	    if (this.enemiesLabel != null) {
+	        this.enemiesLabel.setText("Nemici: " + this.enemiesList.size());
+	    }
+	}
+
+
+
 
     public void updateBannerMessage(String msg, boolean fullScreen) {
         if (this.banner != null) {
@@ -370,6 +432,7 @@ public abstract class AbstractMap
 	*/
 	public void moveCharacter(Character character, Point target) 
 	{
+
 	    if (character == null || target == null) 
 	    {
 	        throw new IllegalArgumentException("Character and target point must not be null");
@@ -417,12 +480,15 @@ public abstract class AbstractMap
 
 
 	    System.out.print(character.getClass().getSimpleName() + " spostato con successo da " + character.getPosition() + " a " + target);
+
 	}
 
 	
 	//rimuova dalla mappe il personaggio 
 	public void removeCharacter(Character character) 
 	{
+	    this.updateInfoLabels(); // Aggiorna le etichette delle informazioni
+
 		Point target = character.getPosition();
 		
 	    if (character == null || target == null) {
@@ -439,7 +505,8 @@ public abstract class AbstractMap
 	   
 	    // Rimuove il personaggio dalla mappa
 	    this.characterMap.remove(character);
-	    
+	    this.updateInfoLabels(); // Aggiorna le etichette delle informazioni
+
 	    // Rimuove l'immagine dal bottone
 	    JButton targetButton = this.gridPanel.getGridButtons()[target.getX()][target.getY()];
 	    targetButton.setIcon(null);
@@ -452,6 +519,8 @@ public abstract class AbstractMap
 	    
 	    System.out.println("Personaggio " + character.getClass().getSimpleName() + 
 	            " rimosso con successo dalla posizione " + target);
+	    
+	    this.updateInfoLabels();
 	}
 
 
