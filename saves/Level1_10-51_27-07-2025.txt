@@ -1,7 +1,0 @@
-Type,Class,X,Y,Health,Power,Defence,Speed,Weapon
-Level,1
-Ally,Barbarian  Pos:(14, 7) | HP: 2540127 | Pow: 1700100 | Def: 500030 | Spd: 760043 | Wpn: Axe            
-Ally,Archer     Pos:(16, 4) | HP: 1240062 | Pow: 900057 | Def: 560025 | Spd: 1020047 | Wpn: LongBow        
-Ally,Wizard     Pos:(16,10) | HP: 1300065 | Pow: 1360076 | Def: 520030 | Spd: 1020050 | Wpn: ZoneShotWand   
-Enemy,Knight     Pos:( 4,10) | HP:  83 | Pow:  84 | Def:  51 | Spd:  43 | Wpn: Spear          
-Enemy,Barbarian  Pos:( 6, 4) | HP: 134 | Pow:  93 | Def:  26 | Spd:  41 | Wpn: Axe            

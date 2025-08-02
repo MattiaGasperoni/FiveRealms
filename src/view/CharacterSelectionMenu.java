@@ -32,16 +32,16 @@ public class CharacterSelectionMenu {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
 
-        // Titolo
-        JLabel info = new JLabel("Select 3 characters", SwingConstants.CENTER);
-        info.setFont(new Font("Stencil", Font.BOLD, 28));
-        info.setForeground(Color.WHITE);
+        // Titolo con stile fantasy migliorato
+        JLabel info = new JLabel("SELECT 3 CHARACTERS", SwingConstants.CENTER);
+        info.setFont(new Font("Serif", Font.BOLD, 36));
+        info.setForeground(new Color(245, 222, 179)); // Beige/oro chiaro
         gbc.gridx = 1;
         gbc.gridy = 0;
         bgLabel.add(info, gbc);
 
-        // Pulsante "Next" con stile medievale
-        nextButton = createStyledButton("Next");
+        // Pulsante "Next" con stile fantasy
+        nextButton = createFantasyButton("NEXT");
         nextButton.setEnabled(false);
         gbc.gridx = 1;
         gbc.gridy = 4;
@@ -58,30 +58,53 @@ public class CharacterSelectionMenu {
         frame.setVisible(true);
     }
 
-    private JButton createStyledButton(String text) {
+    private JButton createFantasyButton(String text) {
         JButton button = new JButton(text);
-        button.setFont(new Font("Stencil", Font.BOLD, 28)); // aumentata dimensione font
-        button.setForeground(Color.WHITE);
-        button.setBackground(new Color(34, 34, 34));
-        button.setBorder(BorderFactory.createLineBorder(Color.GREEN, 3)); // bordo più spesso
+        button.setFont(new Font("Serif", Font.BOLD, 18));
+        button.setForeground(new Color(245, 222, 179)); // Beige/oro chiaro
+        button.setBackground(new Color(101, 67, 33)); // Marrone scuro
+        button.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createRaisedBevelBorder(),
+            BorderFactory.createEmptyBorder(8, 20, 8, 20)
+        ));
         button.setFocusPainted(false);
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        button.setPreferredSize(new Dimension(300, 100)); // aumentata la dimensione
+        button.setPreferredSize(new Dimension(250, 60));
 
         button.addMouseListener(new MouseAdapter() {
+            private Color originalBg = new Color(101, 67, 33);
+            private Color hoverBg = new Color(139, 117, 82);
+            
             public void mouseEntered(MouseEvent evt) {
-                button.setBackground(new Color(44, 44, 44));
-                button.setBorder(BorderFactory.createLineBorder(Color.YELLOW, 3));
+                if (button.isEnabled()) {
+                    button.setBackground(hoverBg);
+                    button.setForeground(new Color(255, 248, 220));
+                }
             }
             public void mouseExited(MouseEvent evt) {
-                button.setBackground(new Color(34, 34, 34));
-                button.setBorder(BorderFactory.createLineBorder(Color.GREEN, 3));
+                if (button.isEnabled()) {
+                    button.setBackground(originalBg);
+                    button.setForeground(new Color(245, 222, 179));
+                } else {
+                    button.setBackground(new Color(60, 40, 20));
+                    button.setForeground(new Color(120, 120, 120));
+                }
+            }
+        });
+
+        // Gestione stato disabled
+        button.addPropertyChangeListener("enabled", evt -> {
+            if (!button.isEnabled()) {
+                button.setBackground(new Color(60, 40, 20));
+                button.setForeground(new Color(120, 120, 120));
+            } else {
+                button.setBackground(new Color(101, 67, 33));
+                button.setForeground(new Color(245, 222, 179));
             }
         });
 
         return button;
     }
-
 
     private void addCharacter(JLabel bgLabel, String name, String desc, String imgPath, int x, int y, GridBagConstraints gbc) {
         JPanel panel = new JPanel(new BorderLayout());
@@ -90,9 +113,11 @@ public class CharacterSelectionMenu {
         panel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
 
         JLabel imgLabel = new JLabel(new ImageIcon(new ImageIcon(imgPath).getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH)), SwingConstants.CENTER);
+        
+        // Testo del personaggio con stile fantasy
         JLabel lbl = new JLabel("<html><center>" + name + "<br>" + desc + "</center></html>", SwingConstants.CENTER);
-        lbl.setFont(new Font("Georgia", Font.BOLD, 12));
-        lbl.setForeground(Color.LIGHT_GRAY);
+        lbl.setFont(new Font("Serif", Font.BOLD, 14));
+        lbl.setForeground(new Color(245, 222, 179)); // Beige/oro chiaro
 
         panel.add(imgLabel, BorderLayout.NORTH);
         panel.add(lbl, BorderLayout.SOUTH);

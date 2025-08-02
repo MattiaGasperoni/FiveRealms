@@ -5,7 +5,6 @@ import controller.GameController;
 import java.awt.*;
 import java.util.List;
 import model.characters.Character;
-import model.point.Point;
 
 /**
  * Tutorial con struttura sequenziale e uso esclusivo delle costanti.
