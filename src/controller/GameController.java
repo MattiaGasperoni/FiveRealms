@@ -3,20 +3,15 @@ package controller;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import javax.swing.JButton;
-import javax.swing.SwingUtilities;
-
 import model.characters.Character;
 import model.gameStatus.Game;
-import model.gameStatus.Level;
 import model.gameStatus.saveSystem.GameState;
 import model.gameStatus.saveSystem.GameStateManager;
 import model.point.Point;
 import view.CharacterSelectionMenu;
+import view.EndGameMenu;
 import view.LoadGameMenu;
 import view.MainMenu;
-import view.PauseMenu;
 import view.TutorialMenu;
 import view.map.AbstractMap;
 import view.map.TutorialMap;
@@ -28,29 +23,39 @@ import view.map.TutorialMap;
  */
 public class GameController 
 {
+    private Game game;
+    private GameStateManager gameStateManager;
     
     private MainMenu mainMenuView;
-    private Game game;
     private TutorialMenu tutorialMenuView;
     private CharacterSelectionMenu characterSelectionMenuView;
-    private GameStateManager gameStateManager;
+    private EndGameMenu endGameMenu;
+
     private TutorialMap currentTutorialMap; // Aggiunto per tenere riferimento alla mappa tutorial
     private boolean isTutorialMode = false; // Flag per sapere se siamo in modalità tutorial
 
-    public GameController(Game game, GameStateManager gameStateManager, MainMenu mainMenu, TutorialMenu tutorialMenu, CharacterSelectionMenu characterSelectionMenu) 
+    public GameController(Game game, GameStateManager gameStateManager, MainMenu mainMenu, TutorialMenu tutorialMenu, CharacterSelectionMenu characterSelectionMenu, EndGameMenu endGameMenu) 
     {
         this.game = game;
         this.gameStateManager = gameStateManager;
-        this.mainMenuView = mainMenu;
-        this.tutorialMenuView = tutorialMenu;
+        
+        this.mainMenuView               = mainMenu;
+        this.tutorialMenuView           = tutorialMenu;
         this.characterSelectionMenuView = characterSelectionMenu;
+        this.endGameMenu                = endGameMenu;
 
-        // Controlla se esistono salvataggi e abilita/disabilita il pulsante
+        
+        this.checkExistSave();
+        this.setupMainMenuListeners();
+        this.setupEndGameListeners();
+    } 
+    
+    private void checkExistSave()
+    {
+    	// Controlla se esistono salvataggi e abilita/disabilita il pulsante
         boolean hasSave = this.gameStateManager.hasSaved();
         this.mainMenuView.setLoadButtonEnabled(hasSave);
-
-        this.setupMainMenuListeners();
-    }   
+    }
     
     private void setupMainMenuListeners() 
     {
@@ -85,6 +90,24 @@ public class GameController
             System.exit(0);
         });
     }
+    
+    private void setupEndGameListeners()
+    {
+    	this.endGameMenu.addMainMenuListener(event -> 
+        {
+            System.out.println(" You chose to return to Main Menu.");
+            this.endGameMenu.close();
+            this.mainMenuView.show();
+        });
+
+    	this.endGameMenu.addExitListener(event -> 
+        {
+            System.out.println(" You chose to close the game.");
+            this.endGameMenu.close();
+            System.exit(0);
+        });
+    }
+    
     
     public void startNewGame() 
     {
@@ -202,8 +225,9 @@ public class GameController
     public GameState loadGame() throws IOException {
         return gameStateManager.loadStatus();  // Delegate loading to GameStateManager
     }
+    
 
-    // Movement functionality
+
     
     /**
      * Moves the given character to a new point on the map.
@@ -232,7 +256,6 @@ public class GameController
         
     }
     
-    
     public void fight(Character attackingCharacter, Character attackedCharacter, List<Character> alliedList, List<Character> enemyList, AbstractMap levelMap) 
     {
         Character deadCharacter = attackingCharacter.fight(attackedCharacter);
@@ -242,35 +265,4 @@ public class GameController
             this.remove(levelMap, deadCharacter, deadCharacter.getPosition(), (deadCharacter.isAllied()? alliedList : enemyList));
         }
     }
-    
-    
-    /*public void setupPauseMenuListeners(PauseMenu pauseMenu) {
-
-        // Resume → nasconde il pannello di pausa
-        pauseMenu.addYesListener(e -> {
-            System.out.println("Game resumed");
-            pauseMenu.getPanel().setVisible(false); // Devi creare getPanel() se non esiste
-        });
-
-        // Save → salva il gioco
-        pauseMenu.addNoListener(e -> {
-            try {
-                this.saveGame(
-                    pauseMenu.getAlliesList(), 
-                    pauseMenu.getEnemiesList(), 
-                    pauseMenu.getNumLevel()
-                );
-                System.out.println("Game saved successfully!");
-                pauseMenu.getPanel().setVisible(false); 
-            } catch (IOException ex) {
-                System.err.println("Error saving game: " + ex.getMessage());
-            }
-        });
-
-        // Exit → chiude il gioco
-        pauseMenu.addExitListener(e -> {
-            System.out.println("You chose to close the game");
-            System.exit(0);
-        });
-    }*/
 }

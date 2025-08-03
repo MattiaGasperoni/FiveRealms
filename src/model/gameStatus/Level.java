@@ -28,7 +28,8 @@ public class Level
         WAITING_FOR_MOVEMENT,   // Attesa movimento dell’utente
         WAITING_FOR_TARGET,     // Attesa scelta bersaglio
         UPDATE_MAP,             // Aggiorna mappa
-        TURN_COMPLETED          // Turno completato
+        TURN_COMPLETED,         // Turno completato
+        PAUSE					// Siamo in pausa
     }
     
     private LevelPhase currentLevelPhase;
@@ -69,7 +70,6 @@ public class Level
         
         this.levelMap.spawnCharacter(this.enemiesList);
         this.levelMap.spawnCharacter(this.alliesList);
-
         
         this.currentLevelPhase = LevelPhase.BATTLE_PHASE;
         this.currentTurnState  = RoundState.INITIALIZING_TURN;
@@ -88,9 +88,7 @@ public class Level
                 this.checkEndLevel();
                 break;
 
-            case DONE:
-                //System.out.println("Chiusura Mappa");
-                
+            case DONE:   
                 break;
 
             default:
@@ -115,10 +113,12 @@ public class Level
         	
             case UPDATE_MAP:
             	this.handleUpdateMap();
+            	
+            case PAUSE:
+                // TODO
                 
             case TURN_COMPLETED:
                 this.checkEndTurn();
-                
                 break;
 
             default:
@@ -146,12 +146,7 @@ public class Level
     
     // Inizia il turno del personaggio i-esimo del round
     private void startNextTurn() 
-    {
-    	// Controlla se tutti gli alleati sono morti o se tutti i nemici sono sconfitti
-    	//this.endTurnCheck();
-    	
-    	//SwingUtilities.invokeLater(() -> {this.levelMap.updateMap();});
-    	
+    {    	    	
         if (this.currentTurnOrder.isEmpty()) 
         {
             System.out.println("Tutti i personaggi hanno giocato, Round completato!");
@@ -209,9 +204,7 @@ public class Level
         
         // Configura il movimento con callback
         this.movementPhaseManager.movementPhase(currentAttacker, () -> 
-        {
-        	this.levelMap.updateBannerMessage("Movimento completato, "+currentAttacker.getClass().getSimpleName()+" scegli un  bersaglio", false);
-            
+        {            
             this.onMovementCompleted();
         });
     }
@@ -255,7 +248,6 @@ public class Level
         Set<Point> occupiedPositions = new HashSet<>();
         alliesList.stream().forEach(character -> occupiedPositions.add(character.getPosition()));
         enemiesList.stream().forEach(character -> occupiedPositions.add(character.getPosition()));
-        
         movementPhaseManager.graphicMovementCharacterToPoint(currentAttacker, availablePositions.stream()
 				.filter(point -> currentAttacker.getDistanceInSquares(point) <= (currentAttacker.getSpeed() / AbstractCharacter.SPEED_TO_MOVEMENT))
 				.filter(point -> !occupiedPositions.contains(point)) //supposed to filter out already-occupied positions...
@@ -318,7 +310,6 @@ public class Level
         {
             this.levelFailed = true;
             System.out.println("Tutti i tuoi personaggi sono morti. Game Over.\n");
-            //this.levelMap.updateBannerMessage("Tutti i tuoi personaggi sono morti. Game Over.", true);
             this.currentLevelPhase = LevelPhase.DONE;
             this.levelMap.closeWindow();
             return;
@@ -327,7 +318,7 @@ public class Level
         {
             this.levelCompleted = true;
             System.out.println("Hai sconfitto tutti i nemici. Livello completato!\n");
-            //this.levelMap.updateBannerMessage("Hai sconfitto tutti i nemici. Livello Completato", true);
+            this.levelMap.updateBannerMessage("Hai sconfitto tutti i nemici. Livello Completato", true);
             this.currentLevelPhase = LevelPhase.DONE;
             this.levelMap.closeWindow();
             return;

@@ -43,7 +43,7 @@ public class GameUnitTests {
         MainMenu mainMenu = new MainMenu(); 
         TutorialMenu tutorialMenu = new TutorialMenu();
         CharacterSelectionMenu characterSelectionMenu = new CharacterSelectionMenu();
-        controller = new GameController(game, gsm, mainMenu, tutorialMenu, null);
+        controller = new GameController(game, gsm, mainMenu, tutorialMenu, null,null);
         
         // Inizializza liste di test
         testAllies = new ArrayList<>();

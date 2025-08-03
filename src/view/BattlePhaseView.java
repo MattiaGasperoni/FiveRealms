@@ -137,6 +137,10 @@ public class BattlePhaseView
 			 if (onAttackCompleted != null) onAttackCompleted.run();
 			 return;
 		}
+		else
+		{
+        	this.levelMap.updateBannerMessage("Movimento completato, "+attacker.getClass().getSimpleName()+" scegli un  bersaglio", false);
+		}
 		
 		// Otteniamo le posizioni dei nemici che possiamo attaccare
 		List<Point> enemyPositions = reachableEnemies.stream()

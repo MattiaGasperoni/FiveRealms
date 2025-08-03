@@ -19,33 +19,41 @@ public class TutorialMenu
      */
     public TutorialMenu()
     {
-    	// Setup the frame
+        // Setup the frame
         this.frame = new JFrame("Tutorial Menu");
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.frame.setSize(800, 800);
         this.frame.setLocationRelativeTo(null);
         this.frame.setResizable(false);
-        
+
         this.backgroundLabel = new JLabel(new ImageIcon("images/Background/background4.jpg"));
         this.backgroundLabel.setLayout(new GridBagLayout());
-        
+
+        // GridBagConstraints per il titolo
+        GridBagConstraints titleGbc = new GridBagConstraints();
+        titleGbc.insets = new Insets(90, 10, 10, 10);
+        titleGbc.gridy = 0;
+
+        this.infoLabel = new JLabel(
+            "<html><div style='text-align: center; color: #8B4513; font-family: serif; font-size: 36px;'>" +
+            "Do you want to play the Tutorial?" +
+            "</div></html>",
+            SwingConstants.CENTER
+        );
+        this.backgroundLabel.add(this.infoLabel, titleGbc);
+
+        // GridBagConstraints per i bottoni 
         this.gbc = new GridBagConstraints();
         this.gbc.insets = new Insets(10, 10, 10, 10);
-        this.gbc.gridy = 0;
-        
-        this.infoLabel = new JLabel("Do you want to play the Tutorial?", SwingConstants.CENTER);
-        this.infoLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        this.infoLabel.setForeground(Color.WHITE);
-        
-        this.backgroundLabel.add(this.infoLabel, this.gbc);
-        
-        this.yesButton  = createButton("Yes");
-    	this.noButton   = createButton("No");
-    	this.exitButton = createButton("Exit");
-    	
-		this.addButtonsToBackground(this.backgroundLabel, this.yesButton, this.noButton, this.exitButton, this.gbc);
-		
-		this.frame.add(this.backgroundLabel);
+        this.gbc.gridy = 1; 
+
+        this.yesButton = createButton("Yes");
+        this.noButton = createButton("No");
+        this.exitButton = createButton("Exit");
+
+        this.addButtonsToBackground(this.backgroundLabel, this.yesButton, this.noButton, this.exitButton, this.gbc);
+
+        this.frame.add(this.backgroundLabel);
     }
     
     /**

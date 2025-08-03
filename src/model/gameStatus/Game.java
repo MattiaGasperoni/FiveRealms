@@ -12,12 +12,7 @@ import model.characters.bosses.*;
 import model.gameStatus.saveSystem.GameStateManager;
 import view.*;
 import view.map.*;
-import view.map.AbstractMap;
 import controller.*;
-
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
-
 
 public class Game 
 {
@@ -31,7 +26,6 @@ public class Game
     private GameStateManager gameStateManager;
     private GameController controller;           
     
-    private Timer gameTimer;
     private int currentLevelIndex;
     private ScheduledExecutorService gameExecutor;
 
@@ -40,6 +34,8 @@ public class Game
     private MainMenu graphicsMenu;
     private TutorialMenu tutorialMenu;
     private CharacterSelectionMenu characterSelectionMenu; // Menu per la scelta dei personaggi
+    private EndGameMenu endGameMenu;
+    
 
     public Game() 
     {
@@ -53,10 +49,11 @@ public class Game
         this.graphicsMenu = new MainMenu();
         this.tutorialMenu = new TutorialMenu();
         this.characterSelectionMenu = new CharacterSelectionMenu();
+        this.endGameMenu = new EndGameMenu();
 
         this.gameStateManager = new GameStateManager();
         
-        this.controller = new GameController(this, this.gameStateManager, this.graphicsMenu, this.tutorialMenu, this.characterSelectionMenu); 
+        this.controller = new GameController(this, this.gameStateManager, this.graphicsMenu, this.tutorialMenu, this.characterSelectionMenu, this.endGameMenu); 
         
     }
     
@@ -109,8 +106,8 @@ public class Game
 	
     public void startLevel() 
     {
-    	
         this.initializeGameLevels(); 
+        
         this.startCurrentLevel();
 
         // Avvia un thread separato per la logica di gioco
@@ -121,7 +118,9 @@ public class Game
             try 
             {
                 this.updateGameSafe(); // logica separata
-            } catch (Exception e) {
+            } 
+            catch (Exception e) 
+            {
                 e.printStackTrace();
             }
         }, 0, 100, TimeUnit.MILLISECONDS); // ogni 100 ms
@@ -131,62 +130,67 @@ public class Game
     {
         try 
         {
-            Level livello = this.gameLevels.get(currentLevelIndex);
-            livello.play(); // inizializza nemici, fasi ecc.
+            Level livello = this.gameLevels.get(this.currentLevelIndex);
+            
+            livello.play();
         } 
         catch (IOException e) 
         {
-            System.err.println("Errore durante il livello " + currentLevelIndex + ": " + e.getMessage());
+            System.err.println("Errore durante il livello " + this.currentLevelIndex + ": " + e.getMessage());
             e.printStackTrace();
-            stopGameLoop();
+        	this.stopGameLoop();
         }
     }
     
     private void updateGameSafe() 
     {
-        Level livello = gameLevels.get(currentLevelIndex);
-        livello.update(); // esegue logica
+        Level livello = gameLevels.get(this.currentLevelIndex);
+        
+        livello.update();
 
         if (livello.isCompleted()) 
         {
-        	System.out.println("Livello " + (currentLevelIndex+1) + " completato.");
+        	System.out.println("Livello " + (this.currentLevelIndex+1) + " completato.");
+
+        	// Mostrare qua il banner di vittoria per aver completato il livello
+        	
+        	// Controllare se qualche alleato e' morto in caso sostituirli
             //checkAndReplaceDeadAllies(this.selectedAllies);
 
-            currentLevelIndex++;
-            if (currentLevelIndex >= Game.TOTAL_LEVEL) 
+        	this.currentLevelIndex++;
+        	
+            if (this.currentLevelIndex >= Game.TOTAL_LEVEL) 
             {           	
                 System.out.println("Tutti i livelli completati!");
-                
-                stopGameLoop();
+                this.stopGameLoop();
+                this.showEndGameMenu();
             } 
             else 
             {
-            	// Avvia un timer che attende 5 secondi (5000 ms) prima di avviare il livello
-            	/*Timer delayTimer = new Timer(5000, e -> {
-            	    System.out.println("Sono passati 5 secondi!");
-            	    
-            	});
-            	delayTimer.setRepeats(false);
-            	delayTimer.start();*/
-            	startCurrentLevel();
-            	
+            	this.startCurrentLevel();         	
             }
         } 
         else if (livello.isFailed()) 
         {
-            SwingUtilities.invokeLater(() -> {
-                System.out.println("Il livello " + currentLevelIndex + " è fallito. Uscita.");
-                stopGameLoop();
-            });
+            System.out.println("Il livello " + this.currentLevelIndex + " è fallito. Uscita.");
+            this.stopGameLoop();
+            this.showEndGameMenu();
         }
     }
 
+    public void showEndGameMenu() 
+    {
+        // Appare il menu per la selezione dei personaggi
+        this.endGameMenu.show();
+    }
+    
     private void stopGameLoop() 
     {
-        if (gameExecutor != null && !gameExecutor.isShutdown()) 
+        if (this.gameExecutor != null && !this.gameExecutor.isShutdown()) 
         {
-            gameExecutor.shutdownNow();
+        	this.gameExecutor.shutdownNow();
         }
+        //System.exit(0); // Termina l'applicazione completamente
     }
 
 
@@ -212,7 +216,6 @@ public class Game
             // Aggiungi i nuovi alleati
             // this.selectedAllies.addAll(newAllies);*/
         this.controller.startSelectionCharacter();
-    	
 	}
 
     public List<Character> createAllies() 

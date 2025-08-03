@@ -197,12 +197,8 @@ public abstract class AbstractMap
      
     private void initializeBanner()
     {
-    	int width = this.layeredPanel.getWidth();
-        int height = this.layeredPanel.getHeight();
+        this.banner = new BannerPanel(this.getWidth(), this.getHeight());
 
-        this.banner = new BannerPanel(width, height);
-
-        // Aggiungilo sopra tutti gli altri componenti
         this.layeredPanel.add(this.banner, Integer.valueOf(2));
 
         this.layeredPanel.revalidate();
@@ -216,7 +212,14 @@ public abstract class AbstractMap
         int labelWidth = 220;  // più piccolo
         int labelHeight = 30;  // più piccolo
 
-        this.levelLabel = createStyledLabel("🎯 Level: " + this.numLevel);
+        if (this.numLevel == 0) 
+        {
+            this.levelLabel = createStyledLabel("🎯 Tutorial");
+        } 
+        else 
+        {
+            this.levelLabel = createStyledLabel("🎯 Level: " + this.numLevel);
+        }
         this.enemiesLabel = createStyledLabel("⚔️ Enemies Remaining: " + this.enemiesList.size());
         
         // Posizioniamo a destra, quindi x = larghezza panel - larghezza label - paddingRight
@@ -283,11 +286,16 @@ public abstract class AbstractMap
 	}
 
 
-    public void updateBannerMessage(String msg, boolean fullScreen) {
-        if (this.banner != null) {
-            if (fullScreen) {
-                this.banner.showFullScreenMessage(msg, getWidth(), getHeight());
-            } else {
+    public void updateBannerMessage(String msg, boolean fullScreen) 
+    {
+        if (this.banner != null) 
+        {
+            if (fullScreen) 
+            {
+                this.banner.showFullScreenMessage(msg);
+            } 
+            else 
+            {
                 this.banner.showMessage(msg);
             }
         }
@@ -520,11 +528,7 @@ public abstract class AbstractMap
 	    JButton targetButton = this.gridPanel.getGridButtons()[target.getX()][target.getY()];
 	    targetButton.setIcon(null);
 	    
-	    /* PERSONAGGIO SI BLOCCA QUA !!!*/
-	    System.out.println("Tentativo di rimuovere il tooltip ");
 	    this.tooltipManager.removeCharacterTooltip(targetButton);   
-	    System.out.println("Tooltip rimosso con successo");
-
 	    
 	    System.out.println("Personaggio " + character.getClass().getSimpleName() + 
 	            " rimosso con successo dalla posizione " + target);
