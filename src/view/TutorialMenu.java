@@ -25,7 +25,6 @@ public class TutorialMenu
         this.frame.setSize(800, 800);
         this.frame.setLocationRelativeTo(null);
         this.frame.setResizable(false);
-
         this.backgroundLabel = new JLabel(new ImageIcon("images/Background/background4.jpg"));
         this.backgroundLabel.setLayout(new GridBagLayout());
 
@@ -35,9 +34,13 @@ public class TutorialMenu
         titleGbc.gridy = 0;
 
         this.infoLabel = new JLabel(
-            "<html><div style='text-align: center; color: #8B4513; font-family: serif; font-size: 36px;'>" +
-            "Do you want to play the Tutorial?" +
-            "</div></html>",
+            "<html>\n"
+            + "<body>\n"
+            + "<center>\n"
+            + "<font face=\"Blackletter, serif\" size=\"8\" color=\"#FFD700\"><b>✦ Tutorial Menu ✦</b></font>\n"
+            + "</center>\n"
+            + "</body>\n"
+            + "</html>",
             SwingConstants.CENTER
         );
         this.backgroundLabel.add(this.infoLabel, titleGbc);

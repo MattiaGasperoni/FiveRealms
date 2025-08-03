@@ -94,11 +94,18 @@ public class GameController
     private void setupEndGameListeners()
     {
     	this.endGameMenu.addMainMenuListener(event -> 
-        {
-            System.out.println(" You chose to return to Main Menu.");
-            this.endGameMenu.close();
-            this.mainMenuView.show();
-        });
+    	{
+    	    System.out.println(" You chose to return to Main Menu.");
+    	    
+    	    this.endGameMenu.close();
+    	    
+    	    this.game = null;
+    	    
+    	    Game newGame = new Game();
+            
+    	    newGame.start();
+    	    
+    	});
 
     	this.endGameMenu.addExitListener(event -> 
         {
@@ -108,31 +115,34 @@ public class GameController
         });
     }
     
-    
+
     public void startNewGame() 
     {
         this.tutorialMenuView.show();
 
-        this.tutorialMenuView.addYesListener(event -> 
-        {
-            this.tutorialMenuView.close();
-            System.out.println(" Yes, start play the tutorial");
-            
-            this.isTutorialMode = true;
-            
-            // Avvia il tutorial ma NON la selezione dei personaggi
-            // La selezione avverrà solo quando i popup del tutorial saranno completati
-            boolean tutorialSuccess = this.game.startTutorial(); 
-            
-            if (!tutorialSuccess) 
-            {
-                System.out.println(" You failed the tutorial");
-                /*
-                 * Qui voglio un PopUp a schermo che dice "Tutorial fallito, e mi chiede se voglio riprovare o uscire"
-                 */
-            }
-            // NON chiamare startSelectionCharacter() qui - sarà chiamato da onTutorialPopupsCompleted()
-        });
+	     // E modifica il listener del pulsante "Yes" così:
+	     this.tutorialMenuView.addYesListener(event -> 
+	     {
+	         // Controllo se il tutorial è già attivo
+	         if (isTutorialMode) {
+	             System.out.println("Tutorial già in esecuzione, ignoro la richiesta.");
+	             return;
+	         }
+	         
+	         this.tutorialMenuView.close();
+	         System.out.println(" Yes, start play the tutorial");
+	         
+	         this.isTutorialMode = true;
+	         
+	         // Avvia il tutorial ma NON la selezione dei personaggi
+	         boolean tutorialSuccess = this.game.startTutorial(); 
+	         
+	         if (!tutorialSuccess) 
+	         {
+	             System.out.println(" You failed the tutorial");
+	             this.isTutorialMode = false; // Reset del flag se fallisce
+	         }
+	     });
 
         this.tutorialMenuView.addNoListener(event -> 
         {
