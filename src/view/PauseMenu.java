@@ -18,6 +18,15 @@ public class PauseMenu {
     private final int numLevel;
     private GameController controller;
 
+    /**
+     * Constructor that initializes the pause menu with game state information
+     * @param frame The main game frame
+     * @param layeredPanel The layered panel where the pause menu will be displayed
+     * @param enemiesList List of enemy characters in the current game
+     * @param alliesList List of ally characters in the current game
+     * @param numLevel Current level number
+     * @param controller Game controller for handling save operations
+     */
     public PauseMenu(JFrame frame, JLayeredPane layeredPanel, List<Character> enemiesList,
                      List<Character> alliesList, int numLevel, GameController controller) {
         this.frame = frame;
@@ -28,6 +37,10 @@ public class PauseMenu {
         this.controller = controller;
     }
 
+    /**
+     * Initializes and sets up the pause menu interface with fantasy-themed styling
+     * Creates the pause menu panel, buttons, and pause trigger button
+     */
     public void initializePauseMenu() {
         JPanel pauseMenuPanel = new JPanel() {
             @Override
@@ -76,7 +89,14 @@ public class PauseMenu {
                 g2d.dispose();
             }
             
-            // Metodo per disegnare decorazioni agli angoli
+            /**
+             * Draws decorative corner elements for the pause menu panel
+             * @param g2d Graphics2D object for drawing
+             * @param x X coordinate of the panel
+             * @param y Y coordinate of the panel
+             * @param width Width of the panel
+             * @param height Height of the panel
+             */
             private void drawCornerDecorations(Graphics2D g2d, int x, int y, int width, int height) {
                 g2d.setColor(new Color(160, 130, 90));
                 g2d.setStroke(new BasicStroke(2));
@@ -168,6 +188,12 @@ public class PauseMenu {
         layeredPanel.add(menuButton, Integer.valueOf(3));
     }
 
+    /**
+     * Creates a fantasy-themed button with icon and hover effects
+     * @param text The text to display on the button
+     * @param icon The icon/emoji to display alongside the text
+     * @return A JButton with fantasy styling and interactive effects
+     */
     private JButton createFantasyButton(String text, String icon) {
         JButton button = new JButton(" " + icon + "  " + text + " ");
         button.setFont(new Font("Serif", Font.BOLD, 18));
@@ -233,6 +259,10 @@ public class PauseMenu {
         return button;
     }
     
+    /**
+     * Creates the pause button that triggers the pause menu display
+     * @return A JButton styled as a pause icon that shows the pause menu when clicked
+     */
     private JButton createPauseButton() {
         JButton menuButton = new JButton(new ImageIcon(new ImageIcon("images/pauseGame.png")
                 .getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
@@ -253,6 +283,10 @@ public class PauseMenu {
         return menuButton;
     }
     
+    /**
+     * Shows a temporary visual confirmation when the game is successfully saved
+     * @param saveButton The save button to modify for showing confirmation feedback
+     */
     private void showSaveConfirmation(JButton saveButton) {
         String originalText = saveButton.getText();
         saveButton.setText(" ✓  Saved! ");

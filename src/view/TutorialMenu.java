@@ -1,5 +1,4 @@
 package view;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -10,11 +9,14 @@ public class TutorialMenu
     private JLabel backgroundLabel;
     private GridBagConstraints gbc;
     private JLabel infoLabel;
-
     private JButton yesButton;
     private JButton noButton;
     private JButton exitButton;
     
+    /**
+     * Constructor that initializes the tutorial menu frame and all its components
+     * Sets up the window properties, creates buttons, and configures the layout
+     */
     public TutorialMenu()
     {
     	// Setup the frame
@@ -22,7 +24,7 @@ public class TutorialMenu
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.frame.setSize(800, 800);
         this.frame.setLocationRelativeTo(null);
-        this.frame.setResizable(true);
+        this.frame.setResizable(false);
         
         this.backgroundLabel = new JLabel(new ImageIcon("images/Background/background4.jpg"));
         this.backgroundLabel.setLayout(new GridBagLayout());
@@ -46,31 +48,52 @@ public class TutorialMenu
 		this.frame.add(this.backgroundLabel);
     }
     
+    /**
+     * Makes the tutorial menu frame visible and prints debug information to console
+     */
     public void show() 
     {        
     	System.out.print("Open Tuturial Menu Frame ->");
         System.out.print(" Do you want to play the Tutorial? ->");
-
         this.frame.setVisible(true);
     }
     
-    
+    /**
+     * Adds an ActionListener to the yes button
+     * @param listener The ActionListener to handle yes button click events
+     */
     public void addYesListener(ActionListener listener) {
         yesButton.addActionListener(listener);
     }
-
+    
+    /**
+     * Adds an ActionListener to the no button
+     * @param listener The ActionListener to handle no button click events
+     */
     public void addNoListener(ActionListener listener) {
         noButton.addActionListener(listener);
     }
-
+    
+    /**
+     * Adds an ActionListener to the exit button
+     * @param listener The ActionListener to handle exit button click events
+     */
     public void addExitListener(ActionListener listener) {
         exitButton.addActionListener(listener);
     }
     
+    /**
+     * Closes and disposes of the tutorial menu frame
+     */
     public void close() {
         frame.dispose();
     }
-
+    
+    /**
+     * Creates a styled button with consistent appearance and properties
+     * @param buttonText The text to display on the button
+     * @return A JButton with standardized styling applied
+     */
     private JButton createButton(String buttonText) 
     {
         JButton button = new JButton(buttonText);
@@ -83,6 +106,14 @@ public class TutorialMenu
         return button;
     }
     
+    /**
+     * Adds the tutorial menu buttons to the background label using GridBagLayout
+     * @param backgroundLabel The background label container to add buttons to
+     * @param yesButton The yes button to add
+     * @param noButton The no button to add
+     * @param exitButton The exit button to add
+     * @param gbc The GridBagConstraints object for layout positioning
+     */
     private void addButtonsToBackground(JLabel backgroundLabel, JButton yesButton, JButton noButton, JButton exitButton, GridBagConstraints gbc) {
         gbc.gridy = 1;
         backgroundLabel.add(yesButton, gbc);
@@ -91,5 +122,4 @@ public class TutorialMenu
         gbc.gridy = 3;
         backgroundLabel.add(exitButton, gbc);
     }
-
 }

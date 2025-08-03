@@ -15,6 +15,10 @@ public class CharacterSelectionMenu {
     private final List<JPanel> selectedPanels = new ArrayList<>();
     private final List<String> selectedCharacters = new ArrayList<>();
 
+    /**
+     * Initializes and displays the character selection menu with all available allies
+     * @param allAllies List of all available characters that can be selected
+     */
     public void start(List<Character> allAllies) {
         System.out.println("Open Characters Selection Menu Frame ->");
 
@@ -22,6 +26,7 @@ public class CharacterSelectionMenu {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 800);
         frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
 
         // Sfondo casuale
         String bgPath = "images/background/background" + (int)(Math.random() * 6) + ".jpg";
@@ -58,6 +63,11 @@ public class CharacterSelectionMenu {
         frame.setVisible(true);
     }
 
+    /**
+     * Creates a styled fantasy-themed button with hover effects
+     * @param text The text to display on the button
+     * @return A JButton with fantasy styling applied
+     */
     private JButton createFantasyButton(String text) {
         JButton button = new JButton(text);
         button.setFont(new Font("Serif", Font.BOLD, 18));
@@ -106,6 +116,16 @@ public class CharacterSelectionMenu {
         return button;
     }
 
+    /**
+     * Adds a selectable character panel to the background label at specified grid position
+     * @param bgLabel The background label container to add the character panel to
+     * @param name The character's name to display
+     * @param desc The character's description text
+     * @param imgPath The file path to the character's image
+     * @param x The grid x position for layout placement
+     * @param y The grid y position for layout placement
+     * @param gbc The GridBagConstraints object for layout configuration
+     */
     private void addCharacter(JLabel bgLabel, String name, String desc, String imgPath, int x, int y, GridBagConstraints gbc) {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setOpaque(true);
@@ -155,14 +175,25 @@ public class CharacterSelectionMenu {
         bgLabel.add(panel, gbc);
     }
 
+    /**
+     * Adds an ActionListener to the next button for handling click events
+     * @param listener The ActionListener to be added to the next button
+     */
     public void addNextButtonListener(ActionListener listener) {
         nextButton.addActionListener(listener);
     }
 
+    /**
+     * Returns a copy of the list containing the names of currently selected characters
+     * @return ArrayList containing the names of selected characters
+     */
     public List<String> getSelectedCharacterNames() {
         return new ArrayList<>(selectedCharacters);
     }
 
+    /**
+     * Closes and disposes of the character selection menu frame
+     */
     public void close() {
         frame.dispose();
     }

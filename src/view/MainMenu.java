@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-public class MainMenu 
+public class MainMenu
 {
 
     private JFrame frame;
@@ -12,42 +12,69 @@ public class MainMenu
     private JButton loadButton;
     private JButton exitButton;
 
-    public MainMenu() 
+    /**
+     * Constructor that initializes the main menu frame and all its components
+     * Sets up the window properties, creates buttons, and configures the layout
+     */
+    public MainMenu()
     {
-        this.frame = new JFrame("Main Menu");
+    	this.frame = new JFrame("FiveRealms - MainMenu");
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.frame.setSize(800, 800);
         this.frame.setLocationRelativeTo(null);
-        this.frame.setResizable(true);
+        this.frame.setResizable(false);
 
         this.startButton = createButton("New Game");
-        this.loadButton  = createButton("Load Game");
-        this.exitButton  = createButton("Exit");
+        this.loadButton = createButton("Load Game");
+        this.exitButton = createButton("Exit");
 
         this.setupLayout();
     }
 
+    /**
+     * Makes the main menu frame visible to the user
+     */
     public void show() {
-    	this.frame.setVisible(true);
+        this.frame.setVisible(true);
     }
 
+    /**
+     * Closes and disposes of the main menu frame
+     */
     public void close() {
-    	this.frame.dispose();
+        this.frame.dispose();
     }
 
+    /**
+     * Adds an ActionListener to the start game button
+     * @param listener The ActionListener to handle start button click events
+     */
     public void addStartListener(ActionListener listener) {
-    	this.startButton.addActionListener(listener);
+        this.startButton.addActionListener(listener);
     }
 
+    /**
+     * Adds an ActionListener to the load game button
+     * @param listener The ActionListener to handle load button click events
+     */
     public void addLoadListener(ActionListener listener) {
-    	this.loadButton.addActionListener(listener);
+        this.loadButton.addActionListener(listener);
     }
 
+    /**
+     * Adds an ActionListener to the exit button
+     * @param listener The ActionListener to handle exit button click events
+     */
     public void addExitListener(ActionListener listener) {
-    	this.exitButton.addActionListener(listener);
+        this.exitButton.addActionListener(listener);
     }
 
-    private JButton createButton(String buttonText) 
+    /**
+     * Creates a styled button with consistent appearance and properties
+     * @param buttonText The text to display on the button
+     * @return A JButton with standardized styling applied
+     */
+    private JButton createButton(String buttonText)
     {
         JButton button = new JButton(buttonText);
         button.setFont(new Font("Arial", Font.BOLD, 18));
@@ -58,8 +85,12 @@ public class MainMenu
         button.setPreferredSize(new Dimension(200, 50));
         return button;
     }
-    
-    private void setupLayout() 
+
+    /**
+     * Configures the layout of the main menu by setting up the background image
+     * and positioning all buttons using GridBagLayout
+     */
+    private void setupLayout()
     {
         JLabel backgroundLabel = new JLabel(new ImageIcon("images/Background/background4.jpg"));
         backgroundLabel.setLayout(new GridBagLayout());
@@ -76,13 +107,20 @@ public class MainMenu
 
         this.frame.add(backgroundLabel);
     }
-    
+
+    /**
+     * Enables or disables the load game button
+     * @param enabled true to enable the button, false to disable it
+     */
     public void setLoadButtonEnabled(boolean enabled) {
         this.loadButton.setEnabled(enabled);
     }
 
+    /**
+     * Sets the visibility of the load game button
+     * @param visible true to make the button visible, false to hide it
+     */
     public void setLoadButtonVisible(boolean visible) {
         this.loadButton.setVisible(visible);
     }
 }
-
