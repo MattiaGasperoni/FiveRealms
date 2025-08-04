@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import model.characters.Character;
 import model.gameStatus.Game;
+import model.gameStatus.Level;
 import model.gameStatus.saveSystem.GameState;
 import model.gameStatus.saveSystem.GameStateManager;
 import model.point.Point;
@@ -12,6 +13,7 @@ import view.CharacterSelectionMenu;
 import view.EndGameMenu;
 import view.LoadGameMenu;
 import view.MainMenu;
+import view.PauseMenu;
 import view.TutorialMenu;
 import view.map.AbstractMap;
 import view.map.TutorialMap;
@@ -30,26 +32,28 @@ public class GameController
     private TutorialMenu tutorialMenuView;
     private CharacterSelectionMenu characterSelectionMenuView;
     private EndGameMenu endGameMenu;
+    private PauseMenu pauseMenu;
 
     private TutorialMap currentTutorialMap; // Aggiunto per tenere riferimento alla mappa tutorial
     private boolean isTutorialMode = false; // Flag per sapere se siamo in modalità tutorial
 
     public GameController(Game game, GameStateManager gameStateManager, MainMenu mainMenu, TutorialMenu tutorialMenu, CharacterSelectionMenu characterSelectionMenu, EndGameMenu endGameMenu) 
     {
-        this.game = game;
+        this.game             = game;
         this.gameStateManager = gameStateManager;
         
         this.mainMenuView               = mainMenu;
         this.tutorialMenuView           = tutorialMenu;
         this.characterSelectionMenuView = characterSelectionMenu;
         this.endGameMenu                = endGameMenu;
+        this.pauseMenu                  = null;
 
-        
         this.checkExistSave();
+        
         this.setupMainMenuListeners();
         this.setupEndGameListeners();
-    } 
-    
+    }
+        
     private void checkExistSave()
     {
     	// Controlla se esistono salvataggi e abilita/disabilita il pulsante
@@ -115,7 +119,56 @@ public class GameController
         });
     }
     
+    public void setPauseMenu(PauseMenu pauseMenu)
+    {
+    	this.pauseMenu = pauseMenu;
+    	this.setupPauseListeners();
+    }
+    
+    private void setupPauseListeners()
+    {
+    	this.pauseMenu.addPauseListener(event -> 
+        {
+        	// Mostriamo la finestra del menu di pausa
+        	this.pauseMenu.show();
+        	Level currentLevel = this.game.getGameLevels().get(this.game.getCurrentLevelIndex());
+        	currentLevel.setLevelPaused(true);
+        });
+    	
+    	
+    	this.pauseMenu.addResumeListener(event -> 
+        {
+        	// Chiudiamo la finestra del menu di pausa
+        	this.pauseMenu.hide();
+        	Level currentLevel = this.game.getGameLevels().get(this.game.getCurrentLevelIndex());
+        	currentLevel.setLevelPaused(false);
+        });
 
+    	
+    	this.pauseMenu.addSaveListener(event -> 
+    	{    	    
+            try 
+            {
+                this.saveGame();
+            } 
+            catch (IOException ex)
+            {
+                System.err.println("Error saving game: " + ex.getMessage());
+            }
+            finally
+            {
+            	// Chiudiamo la finestra del menu di pausa
+				this.pauseMenu.hide();
+			}
+    	});
+
+    	this.pauseMenu.addExitListener(event -> 
+        {
+            System.out.println(" You chose to close the game.");
+            System.exit(0);
+        });
+    }
+    
     public void startNewGame() 
     {
         this.tutorialMenuView.show();
@@ -222,9 +275,11 @@ public class GameController
      * @param level The current game level.
      * @throws IOException If an error occurs during saving.
      */
-    public void saveGame(List<Character> allies, List<Character> enemies, int level) throws IOException 
+    public void saveGame() throws IOException 
     {
-        this.gameStateManager.saveStatus(allies, enemies, level);  // Delegate saving to GameStateManager
+    	Level currentLevel = this.game.getGameLevels().get(this.game.getCurrentLevelIndex());
+    	
+        this.gameStateManager.saveStatus(currentLevel.getAllies(), currentLevel.getEnemies(), this.game.getCurrentLevelIndex());
     }
 
     /**

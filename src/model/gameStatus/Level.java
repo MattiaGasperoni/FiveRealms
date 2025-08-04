@@ -2,8 +2,6 @@ package model.gameStatus;
 
 import java.io.IOException;
 import java.util.*;
-
-import javax.swing.SwingUtilities;
 import controller.*;
 import model.characters.AbstractCharacter;
 import model.characters.Character;
@@ -28,8 +26,7 @@ public class Level
         WAITING_FOR_MOVEMENT,   // Attesa movimento dell’utente
         WAITING_FOR_TARGET,     // Attesa scelta bersaglio
         UPDATE_MAP,             // Aggiorna mappa
-        TURN_COMPLETED,         // Turno completato
-        PAUSE					// Siamo in pausa
+        TURN_COMPLETED          // Turno completato
     }
     
     private LevelPhase currentLevelPhase;
@@ -40,14 +37,15 @@ public class Level
     
     private boolean levelCompleted;
     private boolean levelFailed;
+    private boolean levelPause;
     
     private PriorityQueue<Character> currentTurnOrder;
     private Character currentAttacker;
        
     private final LevelMap levelMap;
     private final BattlePhaseView movementPhaseManager;
-    private final GameController controller;
-
+    private final GameController controller;    
+    
     public Level(LevelMap map, GameController controller) 
     {
         this.levelMap = map;
@@ -59,6 +57,7 @@ public class Level
         
         this.levelCompleted = false;
         this.levelFailed    = false;
+        this.levelPause     = false;
     }
 
     public void play() throws IOException 
@@ -99,8 +98,7 @@ public class Level
     // Metodo che aggiorna lo stato delle fase BATTLE
     private void handleBattlePhase() 
     {
-        if (this.currentTurnState == RoundState.WAITING_FOR_MOVEMENT ||
-            this.currentTurnState == RoundState.WAITING_FOR_TARGET) 
+        if (this.levelPause || this.currentTurnState == RoundState.WAITING_FOR_MOVEMENT || this.currentTurnState == RoundState.WAITING_FOR_TARGET) 
         {
             return; // In attesa dell'input utente
         }
@@ -113,10 +111,7 @@ public class Level
         	
             case UPDATE_MAP:
             	this.handleUpdateMap();
-            	
-            case PAUSE:
-                // TODO
-                
+            	                
             case TURN_COMPLETED:
                 this.checkEndTurn();
                 break;
@@ -274,7 +269,6 @@ public class Level
     	this.currentTurnState = RoundState.TURN_COMPLETED;
     }
     
-    
     private void checkEndTurn()
     {
         System.out.print("\n\n=== CONTROLLO DI FINE TURNO DI UN PERSONAGGIO -> ");
@@ -299,8 +293,6 @@ public class Level
             this.startNextTurn();
         }
     }
-
-
     
     private void checkEndLevel()
     {
@@ -329,7 +321,10 @@ public class Level
         currentLevelPhase  = LevelPhase.BATTLE_PHASE;
         currentTurnState   = RoundState.INITIALIZING_TURN;
     }
-
+ 
+    /*==========================*/
+    /*        Getter            */
+    /*==========================*/
     private PriorityQueue<Character> getTurnOrder(List<Character> allies, List<Character> enemies) 
     {
         PriorityQueue<Character> queue = new PriorityQueue<>((a, b) -> Integer.compare(b.getSpeed(), a.getSpeed()));
@@ -338,26 +333,17 @@ public class Level
         return queue;
     }
 
-    private boolean hasRemainingAttackers(PriorityQueue<Character> attackTurnOrder) {
-        return attackTurnOrder.stream().anyMatch(Character::isAlive);
-    }
-
-    // Getters
+    public LevelMap getLevelMap() { return this.levelMap; }   
     public List<Character> getEnemies() { return this.enemiesList; }
     public List<Character> getAllies() { return this.alliesList; }
     public boolean isCompleted() { return this.levelCompleted; }
     public boolean isFailed() { return this.levelFailed; }
     
-    // Metodo per debug dello stato
-    public void printCurrentState() {
-        System.out.println("Fase: " + currentLevelPhase + ", Stato Battaglia: " + currentTurnState);
-        if (currentAttacker != null) {
-            System.out.println("Attaccante corrente: " + currentAttacker.getClass().getSimpleName());
-        }
-    }
+    /*==========================*/
+    /*        Setter            */
+    /*==========================*/
     
-    public LevelMap getLevelMap() {
-        return this.levelMap;
+    public void setLevelPaused(boolean paused) {
+        this.levelPause = paused;
     }
-
 }

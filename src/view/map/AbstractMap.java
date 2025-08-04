@@ -41,11 +41,10 @@ public abstract class AbstractMap
 
     private Random random;
     
-    private GameController controller;
-
     private JLabel levelLabel;
-    private JLabel alliesLabel;
     private JLabel enemiesLabel;
+	private PauseMenu pauseMenu;
+	private GameController controller;
 
 
     /**
@@ -59,7 +58,6 @@ public abstract class AbstractMap
         this.enemiesList      = enemiesList;
         this.alliesList       = alliesList;
         this.numLevel         = numLevel;
-        this.controller		  = controller;
         
         this.characterMap = new HashMap<>();
         this.alliesPositionList = new ArrayList<>();
@@ -68,6 +66,8 @@ public abstract class AbstractMap
         this.initializePositionList();
         
         this.tooltipManager = new CharacterTooltipManager();
+        this.controller = controller;
+        
 
     }
     
@@ -83,6 +83,9 @@ public abstract class AbstractMap
 		 }
 		 
     	initializeFrame();
+    	
+        this.pauseMenu = new PauseMenu(this.getFrame(), this.getLayeredPanel());
+        this.controller.setPauseMenu(this.pauseMenu);
         
         this.frame.setVisible(true);
     }
@@ -122,15 +125,11 @@ public abstract class AbstractMap
         
         // layer 2. Banner di gioco
         this.initializeBanner();
-        
-        // layer 3. Menu di Pausa
-        PauseMenu pauseMenu = new PauseMenu(this.frame, this.layeredPanel, enemiesList, alliesList, numLevel, this.controller);
-        pauseMenu.initializePauseMenu();
-        
-        // layer 4. Etichette di informazioni sul gioco
+               
+        // layer 3. Etichette di informazioni sul gioco
         this.addGameInfoLabels();
     }
-    
+        
 	/**
 	 * Initializes the background map for the current level.
 	 */
@@ -549,6 +548,14 @@ public abstract class AbstractMap
 	public JButton[][] getGridButtons() {
         return this.gridPanel.getGridButtons();
     }
+	
+	public JFrame getFrame() {
+		return this.frame;
+	}
+
+	public JLayeredPane getLayeredPanel() {
+		return this.layeredPanel;
+	}
 	
 	// Metodo che ti dice se è occupata gia la posizione di un personaggio
 	public boolean isPositionOccupied(Point point) {

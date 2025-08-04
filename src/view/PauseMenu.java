@@ -2,49 +2,45 @@ package view;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
-import java.util.List;
 import javax.swing.*;
 
-import controller.GameController;
-import model.characters.Character;
-
-public class PauseMenu {
-
+public class PauseMenu 
+{
     private JFrame frame;
     private JLayeredPane layeredPanel;
-    private List<Character> enemiesList;
-    private List<Character> alliesList;
-    private final int numLevel;
-    private GameController controller;
-
+    
+    private JButton resumeButton;
+    private JButton saveButton;
+    private JButton exitButton;
+	private JButton menuIcon;
+	private JPanel pauseMenuPanel;	
+	
     /**
      * Constructor that initializes the pause menu with game state information
      * @param frame The main game frame
      * @param layeredPanel The layered panel where the pause menu will be displayed
-     * @param enemiesList List of enemy characters in the current game
-     * @param alliesList List of ally characters in the current game
-     * @param numLevel Current level number
-     * @param controller Game controller for handling save operations
      */
-    public PauseMenu(JFrame frame, JLayeredPane layeredPanel, List<Character> enemiesList,
-                     List<Character> alliesList, int numLevel, GameController controller) {
-        this.frame = frame;
+    public PauseMenu(JFrame frame, JLayeredPane layeredPanel)
+    {
+        this.frame        = frame;
         this.layeredPanel = layeredPanel;
-        this.enemiesList = enemiesList;
-        this.alliesList = alliesList;
-        this.numLevel = numLevel;
-        this.controller = controller;
+        
+        this.initialize();
     }
 
     /**
      * Initializes and sets up the pause menu interface with fantasy-themed styling
      * Creates the pause menu panel, buttons, and pause trigger button
      */
-    public void initializePauseMenu() {
-        JPanel pauseMenuPanel = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
+    private void initialize() 
+    {
+        this.pauseMenuPanel = new JPanel() 
+        {
+            private static final long serialVersionUID = 1L;
+
+			@Override
+            protected void paintComponent(Graphics g) 
+            {
                 super.paintComponent(g);
                 Graphics2D g2d = (Graphics2D) g.create();
                 
@@ -97,7 +93,8 @@ public class PauseMenu {
              * @param width Width of the panel
              * @param height Height of the panel
              */
-            private void drawCornerDecorations(Graphics2D g2d, int x, int y, int width, int height) {
+            private void drawCornerDecorations(Graphics2D g2d, int x, int y, int width, int height) 
+            {
                 g2d.setColor(new Color(160, 130, 90));
                 g2d.setStroke(new BasicStroke(2));
                 
@@ -121,15 +118,17 @@ public class PauseMenu {
             }
         };
 
-        pauseMenuPanel.setSize(frame.getSize());
-        pauseMenuPanel.setOpaque(false);
-        pauseMenuPanel.setLayout(new GridBagLayout());
-        pauseMenuPanel.setVisible(false);
+        this.pauseMenuPanel.setSize(this.frame.getSize());
+        this.pauseMenuPanel.setOpaque(false);
+        this.pauseMenuPanel.setLayout(new GridBagLayout());
+        this.pauseMenuPanel.setVisible(false);
 
         // Blocca i click fuori dai pulsanti
-        pauseMenuPanel.addMouseListener(new MouseAdapter() {
+        this.pauseMenuPanel.addMouseListener(new MouseAdapter() 
+        {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mouseClicked(MouseEvent e) 
+            {
                 e.consume();
             }
         });
@@ -149,9 +148,9 @@ public class PauseMenu {
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
         buttonPanel.setOpaque(false);
 
-        JButton resumeButton = createFantasyButton("Resume", "⚔");
-        JButton saveButton = createFantasyButton("Save Game", "📜");
-        JButton exitButton = createFantasyButton("Exit", "🚪");
+        this.resumeButton = createButton("Resume", "⚔");
+        this.saveButton   = createButton("Save Game", "📜");
+        this.exitButton   = createButton("Exit", "🚪");
 
         buttonPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         buttonPanel.add(resumeButton);
@@ -160,41 +159,82 @@ public class PauseMenu {
         buttonPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         buttonPanel.add(exitButton);
 
-        resumeButton.addActionListener(e -> pauseMenuPanel.setVisible(false));
-
-        saveButton.addActionListener(e -> {
-            try {
-                controller.saveGame(alliesList, enemiesList, numLevel);
-                System.out.println("Game saved successfully!");
-                // Feedback visivo per il salvataggio
-                showSaveConfirmation(saveButton);
-                pauseMenuPanel.setVisible(false);
-            } catch (IOException ex) {
-                System.err.println("Error saving game: " + ex.getMessage());
-            }
-        });
-
-        exitButton.addActionListener(e -> System.exit(0));
-
         gbc.gridy++;
-        pauseMenuPanel.add(titleLabel, gbc);
+        this.pauseMenuPanel.add(titleLabel, gbc);
         gbc.gridy++;
-        pauseMenuPanel.add(buttonPanel, gbc);
+        this.pauseMenuPanel.add(buttonPanel, gbc);
 
-        // Pulsante di pausa con stile migliorato
-        JButton menuButton = createPauseButton();
-
-        layeredPanel.add(pauseMenuPanel, Integer.valueOf(4));
-        layeredPanel.add(menuButton, Integer.valueOf(3));
+        this.createPauseButtonIcon();
+        
+        this.layeredPanel.add(this.pauseMenuPanel, Integer.valueOf(4));
+        this.layeredPanel.add(this.menuIcon, Integer.valueOf(3));
+    }
+    
+    /**
+     * Makes the Pause menu panel visible to the user
+     */
+    public void show() 
+    {
+        if (this.pauseMenuPanel != null) 
+        {
+            this.pauseMenuPanel.setVisible(true);
+            this.layeredPanel.repaint();
+        }
+    }
+    
+    /**
+     * Makes the Pause menu panel invisible to the user
+     */
+    public void hide() 
+    {
+        if (this.pauseMenuPanel != null) 
+        {
+            this.pauseMenuPanel.setVisible(false);
+            this.layeredPanel.repaint();
+        }
+    }
+    
+    /**
+     * Adds an ActionListener to the resume button
+     * @param listener The ActionListener to handle start button click events
+     */
+    public void addResumeListener(ActionListener listener) {
+        this.resumeButton.addActionListener(listener);
+    }
+    
+    /**
+     * Adds an ActionListener to the save game button
+     * @param listener The ActionListener to handle load button click events
+     */
+    public void addSaveListener(ActionListener listener) {
+        this.saveButton.addActionListener(listener);
+    }
+    
+    /**
+     * Adds an ActionListener to the exit button
+     * @param listener The ActionListener to handle exit button click events
+     */
+    public void addExitListener(ActionListener listener) {
+        this.exitButton.addActionListener(listener);
+    }
+    
+    /**
+     * Adds an ActionListener to the pause icon button
+     * @param listener The ActionListener to handle exit button click events
+     */
+    public void addPauseListener(ActionListener listener) {
+        this.menuIcon.addActionListener(listener);
     }
 
+
     /**
-     * Creates a fantasy-themed button with icon and hover effects
+     * Creates a button with icon and hover effects
      * @param text The text to display on the button
      * @param icon The icon/emoji to display alongside the text
      * @return A JButton with fantasy styling and interactive effects
      */
-    private JButton createFantasyButton(String text, String icon) {
+    private JButton createButton(String text, String icon)
+    {
         JButton button = new JButton(" " + icon + "  " + text + " ");
         button.setFont(new Font("Serif", Font.BOLD, 18));
         button.setForeground(new Color(245, 222, 179)); // Beige/oro chiaro
@@ -217,7 +257,8 @@ public class PauseMenu {
             private Color hoverBg = new Color(139, 117, 82);
             
             @Override
-            public void mouseEntered(MouseEvent evt) {
+            public void mouseEntered(MouseEvent evt)
+            {
                 button.setBackground(hoverBg);
                 button.setForeground(new Color(255, 248, 220)); // Quasi bianco
                 // Effetto di sollevamento
@@ -263,40 +304,15 @@ public class PauseMenu {
      * Creates the pause button that triggers the pause menu display
      * @return A JButton styled as a pause icon that shows the pause menu when clicked
      */
-    private JButton createPauseButton() {
-        JButton menuButton = new JButton(new ImageIcon(new ImageIcon("images/pauseGame.png")
+    private void createPauseButtonIcon() 
+    {
+        this.menuIcon = new JButton(new ImageIcon(new ImageIcon("images/pauseGame.png")
                 .getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
         
-        menuButton.setBounds(10, 10, 60, 60);
-        menuButton.setBorderPainted(false);
-        menuButton.setContentAreaFilled(false);
-        menuButton.setFocusPainted(false);
-        menuButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        
-        menuButton.addActionListener(e -> {
-            Component[] components = layeredPanel.getComponentsInLayer(4);
-            if (components.length > 0) {
-                components[0].setVisible(true);
-            }
-        });
-        
-        return menuButton;
-    }
-    
-    /**
-     * Shows a temporary visual confirmation when the game is successfully saved
-     * @param saveButton The save button to modify for showing confirmation feedback
-     */
-    private void showSaveConfirmation(JButton saveButton) {
-        String originalText = saveButton.getText();
-        saveButton.setText(" ✓  Saved! ");
-        saveButton.setBackground(new Color(34, 139, 34));
-        
-        Timer timer = new Timer(1500, e -> {
-            saveButton.setText(originalText);
-            saveButton.setBackground(new Color(101, 67, 33));
-        });
-        timer.setRepeats(false);
-        timer.start();
+        this.menuIcon.setBounds(10, 10, 60, 60);
+        this.menuIcon.setBorderPainted(false);
+        this.menuIcon.setContentAreaFilled(false);
+        this.menuIcon.setFocusPainted(false);
+        this.menuIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 }

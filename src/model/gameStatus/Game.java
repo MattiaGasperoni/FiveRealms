@@ -31,7 +31,7 @@ public class Game
 
 
     // Oggetti Grafici
-    private MainMenu graphicsMenu;
+    private MainMenu mainMenu;
     private TutorialMenu tutorialMenu;
     private CharacterSelectionMenu characterSelectionMenu; // Menu per la scelta dei personaggi
     private EndGameMenu endGameMenu;
@@ -39,21 +39,21 @@ public class Game
 
     public Game() 
     {
-        this.gameLevels = new ArrayList<>();
+        this.gameLevels      = new ArrayList<>();
         this.availableAllies = new ArrayList<>();
-        this.selectedAllies = new ArrayList<>();
+        this.selectedAllies  = new ArrayList<>();
        
         this.currentLevelIndex = 0;
         
         // Inizializzazione Oggetti Grafici
-        this.graphicsMenu = new MainMenu();
-        this.tutorialMenu = new TutorialMenu();
+        this.mainMenu               = new MainMenu();
+        this.tutorialMenu           = new TutorialMenu();
         this.characterSelectionMenu = new CharacterSelectionMenu();
-        this.endGameMenu = new EndGameMenu();
-
-        this.gameStateManager = new GameStateManager();
+        this.endGameMenu            = new EndGameMenu();
         
-        this.controller = new GameController(this, this.gameStateManager, this.graphicsMenu, this.tutorialMenu, this.characterSelectionMenu, this.endGameMenu); 
+        this.gameStateManager       = new GameStateManager();
+        
+        this.controller = new GameController(this, this.gameStateManager, this.mainMenu, this.tutorialMenu, this.characterSelectionMenu, this.endGameMenu); 
         
     }
     
@@ -62,7 +62,7 @@ public class Game
     public void start() 
     {
 		// Mostro il menù principale
-		this.graphicsMenu.show();	
+		this.mainMenu.show();	
 	}
 
     public void startNewGame() throws IOException 
@@ -144,7 +144,7 @@ public class Game
     
     private void updateGameSafe() 
     {
-        Level livello = gameLevels.get(this.currentLevelIndex);
+        Level livello = this.gameLevels.get(this.currentLevelIndex);
         
         livello.update();
 
@@ -296,4 +296,19 @@ public class Game
     }
 
 
+
+	
+    public int getCurrentLevelIndex() {
+		return currentLevelIndex;
+	}
+
+
+
+	public List<Level> getGameLevels() {
+		return gameLevels;
+	}
+    
+    
+
+    
 }

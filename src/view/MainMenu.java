@@ -22,8 +22,8 @@ public class MainMenu
         this.frame.setLocationRelativeTo(null);
         this.frame.setResizable(false);
         this.startButton = createButton("New Game");
-        this.loadButton = createButton("Load Game");
-        this.exitButton = createButton("Exit");
+        this.loadButton  = createButton("Load Game");
+        this.exitButton  = createButton("Exit");
         this.setupLayout();
     }
     
