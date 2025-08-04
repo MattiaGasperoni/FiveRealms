@@ -22,7 +22,7 @@ public class CharacterSelectionMenu {
     public void start(List<Character> allAllies) {
         System.out.println("Open Characters Selection Menu Frame ->");
 
-        frame = new JFrame("Characters Selection Menu");
+        frame = new JFrame("FiveRealms - Characters Selection Menu");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 800);
         frame.setLocationRelativeTo(null);

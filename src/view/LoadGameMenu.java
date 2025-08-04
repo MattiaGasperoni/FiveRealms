@@ -20,8 +20,8 @@ public class LoadGameMenu {
      */
     public void startLoadGame() {
         GameStateManager manager = new GameStateManager();
-        JFrame frame = new JFrame("Load Game");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        JFrame frame = new JFrame("FiveRealms - Load Game");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
         frame.setSize(800, 800);  // mantieni grande
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);

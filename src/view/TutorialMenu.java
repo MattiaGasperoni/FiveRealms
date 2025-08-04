@@ -20,7 +20,7 @@ public class TutorialMenu
     public TutorialMenu()
     {
         // Setup the frame
-        this.frame = new JFrame("Tutorial Menu");
+        this.frame = new JFrame("FiveRealms - TutorialMenu");
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.frame.setSize(800, 800);
         this.frame.setLocationRelativeTo(null);
@@ -34,15 +34,17 @@ public class TutorialMenu
         titleGbc.gridy = 0;
 
         this.infoLabel = new JLabel(
-            "<html>\n"
-            + "<body>\n"
-            + "<center>\n"
-            + "<font face=\"Blackletter, serif\" size=\"8\" color=\"#FFD700\"><b>✦ Tutorial Menu ✦</b></font>\n"
-            + "</center>\n"
-            + "</body>\n"
-            + "</html>",
-            SwingConstants.CENTER
-        );
+    	    "<html>"
+    	        + "<body style='text-align: center; background-color: rgba(0,0,0,0.8); "
+    	        + "border: 2px solid #8B4513; padding: 6px 10px;'>"
+    	        + "<span style='font-family: Serif; font-size: 16px; color: #D2B48C;'>"
+    	        + "Welcome! Would you like to start the tutorial?"
+    	        + "</span>"
+    	        + "</body>"
+    	        + "</html>",
+    	    SwingConstants.CENTER
+    	);
+
         this.backgroundLabel.add(this.infoLabel, titleGbc);
 
         // GridBagConstraints per i bottoni 
