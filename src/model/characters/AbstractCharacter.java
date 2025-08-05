@@ -13,7 +13,8 @@ import model.equipment.weapons.Axe;
 import model.equipment.weapons.LongSword;
 import model.equipment.weapons.Weapon;
 import model.point.Point;
-public abstract class AbstractCharacter implements Character, Serializable {
+public abstract class AbstractCharacter implements Character, Serializable 
+{
 	public static final int EXP_LEVELUP_THRESHOLD = 1000; //threshold at which you level up each time. placeholder value
 	public static final int SPEED_TO_MOVEMENT = 10;
 	private int maxHealth;
@@ -26,8 +27,8 @@ public abstract class AbstractCharacter implements Character, Serializable {
 	private Potion potion;
 	private Point position; 
 	private String imagePath; //filepath
-	private Image image;
-	private ImageIcon icon;
+	private transient Image image;
+	private transient ImageIcon icon;
 	private boolean isAllied;
 	protected ArrayList<Weapon> availableWeapons;
 	protected static final Random rand = new Random();

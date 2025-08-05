@@ -29,6 +29,7 @@ public class GameController
     private GameStateManager gameStateManager;
     
     private MainMenu mainMenuView;
+    private LoadGameMenu loadGameMenu;
     private TutorialMenu tutorialMenuView;
     private CharacterSelectionMenu characterSelectionMenuView;
     private EndGameMenu endGameMenu;
@@ -37,12 +38,13 @@ public class GameController
     private TutorialMap currentTutorialMap; // Aggiunto per tenere riferimento alla mappa tutorial
     private boolean isTutorialMode = false; // Flag per sapere se siamo in modalità tutorial
 
-    public GameController(Game game, GameStateManager gameStateManager, MainMenu mainMenu, TutorialMenu tutorialMenu, CharacterSelectionMenu characterSelectionMenu, EndGameMenu endGameMenu) 
+    public GameController(Game game, GameStateManager gameStateManager, MainMenu mainMenu, LoadGameMenu loadGameMenu,TutorialMenu tutorialMenu, CharacterSelectionMenu characterSelectionMenu, EndGameMenu endGameMenu) 
     {
         this.game             = game;
         this.gameStateManager = gameStateManager;
         
         this.mainMenuView               = mainMenu;
+        this.loadGameMenu               = loadGameMenu;
         this.tutorialMenuView           = tutorialMenu;
         this.characterSelectionMenuView = characterSelectionMenu;
         this.endGameMenu                = endGameMenu;
@@ -52,13 +54,13 @@ public class GameController
         
         this.setupMainMenuListeners();
         this.setupEndGameListeners();
+        this.setupLoadMenuListeners();
     }
         
     private void checkExistSave()
     {
     	// Controlla se esistono salvataggi e abilita/disabilita il pulsante
-        boolean hasSave = this.gameStateManager.hasSaved();
-        this.mainMenuView.setLoadButtonEnabled(hasSave);
+        this.mainMenuView.setLoadButtonEnabled(this.gameStateManager.hasSaved());
     }
     
     private void setupMainMenuListeners() 
@@ -81,10 +83,14 @@ public class GameController
         {
             System.out.println(" You chose to load a game.");
             this.mainMenuView.close();
-            new LoadGameMenu();
-            /*
-             * * Qui dovrei implementare il caricamento del gioco
-             */
+            try
+            {
+                this.game.startLoadGame();
+            } 
+            catch (IOException error) 
+            {
+                error.printStackTrace();
+            }
         });
 
         mainMenuView.addExitListener(event -> 
@@ -117,6 +123,23 @@ public class GameController
             this.endGameMenu.close();
             System.exit(0);
         });
+    }
+    
+    private void setupLoadMenuListeners() 
+    {
+    	loadGameMenu.addChoseSaveListener(event -> 
+        {
+            System.out.println(" You have chosen a save. NOT IMPLEMENTED");
+            this.gameStateManager.getSaveInfo();
+        });
+
+    	loadGameMenu.addMainMenuListener(event -> 
+        {
+            System.out.println(" You chose to go back to main manu.");
+            this.loadGameMenu.close();
+            this.mainMenuView.show();
+        });
+
     }
     
     public void setPauseMenu(PauseMenu pauseMenu)
@@ -213,6 +236,12 @@ public class GameController
         });
     }
     
+    public void startLoadGame()
+    {
+    	System.out.println("Avvio del LoadGameMenu ...");
+    	this.loadGameMenu.show();
+    }
+    
     /**
      * Metodo chiamato dalla TutorialMap quando tutti i popup sono completati
      * Ora può mostrare il menu di selezione dei personaggi
@@ -279,20 +308,22 @@ public class GameController
     {
     	Level currentLevel = this.game.getGameLevels().get(this.game.getCurrentLevelIndex());
     	
-        this.gameStateManager.saveStatus(currentLevel.getAllies(), currentLevel.getEnemies(), this.game.getCurrentLevelIndex());
+    	GameState currentGameState = new GameState(this.game.getCurrentLevelIndex(), currentLevel.getAllies(), currentLevel.getEnemies());
+    	
+        this.gameStateManager.saveGameState(currentGameState,null);
+        
     }
 
     /**
      * Loads the most recent saved game state.
      * @return The loaded GameState object.
      * @throws IOException If an error occurs during loading.
+     * @throws ClassNotFoundException 
      */
-    public GameState loadGame() throws IOException {
-        return gameStateManager.loadStatus();  // Delegate loading to GameStateManager
+    public GameState loadGame() throws IOException, ClassNotFoundException 
+    {
+        return gameStateManager.loadGameState(null); 
     }
-    
-
-
     
     /**
      * Moves the given character to a new point on the map.

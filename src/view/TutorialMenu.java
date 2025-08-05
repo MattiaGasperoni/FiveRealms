@@ -8,6 +8,7 @@ public class TutorialMenu
     private JFrame frame;
     private JLabel backgroundLabel;
     private GridBagConstraints gbc;
+    
     private JLabel infoLabel;
     private JButton yesButton;
     private JButton noButton;

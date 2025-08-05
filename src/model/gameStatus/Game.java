@@ -35,6 +35,7 @@ public class Game
     private TutorialMenu tutorialMenu;
     private CharacterSelectionMenu characterSelectionMenu; // Menu per la scelta dei personaggi
     private EndGameMenu endGameMenu;
+	private LoadGameMenu loadGameMenu;
     
 
     public Game() 
@@ -47,18 +48,16 @@ public class Game
         
         // Inizializzazione Oggetti Grafici
         this.mainMenu               = new MainMenu();
+        this.loadGameMenu           = new LoadGameMenu();
         this.tutorialMenu           = new TutorialMenu();
         this.characterSelectionMenu = new CharacterSelectionMenu();
         this.endGameMenu            = new EndGameMenu();
         
         this.gameStateManager       = new GameStateManager();
         
-        this.controller = new GameController(this, this.gameStateManager, this.mainMenu, this.tutorialMenu, this.characterSelectionMenu, this.endGameMenu); 
-        
+        this.controller = new GameController(this, this.gameStateManager, this.mainMenu, this.loadGameMenu, this.tutorialMenu, this.characterSelectionMenu, this.endGameMenu); 
     }
-    
-
-    
+        
     public void start() 
     {
 		// Mostro il menù principale
@@ -70,6 +69,11 @@ public class Game
     	this.controller.startNewGame();
     }
 
+    public void startLoadGame() throws IOException 
+    {
+    	this.controller.startLoadGame();
+    }
+    
     public boolean startTutorial() 
     {
         // Il tutorial prevede un gameplay statico, sempre uguale percio' non
@@ -178,7 +182,7 @@ public class Game
         }
     }
 
-    public void showEndGameMenu() 
+    private void showEndGameMenu() 
     {
         // Appare il menu per la selezione dei personaggi
         this.endGameMenu.show();
@@ -190,11 +194,8 @@ public class Game
         {
         	this.gameExecutor.shutdownNow();
         }
-        //System.exit(0); // Termina l'applicazione completamente
     }
 
-
-    
     private void checkAndReplaceDeadAllies(List<Character> selectedAllies) 
 	{
     	/*
@@ -296,8 +297,6 @@ public class Game
     }
 
 
-
-	
     public int getCurrentLevelIndex() {
 		return currentLevelIndex;
 	}
@@ -306,9 +305,6 @@ public class Game
 
 	public List<Level> getGameLevels() {
 		return gameLevels;
-	}
-    
-    
+	}   
 
-    
 }

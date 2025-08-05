@@ -16,6 +16,10 @@ public class GameState implements Serializable
     private final int level;
     private final List<Character> allies;
     private final List<Character> enemies;
+    
+    /*
+     * Eventualmente aggiungere la data di salvataggio e il nome/descrizione del salvataggio
+     */
 
     /**
      * Constructs a new GameState.
@@ -26,8 +30,8 @@ public class GameState implements Serializable
      */
     public GameState(int level, List<Character> allies, List<Character> enemies) 
     {
-        this.level = level;
-        this.allies = Collections.unmodifiableList(Objects.requireNonNullElse(allies, Collections.emptyList()));
+        this.level   = level;
+        this.allies  = Collections.unmodifiableList(Objects.requireNonNullElse(allies, Collections.emptyList()));
         this.enemies = Collections.unmodifiableList(Objects.requireNonNullElse(enemies, Collections.emptyList()));
     }
 

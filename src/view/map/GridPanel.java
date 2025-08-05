@@ -5,15 +5,19 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JLayeredPane;
-import javax.swing.JOptionPane;
+//import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import model.point.Point;
 
 public class GridPanel extends JPanel 
 {
 
-    private JButton[][] gridButtons;  // 2D array for grid buttons
-    private JLayeredPane layeredPane; // Riferimento al JLayeredPane
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private JButton[][] gridButtons;  // 2D array for grid buttons
+    //private JLayeredPane layeredPane; // Riferimento al JLayeredPane
 
     /**
      * Constructor for the GridPanel.
@@ -25,7 +29,7 @@ public class GridPanel extends JPanel
     {
         super(new GridLayout(AbstractMap.GRID_SIZE_WIDTH, AbstractMap.GRID_SIZE_HEIGHT)); // Setting GridLayout
         
-        this.layeredPane = layeredPane;
+        //this.layeredPane = layeredPane;
         
         this.gridButtons = new JButton[AbstractMap.GRID_SIZE_WIDTH][AbstractMap.GRID_SIZE_HEIGHT];
         
@@ -43,8 +47,8 @@ public class GridPanel extends JPanel
         {
             for (int j = 0; j < AbstractMap.GRID_SIZE_HEIGHT; j++) 
             {
-                int row = i;
-                int col = j;
+                //int row = i;
+                //int col = j;
                 
                 JButton button = new JButton(); // Create button
                                 
@@ -71,9 +75,9 @@ public class GridPanel extends JPanel
      * @param row The row index of the button.
      * @param col The column index of the button.
      */
-     private void showButtonCoordinates(int row, int col) {
+     /*private void showButtonCoordinates(int row, int col) {
         JOptionPane.showMessageDialog(layeredPane, "Position: [" + row + ", " + col + "]");
-    }
+     }*/
     
 
     /**
