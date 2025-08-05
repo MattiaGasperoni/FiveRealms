@@ -233,7 +233,6 @@ public class GameStateManager
      */
     public String getSaveInfo()
     {
-    	System.out.print("infooooooo");
         File[] saveFiles = getSaveFiles();
         if (saveFiles.length == 0) {
             return "No save files found.";

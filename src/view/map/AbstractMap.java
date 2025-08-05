@@ -10,8 +10,6 @@ import javax.swing.*;
 import controller.GameController;
 import model.characters.Character;
 import model.point.Point;
-import view.BannerPanel;
-import view.CharacterTooltipManager;
 import view.PauseMenu;
 
 /**

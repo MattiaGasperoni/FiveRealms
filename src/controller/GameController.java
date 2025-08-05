@@ -1,5 +1,6 @@
 package controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,12 +12,12 @@ import model.gameStatus.saveSystem.GameStateManager;
 import model.point.Point;
 import view.CharacterSelectionMenu;
 import view.EndGameMenu;
-import view.LoadGameMenu;
-import view.MainMenu;
 import view.PauseMenu;
 import view.TutorialMenu;
 import view.map.AbstractMap;
 import view.map.TutorialMap;
+import view.menu.LoadGameMenu;
+import view.menu.MainMenu;
 
 /**
  * Controller class that coordinates user actions with the game logic.
@@ -127,18 +128,37 @@ public class GameController
     
     private void setupLoadMenuListeners() 
     {
-    	loadGameMenu.addChoseSaveListener(event -> 
-        {
-            System.out.println(" You have chosen a save. NOT IMPLEMENTED");
-            this.gameStateManager.getSaveInfo();
+    	this.loadGameMenu.addChooseSaveListener(event -> 
+        {            
+            // Carica i salvataggi disponibili
+            File[] saveFiles = this.gameStateManager.getSaveFiles();
+            
+            //Mostra i salvataggi
+            this.loadGameMenu.showSaveFile(saveFiles);
         });
 
-    	loadGameMenu.addMainMenuListener(event -> 
+    	this.loadGameMenu.addMainMenuListener(event -> 
         {
             System.out.println(" You chose to go back to main manu.");
             this.loadGameMenu.close();
             this.mainMenuView.show();
         });
+    	
+    	this.loadGameMenu.addSaveFileClickListener(saveFile -> 
+    	{
+    		System.out.println("Loading game from: " + saveFile.getAbsolutePath());
+    		try 
+    		{
+                // Chiudi il menu di caricamento
+    			this.loadGameMenu.close();
+                // Qui implementi la logica di caricamento del gioco
+    			System.out.println("Mo si bestemmia");
+            } 
+    		catch (Exception error)
+    		{
+    			 error.printStackTrace();            }
+    	});
+    	
 
     }
     

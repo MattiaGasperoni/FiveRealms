@@ -19,9 +19,9 @@ import model.characters.Wizard;
 import model.characters.Juggernaut;
 import model.point.Point;
 import view.map.AbstractMap;
+import view.menu.MainMenu;
 import view.BattlePhaseView;
 import view.CharacterSelectionMenu;
-import view.MainMenu;
 import view.TutorialMenu;
 import controller.GameController;
 
@@ -34,16 +34,10 @@ public class GameUnitTests {
     private Game game;
     private List<Character> testAllies;
     private List<Character> testEnemies;
-    private GameController controller;
 
     @BeforeEach
     void setUp() {
         game = new Game();
-        GameStateManager gsm = new GameStateManager();
-        MainMenu mainMenu = new MainMenu(); 
-        TutorialMenu tutorialMenu = new TutorialMenu();
-        CharacterSelectionMenu characterSelectionMenu = new CharacterSelectionMenu();
-        controller = new GameController(game, gsm, mainMenu, tutorialMenu, null,null);
         
         // Inizializza liste di test
         testAllies = new ArrayList<>();
