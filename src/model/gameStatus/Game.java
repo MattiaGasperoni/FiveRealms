@@ -13,6 +13,7 @@ import model.characters.bosses.*;
 import model.gameStatus.saveSystem.GameStateManager;
 import view.*;
 import view.map.*;
+import view.menu.EndGameMenu;
 import view.menu.LoadGameMenu;
 import view.menu.MainMenu;
 import controller.*;

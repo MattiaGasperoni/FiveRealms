@@ -1,4 +1,4 @@
-package view;
+package view.menu;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -14,8 +14,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
-
-import view.menu.AbstractMenu;
 
 /**
  * EndGameMenu represents the screen displayed when a level or the entire game is completed.

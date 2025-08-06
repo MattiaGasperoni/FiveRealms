@@ -11,11 +11,11 @@ import model.gameStatus.saveSystem.GameState;
 import model.gameStatus.saveSystem.GameStateManager;
 import model.point.Point;
 import view.CharacterSelectionMenu;
-import view.EndGameMenu;
 import view.PauseMenu;
 import view.TutorialMenu;
 import view.map.AbstractMap;
 import view.map.TutorialMap;
+import view.menu.EndGameMenu;
 import view.menu.LoadGameMenu;
 import view.menu.MainMenu;
 
@@ -159,10 +159,10 @@ public class GameController
     public void setPauseMenu(PauseMenu pauseMenu)
     {
     	this.pauseMenu = pauseMenu;
-    	this.setupPauseListeners();
+    	this.setupPauseMenuListeners();
     }
     
-    private void setupPauseListeners()
+    private void setupPauseMenuListeners()
     {
     	this.pauseMenu.addPauseListener(event -> 
         {
@@ -208,10 +208,10 @@ public class GameController
     
     public void startNewGame() 
     {
+    	
         this.tutorialMenuView.show();
 
-	     // E modifica il listener del pulsante "Yes" così:
-	     this.tutorialMenuView.addYesListener(event -> 
+	    this.tutorialMenuView.addYesListener(event -> 
 	     {
 	         // Controllo se il tutorial è già attivo
 	         if (isTutorialMode) {
@@ -242,11 +242,16 @@ public class GameController
             this.game.startSelectionCharacter();
         });
 
-        this.tutorialMenuView.addExitListener(event -> 
+        this.tutorialMenuView.addMainMenuListener(event -> 
         {
-            System.out.println("Exited game from tutorial menu");
-            this.tutorialMenuView.close();
-            System.exit(0);
+    	    
+    	    this.tutorialMenuView.close();
+    	    
+    	    this.game = null;
+    	    
+    	    Game newGame = new Game();
+            
+    	    newGame.start();
         });
     }
         
