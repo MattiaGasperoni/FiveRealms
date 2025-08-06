@@ -46,6 +46,14 @@ public abstract class AbstractCharacter implements Character, Serializable
 		this.generateDefaultImage();
 		this.availableWeapons = new ArrayList<>(2);
 	}
+	
+	@Override
+	public void reinitializeAfterLoad()
+	{
+		// Re-initialize the transient fields that cannot be serialized
+		this.icon  = new ImageIcon(this.imagePath);
+        this.image = this.icon.getImage().getScaledInstance(75, 45, Image.SCALE_AREA_AVERAGING);
+	}
 
 	@Override
 	public void moveTo(Point point) throws IllegalArgumentException {

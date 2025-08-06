@@ -84,14 +84,7 @@ public class GameController
         {
             System.out.println(" You chose to load a game.");
             this.mainMenuView.close();
-            try
-            {
-                this.game.startLoadGame();
-            } 
-            catch (IOException error) 
-            {
-                error.printStackTrace();
-            }
+            this.loadGameMenu.show();
         });
 
         mainMenuView.addExitListener(event -> 
@@ -153,6 +146,7 @@ public class GameController
     			this.loadGameMenu.close();
                 // Qui implementi la logica di caricamento del gioco
     			System.out.println("Mo si bestemmia");
+    			this.game.startLoadGame(saveFile);
             } 
     		catch (Exception error)
     		{
@@ -255,13 +249,7 @@ public class GameController
             System.exit(0);
         });
     }
-    
-    public void startLoadGame()
-    {
-    	System.out.println("Avvio del LoadGameMenu ...");
-    	this.loadGameMenu.show();
-    }
-    
+        
     /**
      * Metodo chiamato dalla TutorialMap quando tutti i popup sono completati
      * Ora può mostrare il menu di selezione dei personaggi
@@ -305,7 +293,7 @@ public class GameController
                 System.out.println("Tutorial riavviato con personaggi selezionati!");
             } else {
                 // Altrimenti avvia il livello normale
-                this.game.startLevel();
+                this.game.startNewLevel();
             }
         });
     }

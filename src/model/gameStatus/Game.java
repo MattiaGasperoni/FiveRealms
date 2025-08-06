@@ -1,5 +1,6 @@
 package model.gameStatus;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -35,7 +36,7 @@ public class Game
     // Oggetti Grafici
     private MainMenu mainMenu;
     private TutorialMenu tutorialMenu;
-    private CharacterSelectionMenu characterSelectionMenu; // Menu per la scelta dei personaggi
+    private CharacterSelectionMenu characterSelectionMenu;
     private EndGameMenu endGameMenu;
 	private LoadGameMenu loadGameMenu;
     
@@ -71,9 +72,58 @@ public class Game
     	this.controller.startNewGame();
     }
 
-    public void startLoadGame() throws IOException 
+    public void startLoadGame(File saveFile) 
     {
-    	this.controller.startLoadGame();
+        try 
+        {
+            // Inizializza l'executor se non esiste
+            if (this.gameExecutor == null) 
+            {
+                this.gameExecutor = Executors.newScheduledThreadPool(1);
+            }
+            
+            // Inizializza tutti i livelli
+            this.initializeGameLevels();
+
+            // Carichiamo i dati del salvataggio specifico
+            this.gameStateManager.loadFileInfo(saveFile);
+            
+            // Estraiamo i dati usando i getter
+            List<Character> allies  = this.gameStateManager.getLoadedAllies();
+            List<Character> enemies = this.gameStateManager.getLoadedEnemies();
+            int numLevel            = this.gameStateManager.getLoadedLevel();
+            
+            // Reinizializza i character riottenendo le immagini
+            allies  = this.reinitializeCharacters(allies);
+            enemies = this.reinitializeCharacters(enemies);	
+            
+            // Impostiamo i settaggi del livello da cui vogliamo ripartire con quelli caricati
+            this.setGameLevelValue(numLevel, allies, enemies);
+            
+            // Avviamo il livello
+            this.startCurrentLevel();
+
+            // Puliamo la cache per liberare memoria
+            this.gameStateManager.clearLoadedGameState();
+
+            // Avviamo il game loop
+            this.gameExecutor.scheduleAtFixedRate(() -> 
+            {
+                try 
+                {
+                    this.updateGameSafe();
+                } 
+                catch (Exception e) 
+                {
+                    e.printStackTrace();
+                }
+            }, 0, 100, TimeUnit.MILLISECONDS);
+            
+        } catch (IOException | ClassNotFoundException e) 
+        {
+            System.err.println("Errore nel caricamento del salvataggio: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
     
     public boolean startTutorial() 
@@ -110,7 +160,7 @@ public class Game
         this.controller.startSelectionCharacter();
     }
 	
-    public void startLevel() 
+    public void startNewLevel() 
     {
         this.initializeGameLevels(); 
         
@@ -243,12 +293,12 @@ public class Game
    		}
 	}
     
-    private void initializeGameLevels() {
-        // Popolo le liste di nemici dei livelli principali
+    private void initializeGameLevels()
+    {
+        // Popolo le liste dei nemici e dei livelli principali
+    	
         List<Character> level1Enemies = new ArrayList<>();
-        //level1Enemies.add(new KnightBoss()); //KnightBoss
         level1Enemies.add(new Knight());
-        //level1Enemies.add(new Knight());
         level1Enemies.add(new Barbarian());
 
         List<Character> level2Enemies = new ArrayList<>();
@@ -282,14 +332,10 @@ public class Game
         level5Enemies.add(new Archer());
         level5Enemies.add(new Juggernaut());
 
-        // Agggiungo tutti i livelli alla lista dei
-        // PROBLEM : se qualche personaggio mi muore poi nei livelli prima poi la lista
-        // dei selectedAllies viene aggiornata o tengono quella fornita originalmente
-        // PROBLEM : LevelMap non funziona e quando chiamo il metodo
-        // initializeGameLevels mi crea gia le istanze delle finestre
-        // per capire in che livello siamo a leveMap gli passo un numeroche lo
-        // rappresenta.
         
+        // TODO
+        // PROBLEM : selectedAllies viene aggiornata o tengono quella fornita originalmente?
+
 		// Inizializzo i livelli        
         this.gameLevels.add(new Level(new LevelMap(level1Enemies, this.selectedAllies, 1, this.controller), this.controller));
         this.gameLevels.add(new Level(new LevelMap(level2Enemies, this.selectedAllies, 2, this.controller), this.controller));
@@ -298,15 +344,84 @@ public class Game
         this.gameLevels.add(new Level(new LevelMap(level5Enemies, this.selectedAllies, 5, this.controller), this.controller));
     }
 
-
     public int getCurrentLevelIndex() {
-		return currentLevelIndex;
+		return this.currentLevelIndex;
 	}
 
-
-
 	public List<Level> getGameLevels() {
-		return gameLevels;
+		return this.gameLevels;
 	}   
-
+	
+	
+	private void setGameLevelValue(int index, List<Character> allies, List<Character> enemy)
+	{
+		this.currentLevelIndex = index;
+		
+		// Imposta i nemici caricati solo per il livello index
+		this.gameLevels.get(index).setEnemiesList(enemy);
+		
+	    // Imposta gli alleati per tutti i livelli
+		for (Level level : this.gameLevels)
+		{
+		    level.setAlliesList(allies);
+		}
+		
+		this.selectedAllies = allies;
+	}
+	
+	/**
+	 * Re-inizializza una lista di personaggi dopo il caricamento,
+	 * ricaricando immagini e altri dati non serializzabili.
+	 */
+	private List<Character> reinitializeCharacters(List<Character> characters) 
+	{
+	    List<Character> reinitializedCharacters = new ArrayList<>();
+	    
+	    for (Character character : characters) 
+	    {
+	        try 
+	        {
+	            // Controlla se il personaggio e' valido
+	            if (!this.isCharacterValid(character)) 
+	            {
+	            	// Se non lo e' lo salta
+	                continue; 
+	            }
+	            
+	            // Re-inizializza il personaggio (ricarica immagini, icone)
+	            character.reinitializeAfterLoad();
+	            
+	            reinitializedCharacters.add(character);
+	        } 
+	        catch (Exception e) 
+	        {
+	            System.err.println("Errore nella re-inizializzazione del personaggio: " + e.getMessage());
+	        }
+	    }
+	    
+	    return reinitializedCharacters;
+	}
+	
+	private boolean isCharacterValid(Character character) 
+	{
+	    if (character == null) {
+	        return false;
+	    }
+	    
+	    // Controlla se ha posizione valida
+	    if (character.getPosition() == null) 
+	    {
+	        System.out.println("Character has null position: " + character.getClass().getSimpleName());
+	        return false;
+	    }
+	    
+	    // Controlla se è ancora vivo
+	    if (character.getCurrentHealth() <= 0) 
+	    {
+	        System.out.println("Character is dead: " + character.getClass().getSimpleName());
+	        return false;
+	    }
+	    System.out.println("Validooo");
+	    return true;
+	}
 }

@@ -3,14 +3,20 @@ package model.gameStatus.saveSystem;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
+import model.characters.*;
+import model.characters.Character;
 
 public class GameStateManager 
 {
     // Nome della cartella dove vengono salvati i file di salvataggio
     public static final String DIRECTORY_NAME = "saves";
     public static final String FILE_EXTENSION = ".sav";
+
+    private GameState currentLoadedGameState = null;
 
     /**
      * Salva lo stato del gioco usando la serializzazione Java.
@@ -252,5 +258,85 @@ public class GameStateManager
             ));
         }
         return info.toString();
+    }
+    
+    /**
+     * Carica le informazioni da un file specifico e le mantiene in cache.
+     * Questo metodo deve essere chiamato prima di usare i getter sottostanti.
+     * @param saveFile Il file da cui caricare i dati.
+     * @throws IOException Se si verifica un errore durante il caricamento.
+     * @throws ClassNotFoundException Se la classe GameState non può essere trovata.
+     */
+    public void loadFileInfo(File saveFile) throws IOException, ClassNotFoundException {
+        this.currentLoadedGameState = loadGameState(saveFile.getName());
+    }
+
+    /**
+     * Metodo alternativo che carica le informazioni dal file più recente.
+     * @throws IOException Se si verifica un errore durante il caricamento.
+     * @throws ClassNotFoundException Se la classe GameState non può essere trovata.
+     */
+    public void getFileInfo() throws IOException, ClassNotFoundException {
+        this.currentLoadedGameState = loadLatestGameState();
+    }
+
+    /**
+     * Restituisce la lista degli alleati dal GameState attualmente caricato.
+     * NOTA: Chiamare prima loadFileInfo() o getFileInfo().
+     * @return Lista degli alleati.
+     * @throws IllegalStateException Se nessun file è stato caricato.
+     */
+    public List<Character> getLoadedAllies() {
+        if (currentLoadedGameState == null) {
+            throw new IllegalStateException("No game state loaded. Call loadFileInfo() or getFileInfo() first.");
+        }
+        return currentLoadedGameState.getAllies();
+    }
+
+    /**
+     * Restituisce la lista dei nemici dal GameState attualmente caricato.
+     * NOTA: Chiamare prima loadFileInfo() o getFileInfo().
+     * @return Lista dei nemici.
+     * @throws IllegalStateException Se nessun file è stato caricato.
+     */
+    public List<Character> getLoadedEnemies() {
+        if (currentLoadedGameState == null) {
+            throw new IllegalStateException("No game state loaded. Call loadFileInfo() or getFileInfo() first.");
+        }
+        return currentLoadedGameState.getEnemies();
+    }
+
+    /**
+     * Restituisce il numero del livello dal GameState attualmente caricato.
+     * NOTA: Chiamare prima loadFileInfo() o getFileInfo().
+     * @return Il numero del livello.
+     * @throws IllegalStateException Se nessun file è stato caricato.
+     */
+    public int getLoadedLevel() {
+        if (currentLoadedGameState == null) {
+            throw new IllegalStateException("No game state loaded. Call loadFileInfo() or getFileInfo() first.");
+        }
+        return currentLoadedGameState.getLevel();
+    }
+
+    /**
+     * Restituisce l'intero GameState attualmente caricato.
+     * NOTA: Chiamare prima loadFileInfo() o getFileInfo().
+     * @return Il GameState completo.
+     * @throws IllegalStateException Se nessun file è stato caricato.
+     */
+    public GameState getCurrentLoadedGameState() {
+        if (currentLoadedGameState == null) {
+            throw new IllegalStateException("No game state loaded. Call loadFileInfo() or getFileInfo() first.");
+        }
+        return currentLoadedGameState;
+    }
+
+    /**
+     * Pulisce la cache del GameState caricato.
+     * Utile per liberare memoria dopo aver utilizzato i dati.
+     */
+    public void clearLoadedGameState() {
+        this.currentLoadedGameState = null;
     }
 }

@@ -1,6 +1,0 @@
-Type,Class,X,Y,Health,Power,Defence,Speed,Weapon
-Level,5
-Ally,Archer     Pos:( 2,10) | HP: 1548877 | Pow: 992261 | Def: 677630 | Spd: 1597275 | Wpn: LongBow        
-Ally,Knight     Pos:( 4, 7) | HP: 1936096 | Pow: 1738096 | Def: 1188067 | Spd: 990046 | Wpn: LongSword      
-Ally,Juggernaut Pos:( 3, 6) | HP: 2582267 | Pow: 1810254 | Def: 2262818 | Spd: 532429 | Wpn: ShortSword     
-Enemy,WizardBoss Pos:( 3, 7) | HP:  66 | Pow: 110 | Def:  36 | Spd:  49 | Wpn: ZoneShotWand   

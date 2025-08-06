@@ -555,8 +555,29 @@ public abstract class AbstractMap
 		return this.layeredPanel;
 	}
 	
+	
+	
+	public void setEnemiesList(List<Character> enemiesList) {
+		this.enemiesList = enemiesList;
+	}
+
+
+	public void setAlliesList(List<Character> alliesList) {
+		this.alliesList = alliesList;
+	}
+
+
 	// Metodo che ti dice se è occupata gia la posizione di un personaggio
-	public boolean isPositionOccupied(Point point) {
-		return this.alliesList.stream().anyMatch(a -> a.getPosition().equals(point)) || this.enemiesList.stream().anyMatch(a -> a.getPosition().equals(point));
+	public boolean isPositionOccupied(Point point) 
+	{
+	    if (point == null) return false;
+	    
+	    return this.alliesList.stream()
+	            .filter(ally -> ally != null && ally.getPosition() != null)
+	            .anyMatch(ally -> ally.getPosition().equals(point)) 
+	        || 
+	           this.enemiesList.stream()
+	            .filter(enemy -> enemy != null && enemy.getPosition() != null)
+	            .anyMatch(enemy -> enemy.getPosition().equals(point));
 	}
 }

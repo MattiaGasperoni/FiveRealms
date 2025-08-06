@@ -1,7 +1,11 @@
 package model.equipment.potions;
 
-public abstract class AbstractPotion implements Potion {
+import java.io.Serializable;
+
+public abstract class AbstractPotion implements Potion, Serializable {
     
+	private static final long serialVersionUID = 1L;  // per salvare lo stato del gioco
+
     private final int potionValue;
     
     public AbstractPotion(int potionValue) {

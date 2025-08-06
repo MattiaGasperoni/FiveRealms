@@ -48,4 +48,5 @@ public interface Character {
 	
 	public Character fight(Character attackedCharacter) throws IllegalArgumentException;
 	
+	public void reinitializeAfterLoad();
 }

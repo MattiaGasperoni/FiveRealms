@@ -19,13 +19,12 @@ public class Level
         DONE 				   // Fine livello
     }
     
-    // Stati della fase BATTLE_PHASE
+    // Stati della LevelPhase.BATTLE_PHASE
     private enum RoundState 
     {
         INITIALIZING_TURN,      // Preparazione inizio round
         WAITING_FOR_MOVEMENT,   // Attesa movimento dell’utente
         WAITING_FOR_TARGET,     // Attesa scelta bersaglio
-        UPDATE_MAP,             // Aggiorna mappa
         TURN_COMPLETED          // Turno completato
     }
     
@@ -54,7 +53,7 @@ public class Level
 
         this.enemiesList = this.levelMap.getEnemiesList();
         this.alliesList  = this.levelMap.getAlliesList();
-        
+
         this.levelCompleted = false;
         this.levelFailed    = false;
         this.levelPause     = false;
@@ -100,7 +99,8 @@ public class Level
     {
         if (this.levelPause || this.currentTurnState == RoundState.WAITING_FOR_MOVEMENT || this.currentTurnState == RoundState.WAITING_FOR_TARGET) 
         {
-            return; // In attesa dell'input utente
+        	// In attesa dell'input utente
+            return; 
         }
 
         switch (this.currentTurnState) 
@@ -108,10 +108,7 @@ public class Level
             case INITIALIZING_TURN:
                 this.initializeBattleRound();
                 break;
-        	
-            case UPDATE_MAP:
-            	this.handleUpdateMap();
-            	                
+        	            	                
             case TURN_COMPLETED:
                 this.checkEndTurn();
                 break;
@@ -132,7 +129,7 @@ public class Level
         if (this.currentTurnOrder.isEmpty()) 
         {
             System.out.println("Coda del turno vuota, Round completato!");
-            this.currentTurnState = RoundState.UPDATE_MAP;
+            this.currentTurnState = RoundState.TURN_COMPLETED;
             return;
         }
         
@@ -171,7 +168,7 @@ public class Level
         if (nextAttacker == null) 
         {
             System.out.println("Nessun personaggio vivo rimasto, fine round");
-            this.currentTurnState = RoundState.UPDATE_MAP;
+            this.currentTurnState = RoundState.TURN_COMPLETED;
             return;
         }
         
@@ -211,7 +208,7 @@ public class Level
         
         this.movementPhaseManager.chooseTarget(this.enemiesList, this.currentAttacker, () -> 
         {
-            this.currentTurnState = RoundState.UPDATE_MAP;
+            this.currentTurnState = RoundState.TURN_COMPLETED;
         });
     }
     
@@ -228,7 +225,7 @@ public class Level
 				   .orElse(null);
 		
 	    if (victim == null) {
-	    	this.currentTurnState = RoundState.UPDATE_MAP;
+	    	this.currentTurnState = RoundState.TURN_COMPLETED;
 	        return;
 	    }
 		
@@ -259,16 +256,9 @@ public class Level
 			System.out.print(" Nessun nemico nel raggio d'attacco. Fase di attacco annullata.");
 		}
         
-        this.currentTurnState = RoundState.UPDATE_MAP;
+        this.currentTurnState = RoundState.TURN_COMPLETED;
     }
-    
-    
-    private void handleUpdateMap() 
-    {       	
-    	/*TODO rimuovere questo metodo e aggiornare RoundState.UPDATE_MAP con  RoundState.TURN_COMPLETED*/
-    	this.currentTurnState = RoundState.TURN_COMPLETED;
-    }
-    
+       
     private void checkEndTurn()
     {
         System.out.print("\n\n=== CONTROLLO DI FINE TURNO DI UN PERSONAGGIO -> ");
@@ -325,6 +315,7 @@ public class Level
     /*==========================*/
     /*        Getter            */
     /*==========================*/
+    
     private PriorityQueue<Character> getTurnOrder(List<Character> allies, List<Character> enemies) 
     {
         PriorityQueue<Character> queue = new PriorityQueue<>((a, b) -> Integer.compare(b.getSpeed(), a.getSpeed()));
@@ -346,4 +337,15 @@ public class Level
     public void setLevelPaused(boolean paused) {
         this.levelPause = paused;
     }
+
+	public void setEnemiesList(List<Character> enemiesList) {
+		this.enemiesList = enemiesList;
+		this.levelMap.setEnemiesList(this.enemiesList);
+	}
+
+	public void setAlliesList(List<Character> alliesList) 
+	{
+		this.alliesList = alliesList;
+		this.levelMap.setAlliesList(this.alliesList);
+	}
 }
