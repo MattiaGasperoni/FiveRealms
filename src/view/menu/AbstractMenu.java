@@ -161,8 +161,7 @@ public abstract class AbstractMenu {
         ));
         
         // Add hover effect
-        addHoverEffect(button);
-        
+        addHoverEffect(button);        
         return button;
     }
     

@@ -306,13 +306,14 @@ public class PauseMenu
      */
     private void createPauseButtonIcon() 
     {
-        this.menuIcon = new JButton(new ImageIcon(new ImageIcon("images/pauseGame.png")
-                .getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
-        
-        this.menuIcon.setBounds(10, 10, 60, 60);
+        this.menuIcon = new JButton(new ImageIcon(new ImageIcon("images/pauseMenu.png")
+                .getImage().getScaledInstance(70, 70, Image.SCALE_SMOOTH)));
+
+        this.menuIcon.setBounds(10, 10, 74, 74); 
         this.menuIcon.setBorderPainted(false);
         this.menuIcon.setContentAreaFilled(false);
         this.menuIcon.setFocusPainted(false);
         this.menuIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
+
 }
