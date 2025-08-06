@@ -16,6 +16,7 @@ import view.map.*;
 import view.menu.EndGameMenu;
 import view.menu.LoadGameMenu;
 import view.menu.MainMenu;
+import view.menu.TutorialMenu;
 import controller.*;
 
 public class Game 
@@ -129,9 +130,6 @@ public class Game
     
     public boolean startTutorial() 
     {
-        // Il tutorial prevede un gameplay statico, sempre uguale percio' non
-        // permettiamo la scelta dei personaggi
-
         // Popolo la lista di nemici del tutorial
         List<Character> tutorialEnemies = new ArrayList<>();
         tutorialEnemies.add(new Barbarian());
@@ -144,12 +142,13 @@ public class Game
         tutorialAllies.add(new Archer());
         tutorialAllies.add(new Knight());
         
-        for(Character ally : tutorialAllies) {
+        for(Character ally : tutorialAllies) 
+        {
 			ally.becomeHero();
 		}
 
         // Creo e istanzio l'oggetto tutorial
-        Tutorial tutorial = new Tutorial(new TutorialMap(tutorialEnemies, tutorialAllies, this.controller), this.controller);
+        Tutorial tutorial = new Tutorial(new TutorialMap(tutorialEnemies, tutorialAllies, this.controller),this.controller);
 
         // Gioco il Tutorial
         return tutorial.play();
@@ -213,7 +212,10 @@ public class Game
         	
         	// Controllare se qualche alleato e' morto in caso sostituirli
             //checkAndReplaceDeadAllies(this.selectedAllies);
-
+        	for (Character character : this.selectedAllies) 
+        	{
+        	    character.setPosition(null);
+        	}
         	this.currentLevelIndex++;
         	
             if (this.currentLevelIndex >= Game.TOTAL_LEVEL) 

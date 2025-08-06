@@ -8,49 +8,123 @@ import view.map.TutorialMap;
 
 public class Tutorial 
 {
-	private boolean tutorialCompleted;             // Flag che indica se il tutorial è stato completato
-	private TutorialMap tutorialMap;               // Mappa del tutorial
-	private List<Character> enemiesList;       // Lista dei nemici del tutorial
-	private List<Character> alliesList;        // Lista degli alleati del tutorial
-	
-	public Tutorial(TutorialMap map, GameController controller) 
-	{
-		
-		this.tutorialCompleted = false;
-		this.tutorialMap       = map; 
+    // Messaggi dl Tutorial
+    private static final String[] TUTORIAL_MESSAGES = 
+    {
+        "Welcome, soldier! Listen carefully.",
+        "The enemies are above you. Defeat them!",
+        "Your allies are down here!",
+        "Your mission is to defeat all enemies!",
+        "Good luck, soldier!"
+    };
+    
+    private boolean tutorialCompleted;
+    private TutorialMap tutorialMap;
+    private List<Character> enemiesList;
+    private List<Character> alliesList;
+    private int currentStep;
+	private GameController controller;
+    
+    public Tutorial(TutorialMap map, GameController controller)
+    {
+        this.tutorialCompleted = false;
+        this.tutorialMap       = map;
         this.enemiesList       = this.tutorialMap.getEnemiesList();
         this.alliesList        = this.tutorialMap.getAlliesList();
-
-	}
-
-	//Metodo Pubblico per giocare il tutorial, restituisce true se il livello è stato completato, false altrimenti
+        this.currentStep       = 0;
+        this.controller        = controller;
+    }
+    
+    /**
+     * Avvia il tutorial completo
+     */
     public boolean play() 
     {
-    	
-    	// Faccio comparire la mappa del tutorial
-    	this.tutorialMap.start();
-    	
-    	System.out.print(" Start tutorial ->");
-    	
-    	//call ai pop-up introduttivi
-    	this.tutorialMap.startPopUpTutorial(); 
-		
-		// Spawn deii personaggi
-    	//call al pup-up che ti dice dove spownano i personaggi alleati
-		this.tutorialMap.spawnCharacter(this.alliesList); 
-		System.out.print(" Spawn alleati ->");
-		//call al pup-up che ti dice dove spownano i personaggi nemici
-		this.tutorialMap.spawnCharacter(this.enemiesList); 
-		System.out.print(" Spawn nemici ->");
-		
-		
-		// Logica combattimento semplificata per il tutorial
-
-
-		this.tutorialCompleted = true;  //TEMP
-		//this.tutorialMap.closeWindow(); //TEMP
-		
-    	return this.tutorialCompleted;
+        // Mostra la mappa del tutorial
+        this.tutorialMap.start();
+        
+        // Spawna i personaggi
+        this.tutorialMap.spawnCharacter(this.alliesList);
+        this.tutorialMap.spawnCharacter(this.enemiesList);
+        
+        // Avvia la sequenza di popup tutorial
+        this.startTutorialSequence();
+        
+        return this.tutorialCompleted;
     }
-
+    
+    /**
+     * Inizia la sequenza dei popup tutorial
+     */
+    
+    private void startTutorialSequence() 
+    {
+    	this.currentStep = 0;
+        this.showNextStep();
+    }
+    
+    /**
+     * Mostra il prossimo step del tutorial
+     */
+    private void showNextStep() 
+    {
+        if (this.currentStep >= TUTORIAL_MESSAGES.length) 
+        {
+            this.completeTutorial();
+            return;
+        }
+        
+        String message = TUTORIAL_MESSAGES[this.currentStep];
+        
+        switch (this.currentStep) 
+        {
+            case 0: // Welcome + highlight allies
+            	this.tutorialMap.showTutorialPopup(message, () -> 
+                {
+                	this.tutorialMap.highlightAlliesArea(this::nextStep);
+                });
+                break;
+                
+            case 1: // Enemy warning + highlight enemies
+            	this.tutorialMap.showTutorialPopup(message, () -> 
+                {
+                	this.tutorialMap.highlightEnemiesArea(this::nextStep);
+                });
+                break;
+                
+            case 2: // Ally info
+            case 3: // Mission info
+            case 4: // Final message
+            	this.tutorialMap.showTutorialPopup(message, this::nextStep);
+                break;
+        }
+    }
+    
+    /**
+     * Passa al prossimo step
+     */
+    private void nextStep() 
+    {
+    	this.currentStep++;
+        this.showNextStep();
+    }
+    
+    /**
+     * Completa il tutorial
+     */
+    private void completeTutorial() 
+    {
+    	this.tutorialCompleted = true;
+        System.out.println("Tutorial completed!");
+        this.tutorialMap.closeWindow();
+        this.controller.onTutorialPopupsCompleted();
+    }
+    
+    /**
+     * Controlla se il tutorial è completato
+     */
+    public boolean isCompleted() 
+    {
+        return this.tutorialCompleted;
+    }
 }

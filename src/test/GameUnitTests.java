@@ -20,9 +20,9 @@ import model.characters.Juggernaut;
 import model.point.Point;
 import view.map.AbstractMap;
 import view.menu.MainMenu;
+import view.menu.TutorialMenu;
 import view.BattlePhaseView;
 import view.CharacterSelectionMenu;
-import view.TutorialMenu;
 import controller.GameController;
 
 /**

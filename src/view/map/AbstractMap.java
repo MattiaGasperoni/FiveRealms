@@ -1,6 +1,7 @@
 package view.map;
 
 import java.awt.*;
+import java.lang.ModuleLayer.Controller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -413,7 +414,8 @@ public abstract class AbstractMap
 	private void spawnCharacterHelper(Character character, List<Point> positionList) 
 	{
 	    Point chosenPosition = character.getPosition();
-	
+	    System.out.println("Chosen position: " + chosenPosition);
+
 	    if (chosenPosition == null) 
 	    {
 	        // Se la posizione non è già impostata, scegli una casuale dalla lista

@@ -12,12 +12,11 @@ import model.gameStatus.saveSystem.GameStateManager;
 import model.point.Point;
 import view.CharacterSelectionMenu;
 import view.PauseMenu;
-import view.TutorialMenu;
 import view.map.AbstractMap;
-import view.map.TutorialMap;
 import view.menu.EndGameMenu;
 import view.menu.LoadGameMenu;
 import view.menu.MainMenu;
+import view.menu.TutorialMenu;
 
 /**
  * Controller class that coordinates user actions with the game logic.
@@ -31,25 +30,22 @@ public class GameController
     
     private MainMenu mainMenuView;
     private LoadGameMenu loadGameMenu;
-    private TutorialMenu tutorialMenuView;
-    private CharacterSelectionMenu characterSelectionMenuView;
+    private TutorialMenu tutorialMenu;
+    private CharacterSelectionMenu characterSelectionMenu;
     private EndGameMenu endGameMenu;
     private PauseMenu pauseMenu;
-
-    private TutorialMap currentTutorialMap; // Aggiunto per tenere riferimento alla mappa tutorial
-    private boolean isTutorialMode = false; // Flag per sapere se siamo in modalità tutorial
 
     public GameController(Game game, GameStateManager gameStateManager, MainMenu mainMenu, LoadGameMenu loadGameMenu,TutorialMenu tutorialMenu, CharacterSelectionMenu characterSelectionMenu, EndGameMenu endGameMenu) 
     {
         this.game             = game;
         this.gameStateManager = gameStateManager;
         
-        this.mainMenuView               = mainMenu;
-        this.loadGameMenu               = loadGameMenu;
-        this.tutorialMenuView           = tutorialMenu;
-        this.characterSelectionMenuView = characterSelectionMenu;
-        this.endGameMenu                = endGameMenu;
-        this.pauseMenu                  = null;
+        this.mainMenuView           = mainMenu;
+        this.loadGameMenu           = loadGameMenu;
+        this.tutorialMenu           = tutorialMenu;
+        this.characterSelectionMenu = characterSelectionMenu;
+        this.endGameMenu            = endGameMenu;
+        this.pauseMenu              = null;
 
         this.checkExistSave();
         
@@ -150,7 +146,8 @@ public class GameController
             } 
     		catch (Exception error)
     		{
-    			 error.printStackTrace();            }
+    			 error.printStackTrace();            
+		    }
     	});
     	
 
@@ -209,43 +206,28 @@ public class GameController
     public void startNewGame() 
     {
     	
-        this.tutorialMenuView.show();
+        this.tutorialMenu.show();
 
-	    this.tutorialMenuView.addYesListener(event -> 
+	    this.tutorialMenu.addYesListener(event -> 
 	     {
-	         // Controllo se il tutorial è già attivo
-	         if (isTutorialMode) {
-	             System.out.println("Tutorial già in esecuzione, ignoro la richiesta.");
-	             return;
-	         }
+	         this.tutorialMenu.close();
+	         	         
+	         // Avvia il tutorial
+	         this.game.startTutorial(); 
 	         
-	         this.tutorialMenuView.close();
-	         System.out.println(" Yes, start play the tutorial");
-	         
-	         this.isTutorialMode = true;
-	         
-	         // Avvia il tutorial ma NON la selezione dei personaggi
-	         boolean tutorialSuccess = this.game.startTutorial(); 
-	         
-	         if (!tutorialSuccess) 
-	         {
-	             System.out.println(" You failed the tutorial");
-	             this.isTutorialMode = false; // Reset del flag se fallisce
-	         }
 	     });
 
-        this.tutorialMenuView.addNoListener(event -> 
+        this.tutorialMenu.addNoListener(event -> 
         {
-            this.tutorialMenuView.close();
-            System.out.println(" No, Tutorial skipped");
-            this.isTutorialMode = false;
+            this.tutorialMenu.close();
+            
+            // Inizia la selezione dei personaggi
             this.game.startSelectionCharacter();
         });
 
-        this.tutorialMenuView.addMainMenuListener(event -> 
+        this.tutorialMenu.addMainMenuListener(event -> 
         {
-    	    
-    	    this.tutorialMenuView.close();
+    	    this.tutorialMenu.close();
     	    
     	    this.game = null;
     	    
@@ -259,29 +241,21 @@ public class GameController
      * Metodo chiamato dalla TutorialMap quando tutti i popup sono completati
      * Ora può mostrare il menu di selezione dei personaggi
      */
-    public void onTutorialPopupsCompleted() {
-        System.out.println("Popup del tutorial completati, mostro il menu di selezione...");
-        
-        // Ora avvia la selezione dei personaggi
+    public void onTutorialPopupsCompleted() 
+    {
         this.game.startSelectionCharacter();
     }
     
-    /**
-     * Metodo per impostare il riferimento alla mappa tutorial
-     * Deve essere chiamato dal Game quando crea la TutorialMap
-     */
-    public void setTutorialMap(TutorialMap tutorialMap) {
-        this.currentTutorialMap = tutorialMap;
-    }
+
     
     public void startSelectionCharacter()
     {
         List<Character> availableCharacter = this.game.createAllies();
-        this.characterSelectionMenuView.start(availableCharacter);
+        this.characterSelectionMenu.start(availableCharacter);
         
-        this.characterSelectionMenuView.addNextButtonListener(event -> 
+        this.characterSelectionMenu.addNextButtonListener(event -> 
         {
-            List<String> characterNames = this.characterSelectionMenuView.getSelectedCharacterNames();
+            List<String> characterNames = this.characterSelectionMenu.getSelectedCharacterNames();
 
             System.out.print(" You chose: " + String.join(", ", characterNames) + " -> ");
             System.out.println(" End of character selection");
@@ -290,16 +264,9 @@ public class GameController
             
             this.game.setSelectedCharacters(characterSelected);
             
-            this.characterSelectionMenuView.close();
-            
-            // Se siamo in modalità tutorial, riavvia la mappa tutorial con i personaggi selezionati
-            if (this.isTutorialMode && this.currentTutorialMap != null) {
-                this.currentTutorialMap.restartWithSelectedCharacters(characterSelected);
-                System.out.println("Tutorial riavviato con personaggi selezionati!");
-            } else {
-                // Altrimenti avvia il livello normale
-                this.game.startNewLevel();
-            }
+            this.characterSelectionMenu.close();
+
+            this.game.startNewLevel();
         });
     }
     

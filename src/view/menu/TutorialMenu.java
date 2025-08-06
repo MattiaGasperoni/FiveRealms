@@ -1,7 +1,5 @@
-package view;
+package view.menu;
 import javax.swing.*;
-
-import view.menu.AbstractMenu;
 
 import java.awt.*;
 import java.awt.event.*;

@@ -1,119 +1,139 @@
 package view.map;
 
 import javax.swing.*;
+
 import controller.GameController;
+
 import java.awt.*;
 import java.util.List;
 import model.characters.Character;
 
-public class TutorialMap extends AbstractMap {
+public class TutorialMap extends AbstractMap 
+{
     
-    private boolean popupsCompleted = false;
-    private List<Character> alliesList;
-    private List<Character> enemiesList;
-    private GameController controller;
+    // Constanti per la grafica
+    private static final Color ALLY_HIGHLIGHT   = Color.RED;
+    private static final Color ENEMY_HIGHLIGHT  = Color.BLUE;
+    private static final Color POPUP_BG         = new Color(245, 230, 200);
+    private static final Color POPUP_BORDER     = new Color(150, 100, 50);
+    private static final Color TEXT_COLOR       = new Color(70, 30, 10);
+    private static final Font POPUP_FONT        = new Font("Times New Roman", Font.BOLD, 18);
+    private static final Font BUTTON_FONT       = new Font("Times New Roman", Font.BOLD, 14);
+    private static final int HIGHLIGHT_DURATION = 1500;
     
-    /**
-     * Constructs a new TutorialMap with specified characters and controller
-     * @param enemiesList The list of enemy characters
-     * @param alliesList The list of ally characters
-     * @param controller The game controller for callback notifications
-     */
-    public TutorialMap(List<Character> enemiesList, List<Character> alliesList, GameController controller) {
+    
+    public TutorialMap(List<Character> enemiesList, List<Character> alliesList, GameController controller) 
+    {
         super(enemiesList, alliesList, 0, controller);
-        this.alliesList = alliesList;
-        this.enemiesList = enemiesList;
-        this.controller = controller;
+    }
+    
+    // ==================== METODI GRAFICI PUBBLICI ====================
+    
+    /**
+     * Mostra un popup con messaggio e callback
+     */
+    public void showTutorialPopup(String message, Runnable onClose) 
+    {
+        JDialog dialog = createDialog();
+        JPanel panel = createStyledPanel();
+        
+        addMessageLabel(panel, message);
+        addOkButton(panel, dialog, onClose);
+        
+        dialog.add(panel);
+        dialog.setVisible(true);
     }
     
     /**
-     * Checks if all tutorial popups have been completed
-     * @return true if all tutorial messages have been shown, false otherwise
+     * Evidenzia le righe degli alleati
      */
-    public boolean arePopupsCompleted() {
-        return popupsCompleted;
+    public void highlightAlliesArea(Runnable afterAction) 
+    {
+        highlightRows(0, AbstractMap.GRID_SIZE_HEIGHT / 2, ALLY_HIGHLIGHT, afterAction);
     }
     
     /**
-     * Starts the tutorial sequence by showing the first welcome message
+     * Evidenzia le righe dei nemici
      */
-    public void startPopUpTutorial() {
-        showWelcomeMessage();
+    public void highlightEnemiesArea(Runnable afterAction) 
+    {
+        highlightRows(AbstractMap.GRID_SIZE_WIDTH / 2, AbstractMap.GRID_SIZE_WIDTH - 1, ENEMY_HIGHLIGHT, afterAction);
     }
     
     /**
-     * Shows the initial welcome message and highlights ally positions
+     * Rimuove tutti gli highlight
      */
-    private void showWelcomeMessage() {
-        showTutorialPopup("Welcome, soldier! Listen carefully.", () -> 
-            highlightRowsWithTimer(0, AbstractMap.GRID_SIZE_HEIGHT / 2, Color.RED, 1500, this::showEnemyWarning));
-    }
-    
-    /**
-     * Shows enemy warning message and highlights enemy positions
-     */
-    private void showEnemyWarning() {
-        showTutorialPopup("The enemies are above you. Defeat them!", () -> 
-            highlightRowsWithTimer(AbstractMap.GRID_SIZE_WIDTH / 2, AbstractMap.GRID_SIZE_WIDTH - 1, Color.BLUE, 1500, this::showAllyInfo));
-    }
-    
-    /**
-     * Shows ally information message
-     */
-    private void showAllyInfo() {
-        showTutorialPopup("Your allies are down here!", this::showMissionInfo); 
-    }
-    
-    /**
-     * Shows the mission objective message
-     */
-    private void showMissionInfo() {
-        showTutorialPopup("Your mission is to defeat all enemies!", this::showFinalMessage);
-    }
-    
-    /**
-     * Shows the final encouragement message and notifies controller
-     */
-    private void showFinalMessage() {
-        showTutorialPopup("Good luck, soldier!", () -> {
-            popupsCompleted = true;
-            if (frame != null) {
-                frame.setVisible(false);
+    public void clearHighlights() 
+    {
+        for (int i = 0; i < AbstractMap.GRID_SIZE_WIDTH; i++) 
+        {
+            for (int j = 0; j < AbstractMap.GRID_SIZE_HEIGHT; j++) 
+            {
+                JButton btn = gridPanel.getGridButtons()[i][j];
+                btn.setBackground(null);
+                btn.setOpaque(false);
+                btn.setContentAreaFilled(false);
+                btn.setBorderPainted(false);
             }
-            if (controller != null) {
-                controller.onTutorialPopupsCompleted();
+        }
+    }
+    
+    // ==================== METODI PRIVATI DI SUPPORTO ====================
+    
+    private JDialog createDialog() 
+{
+        JDialog dialog = new JDialog();
+        dialog.setSize(360, 120);
+        dialog.setUndecorated(true);
+        dialog.setModal(true);
+        dialog.setLocationRelativeTo(gridPanel);
+        return dialog;
+    }
+    
+    private JPanel createStyledPanel() 
+{
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(POPUP_BG);
+        panel.setBorder(BorderFactory.createLineBorder(POPUP_BORDER, 2));
+        return panel;
+    }
+    
+    private void addMessageLabel(JPanel panel, String message) 
+{
+        JLabel messageLabel = new JLabel(
+            "<html><div style='text-align: center;'>" + message + "</div></html>", 
+            SwingConstants.CENTER
+        );
+        messageLabel.setFont(POPUP_FONT);
+        messageLabel.setForeground(TEXT_COLOR);
+        messageLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 5, 10));
+        panel.add(messageLabel, BorderLayout.CENTER);
+    }
+    
+    private void addOkButton(JPanel panel, JDialog dialog, Runnable onClose) 
+{
+        JButton okButton = new JButton("OK");
+        okButton.setFont(BUTTON_FONT);
+        okButton.setBackground(POPUP_BORDER);
+        okButton.setForeground(Color.WHITE);
+        okButton.setBorder(BorderFactory.createEmptyBorder(4, 15, 4, 15));
+        okButton.setBorderPainted(false);
+        okButton.setFocusPainted(false);
+        
+        okButton.addActionListener(e -> {
+            dialog.dispose();
+            clearHighlights();
+            if (onClose != null) {
+                onClose.run();
             }
         });
+        
+        panel.add(okButton, BorderLayout.SOUTH);
     }
     
-    /**
-     * Restarts the tutorial with newly selected ally characters
-     * @param selectedAllies The list of ally characters selected by player
-     */
-    public void restartWithSelectedCharacters(List<Character> selectedAllies) {
-        this.alliesList.clear();
-        this.alliesList.addAll(selectedAllies);
-        
-        if (frame != null) {
-            frame.setVisible(true);
-            frame.toFront();
-        }
-        
-        spawnCharacter(this.alliesList);
-        spawnCharacter(this.enemiesList);
-                
-        System.out.println("Tutorial riavviato con personaggi selezionati!");
-    }
-    
-    /**
-     * Highlights specified grid rows for a set duration
-     * @param startRow The starting row index to highlight
-     * @param endRow The ending row index to highlight
-     * @param color The highlight color to apply
-     * @param duration The highlight duration in milliseconds
-     * @param afterAction The action to perform after highlighting completes
-     */
-    private void highlightRowsWithTimer(int startRow, int endRow, Color color, int duration, Runnable afterAction) {
+    private void highlightRows(int startRow, int endRow, Color color, Runnable afterAction) 
+{
+        // Evidenzia le righe
         for (int i = startRow; i <= endRow; i++) {
             for (int j = 0; j < AbstractMap.GRID_SIZE_HEIGHT; j++) {
                 JButton btn = gridPanel.getGridButtons()[i][j];
@@ -124,74 +144,14 @@ public class TutorialMap extends AbstractMap {
             }
         }
         
-        Timer timer = new Timer(duration, e -> {
-            clearHighlightedRows();
+        // Timer per rimuovere l'highlight
+        Timer timer = new Timer(HIGHLIGHT_DURATION, e -> {
+            clearHighlights();
             if (afterAction != null) {
                 afterAction.run();
             }
         });
         timer.setRepeats(false);
         timer.start();
-    }
-    
-    /**
-     * Displays a tutorial popup message with OK button
-     * @param message The instructional message to display
-     * @param afterAction The action to perform after popup is dismissed
-     */
-    private void showTutorialPopup(String message, Runnable afterAction) {
-        JDialog dialog = new JDialog();
-        dialog.setSize(360, 120);
-        dialog.setUndecorated(true);
-        dialog.setModal(true);
-        dialog.setLocationRelativeTo(gridPanel);
-        
-        // Pannello principale con stile pergamena
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(new Color(245, 230, 200));
-        panel.setBorder(BorderFactory.createLineBorder(new Color(150, 100, 50), 2));
-        
-        // Testo con font più grande
-        JLabel messageLabel = new JLabel("<html><div style='text-align: center;'>" + message + "</div></html>", SwingConstants.CENTER);
-        messageLabel.setFont(new Font("Times New Roman", Font.BOLD, 18)); 
-        messageLabel.setForeground(new Color(70, 30, 10));
-        messageLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 5, 10)); 
-        
-        panel.add(messageLabel, BorderLayout.CENTER);
-        
-        // Pulsante con font più grande
-        JButton okButton = new JButton("OK");
-        okButton.setFont(new Font("Times New Roman", Font.BOLD, 14)); 
-        okButton.setBackground(new Color(150, 100, 50));
-        okButton.setForeground(Color.WHITE);
-        okButton.setBorder(BorderFactory.createEmptyBorder(4, 15, 4, 15));
-        okButton.setBorderPainted(false);
-        okButton.setFocusPainted(false);
-        okButton.addActionListener(e -> {
-            dialog.dispose();
-            clearHighlightedRows();
-            if (afterAction != null) {
-                afterAction.run();
-            }
-        });
-        
-        panel.add(okButton, BorderLayout.SOUTH);
-        dialog.add(panel);
-        dialog.setVisible(true);
-    }
-    
-    /**
-     * Clears all row highlighting from the grid
-     */
-    private void clearHighlightedRows() {
-        for (int i = 0; i < AbstractMap.GRID_SIZE_WIDTH; i++) {
-            for (int j = 0; j < AbstractMap.GRID_SIZE_HEIGHT; j++) {
-                JButton btn = gridPanel.getGridButtons()[i][j];
-                btn.setBackground(null);
-                btn.setOpaque(false);
-                btn.setContentAreaFilled(false);
-                btn.setBorderPainted(false);
-            }
-        }
     }
 }
