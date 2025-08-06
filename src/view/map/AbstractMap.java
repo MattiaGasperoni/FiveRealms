@@ -412,18 +412,32 @@ public abstract class AbstractMap
 
 	private void spawnCharacterHelper(Character character, List<Point> positionList) 
 	{
-	    int target = random.nextInt(positionList.size());
-	    Point chosenPosition = positionList.remove(target);
-	    character.setPosition(chosenPosition);
-
-	    // Aggiorna characterMap solo ora che il personaggio ha posizione
+	    Point chosenPosition = character.getPosition();
+	
+	    if (chosenPosition == null) 
+	    {
+	        // Se la posizione non è già impostata, scegli una casuale dalla lista
+	        int target = random.nextInt(positionList.size());
+	        chosenPosition = positionList.remove(target);
+	        character.setPosition(chosenPosition);
+	    }
+	    else
+	    {
+	        // Se la posizione è già impostata, rimuovila dalla lista solo se presente
+	        if (positionList.contains(chosenPosition)) 
+		{
+	            positionList.remove(chosenPosition);
+	        }
+	    }
+		
+	    // Aggiorna characterMap
 	    this.characterMap.put(character, chosenPosition);
-
+	
 	    JButton button = this.gridPanel.getGridButtons()[chosenPosition.getX()][chosenPosition.getY()];
 	    button.setIcon(new ImageIcon(character.getImage()));
 	    button.setContentAreaFilled(false);
-	    
-	    // Aggiungi al personaggio il suo ToolTip
+	
+	    // Aggiungi al personaggio il ToolTip
 	    this.tooltipManager.showCharacterTooltip(character, button);
 	}
 
@@ -581,3 +595,4 @@ public abstract class AbstractMap
 	            .anyMatch(enemy -> enemy.getPosition().equals(point));
 	}
 }
+
