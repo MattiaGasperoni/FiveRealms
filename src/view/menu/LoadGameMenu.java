@@ -145,31 +145,41 @@ public class LoadGameMenu extends AbstractMenu
      */
     private JButton createOptionsButton(File saveFile) 
     {
-        JButton optionsButton = new JButton("^");
-        optionsButton.setFont(new Font("Arial", Font.BOLD, 18));
-        optionsButton.setBackground(new Color(139, 69, 19, 180));
-        optionsButton.setForeground(Color.WHITE);
-        optionsButton.setBorder(BorderFactory.createRaisedBevelBorder());
-        optionsButton.setFocusPainted(false);
-        optionsButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        // Carica l'immagine dal percorso (assicurati che sia accessibile)
+        ImageIcon icon = new ImageIcon("images/vertical_ellipsis.png");
+
+        // Ridimensiona se necessario
+        Image scaledImage = icon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
+        icon = new ImageIcon(scaledImage);
+
+        // Crea il pulsante con l'immagine
+        JButton optionsButton = new JButton(icon);
         optionsButton.setPreferredSize(new Dimension(50, 40));
         optionsButton.setMaximumSize(new Dimension(50, 40));
-        
+        optionsButton.setFocusPainted(false);
+        optionsButton.setContentAreaFilled(true); // Se vuoi sfondo visibile
+        optionsButton.setOpaque(true);
+        optionsButton.setBackground(new Color(139, 69, 19, 180));
+        optionsButton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
+        optionsButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
         // Hover effect
         optionsButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 optionsButton.setBackground(new Color(160, 82, 45, 200));
             }
+
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 optionsButton.setBackground(new Color(139, 69, 19, 180));
             }
         });
-        
-        // Show options menu when clicked
+
+        // Mostra il menu opzioni al click
         optionsButton.addActionListener(e -> showOptionsMenu(optionsButton, saveFile));
-        
+
         return optionsButton;
     }
+
     
     /**
      * Shows the popup menu with rename and delete options.
@@ -182,18 +192,23 @@ public class LoadGameMenu extends AbstractMenu
         popup.setBackground(new Color(139, 69, 19, 220));
         popup.setBorder(BorderFactory.createLineBorder(new Color(101, 67, 33), 2));
         
+        // Utility font for emojis
+        Font emojiFont = new Font("Segoe UI Emoji", Font.PLAIN, 14); 
+
         // Rename option
         JMenuItem renameItem = new JMenuItem("🏷️ Rename");
+        renameItem.setPreferredSize(new Dimension(200, 40));
         renameItem.setBackground(new Color(139, 69, 19, 220));
         renameItem.setForeground(Color.WHITE);
-        renameItem.setFont(new Font("Arial", Font.BOLD, 12));
+        renameItem.setFont(emojiFont);  
         renameItem.addActionListener(e -> renameSaveFile(saveFile));
-        
+
         // Delete option
         JMenuItem deleteItem = new JMenuItem("🗑️ Delete");
+        deleteItem.setPreferredSize(new Dimension(200, 40));
         deleteItem.setBackground(new Color(139, 69, 19, 220));
         deleteItem.setForeground(Color.WHITE);
-        deleteItem.setFont(new Font("Arial", Font.BOLD, 12));
+        deleteItem.setFont(emojiFont);  
         deleteItem.addActionListener(e -> deleteSaveFile(saveFile));
         
         // Add hover effects
@@ -203,29 +218,32 @@ public class LoadGameMenu extends AbstractMenu
         popup.add(renameItem);
         popup.addSeparator();
         popup.add(deleteItem);
-        
-        // Show popup below the button
+
+        // Opzionalmente forza dimensioni minime del popup
+        popup.setPreferredSize(new Dimension(220, 100));
+
+        // Mostra popup sotto il pulsante
         popup.show(sourceButton, 0, sourceButton.getHeight());
     }
+
+
     
     /**
      * Adds hover effect to menu items.
      * @param item The menu item to add hover effect to
      */
-    private void addHoverEffect(JMenuItem item) 
-    {
-        item.addMouseListener(new java.awt.event.MouseAdapter() 
-        {
-            public void mouseEntered(java.awt.event.MouseEvent evt) 
-            {
+    private void addHoverEffect(JMenuItem item) {
+        item.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
                 item.setBackground(new Color(160, 82, 45, 240));
             }
-            public void mouseExited(java.awt.event.MouseEvent evt) 
-            {
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
                 item.setBackground(new Color(139, 69, 19, 220));
             }
         });
     }
+
     
     /**
      * Shows rename dialog for a save file.
