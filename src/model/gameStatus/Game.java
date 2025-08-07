@@ -6,12 +6,12 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import model.characters.*;
 import model.characters.Character;
 import model.characters.bosses.*;
 import model.gameStatus.saveSystem.GameStateManager;
-import view.*;
+import view.CharacterReplaceMenu;
+import view.CharacterSelectionMenu;
 import view.map.*;
 import view.menu.EndGameMenu;
 import view.menu.LoadGameMenu;
@@ -27,6 +27,8 @@ public class Game
     private List<Level> gameLevels;          // Lista dei livelli del gioco
     private List<Character> availableAllies; // Lista di tutti i personaggi giocabili
     private List<Character> selectedAllies;  // Lista dei personaggi con cui l'utente giocherà il livello
+
+    private boolean waitingForCharacterReplacement = false;
 
     private GameStateManager gameStateManager;
     private GameController controller;           
@@ -184,12 +186,13 @@ public class Game
         }, 0, 100, TimeUnit.MILLISECONDS);
     }
     
-    private void startCurrentLevel() 
+    public void startCurrentLevel() 
     {
         try 
         {
             Level livello = this.gameLevels.get(this.currentLevelIndex);
-            
+            System.out.print("Inizia il livelloooooooooooooooooooo");
+
             livello.play();
         } 
         catch (IOException e) 
@@ -200,55 +203,79 @@ public class Game
         }
     }
     
-    private void updateGameSafe() 
+    private void updateGameSafe()
     {
         Level livello = this.gameLevels.get(this.currentLevelIndex);
-        
+
         livello.update();
 
-        if (livello.isCompleted()) 
+        if (livello.isCompleted() && !this.isWaitingForCharacterReplacement())
         {
-        	System.out.println("Livello " + (this.currentLevelIndex+1) + " completato.");
+            System.out.println("Livello " + (this.currentLevelIndex+1) + " completato.");
 
-        	// TODO
-        	// Mostrare qua il banner di vittoria per aver completato il livello
-        	// -> potrebbe essere un frame a prte e non un bannerpanel per farlo scomparire quando vogliamo noi
-        	
-        	// Controlla se qualche alleato e' morto e nel caso chiede all'utente di sostituirli
-        	if(this.selectedAllies.size() < 3)
-        	{
-        		this.replaceDeadAllies();
-        	}
-        	
-        	// Imposta le posizioni a null per lo spwn nel livello successivo
-        	for (Character character : this.selectedAllies) 
-        	{
-        	    character.setPosition(null);
-        	}
-        	
-        	this.currentLevelIndex++;
-        	
-            if (this.currentLevelIndex >= Game.TOTAL_LEVEL) 
-            {           	
+            if (this.currentLevelIndex >= Game.TOTAL_LEVEL)
+            {
                 System.out.println("Tutti i livelli completati!");
                 this.stopGameLoop();
                 this.showEndGameMenu(true);
-            } 
-            else 
-            {
-            	this.startCurrentLevel();         	
             }
-        } 
-        else if (livello.isFailed()) 
+            else
+            {
+                if(this.selectedAllies.size() < 3)
+                {
+                    this.setWaitingForCharacterReplacement(true);
+                    this.controller.startReplaceDeadAllies(Game.MAX_ALLIES_PER_ROUND - this.selectedAllies.size());
+                }
+                else
+                {
+                    // Imposta le posizioni a null per lo spawn nel livello successivo
+                    for (Character character : this.selectedAllies)
+                    {
+                        character.setPosition(null);
+                    }
+
+                    this.currentLevelIndex++;
+                    this.startCurrentLevel();
+                }
+            }
+        }
+        else if (livello.isFailed())
         {
             System.out.println("Il livello " + this.currentLevelIndex + " è fallito. Uscita.");
             this.stopGameLoop();
             this.showEndGameMenu(false);
         }
     }
+    
 
+    public boolean isWaitingForCharacterReplacement() 
+    {
+        return this.waitingForCharacterReplacement;
+    }
+
+    public void setWaitingForCharacterReplacement(boolean waiting) {
+        this.waitingForCharacterReplacement = waiting;
+    }
+
+    public void markCharacterReplacementCompleted()
+    {
+        this.waitingForCharacterReplacement = false;
+        
+        // Imposta le posizioni a null per lo spawn nel livello successivo
+        for (Character character : this.selectedAllies)
+        {
+            character.setPosition(null);
+        }
+        
+        this.currentLevelIndex++;
+        System.out.print("Incremento il livello");
+
+        this.startCurrentLevel();
+    }
+    
     private void showEndGameMenu(boolean result) 
     {
+    	System.out.print(result);
         this.endGameMenu.setGameResult(result);
     	// Appare il menu per la selezione dei personaggi
         this.endGameMenu.show();
@@ -262,20 +289,6 @@ public class Game
         	this.gameExecutor.shutdownNow();
         }
     }
-
-    private void replaceDeadAllies() 
-	{    	
-        // Calcola quanti alleati sono morti
-        int alliesToChange = Game.MAX_ALLIES_PER_ROUND - this.selectedAllies.size();
-
-        if (alliesToChange > 0) 
-        {
-        	System.out.println("Inizio sostituzione alleati morti: " + alliesToChange+ " da sostituire");
-            this.controller.startReplaceDeadAllies(alliesToChange);
-        }
-        else
-        	System.out.println("Non ci sono alleati morti ");
-	}
 
     public List<Character> createAllies() 
     {
@@ -297,6 +310,15 @@ public class Game
         {
    			ally.becomeHero();
    		}
+	}
+    
+    public void addSelectedCharacters(List<Character> selectedAllies) 
+    {
+    	for(Character character : selectedAllies)
+    	{
+    		this.selectedAllies.add(character);
+    		character.becomeHero();
+    	}
 	}
     
     private void initializeGameLevels()
@@ -348,6 +370,10 @@ public class Game
 
     public int getCurrentLevelIndex() {
 		return this.currentLevelIndex;
+	}
+    
+	public void setCurrentLevelIndex(int currentLevelIndex) {
+		this.currentLevelIndex = currentLevelIndex;
 	}
 
 	public List<Level> getGameLevels() {

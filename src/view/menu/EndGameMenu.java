@@ -16,7 +16,7 @@ public class EndGameMenu extends AbstractMenu
     private static final long serialVersionUID = 1L;
 	private JButton mainMenuButton;
     private JButton exitButton;
-	private boolean result = false;
+	private boolean result;
 
     /**
      * Constructs a new EndGameMenu with default settings
@@ -54,6 +54,8 @@ public class EndGameMenu extends AbstractMenu
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.insets = new Insets(0, 20, 10, 20);
+        
+        System.out.print(this.result);
         
         if(this.result)
         {
@@ -112,6 +114,7 @@ public class EndGameMenu extends AbstractMenu
     
     public void setGameResult(boolean result)
     {
+    	System.out.print(result);
     	this.result = result;
     }
 }

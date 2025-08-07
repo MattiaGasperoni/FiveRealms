@@ -65,10 +65,12 @@ public class Level
         this.levelFailed    = false;
         this.levelPause     = false;
 		
-        //for use in AITurn
+        //For AITurn
         this.availablePositions = new ArrayList<>();
-        for(int i = 0; i < AbstractMap.GRID_SIZE_WIDTH; i++) {
-        	for(int j = 0; j < AbstractMap.GRID_SIZE_HEIGHT; j++) {
+        for(int i = 0; i < AbstractMap.GRID_SIZE_WIDTH; i++) 
+        {
+        	for(int j = 0; j < AbstractMap.GRID_SIZE_HEIGHT; j++) 
+        	{
         		availablePositions.add(new Point(i,j));
         	}
         }
@@ -76,21 +78,22 @@ public class Level
 
     public void play() throws IOException 
     {
-    	
         this.levelMap.start();
 
-        System.out.print(" Start level ->");
-        
         this.levelMap.spawnCharacter(this.enemiesList);
         this.levelMap.spawnCharacter(this.alliesList);
         
         this.currentLevelPhase = LevelPhase.BATTLE_PHASE;
         this.currentTurnState  = RoundState.INITIALIZING_TURN;
+         
     }
 
     // Metodo che aggiorna lo stato della fase BATTLE_PHASE
     public void update() 
     {
+    	if(this.currentLevelPhase==null)
+    		return;
+    	
         switch (this.currentLevelPhase) 
         {
             case BATTLE_PHASE:

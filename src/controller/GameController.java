@@ -270,9 +270,6 @@ public class GameController
         this.characterSelectionMenu.addNextButtonListener(event -> 
         {
             List<String> characterNames = this.characterSelectionMenu.getSelectedCharacterNames();
-
-            System.out.print(" You chose: " + String.join(", ", characterNames) + " -> ");
-            System.out.println(" End of character selection");
             
             List<Character> characterSelected = transformList(availableCharacter, characterNames);
             
@@ -291,19 +288,22 @@ public class GameController
         this.characterReplaceMenu.start(availableAllies,alliesToChange);
         
         this.characterReplaceMenu.addNextButtonListener(event -> 
-        {
-            List<String> characterNames = this.characterReplaceMenu.getSelectedCharacterNames();
-
-            System.out.print(" You chose: " + String.join(", ", characterNames) + " -> ");
-            System.out.println(" End of character selection");
+        {            
+            List<Character> characterSelected = this.transformList(availableAllies, this.characterReplaceMenu.getSelectedCharacterNames());
             
-            List<Character> characterSelected = this.transformList(availableAllies, characterNames);
+            this.game.addSelectedCharacters(characterSelected);
             
-            this.game.setSelectedCharacters(characterSelected);
-            
+            // Imposta le posizioni a null per lo spawn nel livello successivo
+        	for (Character character : this.game.getSelectedAllies()) 
+        	{
+        	    character.setPosition(null);
+        	}
+        	      
             this.characterReplaceMenu.close();
+            System.out.print("Fine sostituzione personaggio");
 
-            this.game.startNewLevel();
+            // Segnala che la sostituzione è completata
+            this.game.markCharacterReplacementCompleted();
         });
     }
     
@@ -384,6 +384,10 @@ public class GameController
         if(deadCharacter != null)
         {
             this.remove(levelMap, deadCharacter, deadCharacter.getPosition(), (deadCharacter.isAllied()? alliedList : enemyList));
+        }
+        else
+        {
+        	levelMap.updateToolTip();
         }
     }
 }

@@ -1,11 +1,11 @@
 package view.map;
 
 import java.awt.*;
-import java.lang.ModuleLayer.Controller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import javax.swing.*;
 import controller.GameController;
@@ -492,8 +492,7 @@ public abstract class AbstractMap
 	    JButton targetButton = this.gridPanel.getGridButtons()[target.getX()][target.getY()];
 	    targetButton.setIcon(new ImageIcon(character.getImage()));
 
-	    //this.showCharacterTooltip(character, targetButton);
-	    this.tooltipManager.showCharacterTooltip(character, targetButton);
+	    this.updateToolTip();	    
 
 	    System.out.print(character.getClass().getSimpleName() + " spostato con successo da " + character.getPosition() + " a " + target);	    
 	}
@@ -525,10 +524,26 @@ public abstract class AbstractMap
 	    
 	    this.tooltipManager.removeCharacterTooltip(targetButton);   
 	    
+	    this.updateToolTip();	    
+	    
 	    System.out.println("Personaggio " + character.getClass().getSimpleName() + 
 	            " rimosso con successo dalla posizione " + target);
 	    
 	    this.updateInfoLabels();
+	}
+	
+	public void updateToolTip()
+	{
+		// Per un aggiornamnto dei tooltip costante
+	    for(Entry<Character, Point> entry : this.characterMap.entrySet())
+	    {
+	    	this.tooltipManager.removeCharacterTooltip(this.gridPanel.getGridButtons()[entry.getValue().getX()][entry.getValue().getY()]);
+	    }
+	    
+	    for(Entry<Character, Point> entry : this.characterMap.entrySet())
+	    {
+		    this.tooltipManager.showCharacterTooltip(entry.getKey(), this.gridPanel.getGridButtons()[entry.getValue().getX()][entry.getValue().getY()]);
+	    }
 	}
 
 

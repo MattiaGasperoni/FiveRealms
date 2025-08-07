@@ -22,7 +22,6 @@ import view.map.AbstractMap;
 import view.menu.MainMenu;
 import view.menu.TutorialMenu;
 import view.BattlePhaseView;
-import view.CharacterSelectionMenu;
 import controller.GameController;
 
 /**

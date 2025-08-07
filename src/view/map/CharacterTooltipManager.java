@@ -31,19 +31,18 @@ public class CharacterTooltipManager
     public void showCharacterTooltip(Character character, JButton button) 
     {
         // Se esiste già un tooltip per questo bottone, rimuovilo prima
-        removeCharacterTooltip(button);
+        this.removeCharacterTooltip(button);
         
         JWindow tooltipWindow = new JWindow();
         
         // Panel principale con bordo arrotondato
-        JPanel mainPanel = new JPanel() {
-            /**
-			 * 
-			 */
+        JPanel mainPanel = new JPanel() 
+        {
 			private static final long serialVersionUID = 1L;
 
 			@Override
-            protected void paintComponent(Graphics g) {
+            protected void paintComponent(Graphics g) 
+			{
                 Graphics2D g2d = (Graphics2D) g.create();
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 
@@ -164,7 +163,7 @@ public class CharacterTooltipManager
         button.addMouseListener(tooltipMouseListener);
         
         // Salva i dati del tooltip nella mappa
-        tooltipListeners.put(button, new TooltipListenerData(tooltipMouseListener, tooltipWindow));
+        this.tooltipListeners.put(button, new TooltipListenerData(tooltipMouseListener, tooltipWindow));
     }
     
     public void removeCharacterTooltip(JButton button) 
