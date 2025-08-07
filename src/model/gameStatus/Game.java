@@ -39,6 +39,7 @@ public class Game
     private MainMenu mainMenu;
     private TutorialMenu tutorialMenu;
     private CharacterSelectionMenu characterSelectionMenu;
+    private CharacterReplaceMenu characterReplaceMenu;
     private EndGameMenu endGameMenu;
 	private LoadGameMenu loadGameMenu;
     
@@ -55,17 +56,18 @@ public class Game
         this.mainMenu               = new MainMenu();
         this.loadGameMenu           = new LoadGameMenu();
         this.tutorialMenu           = new TutorialMenu();
-        this.characterSelectionMenu = new CharacterSelectionMenu();
         this.endGameMenu            = new EndGameMenu();
+        
+        this.characterSelectionMenu = new CharacterSelectionMenu();
+        this.characterReplaceMenu   = new CharacterReplaceMenu();
         
         this.gameStateManager       = new GameStateManager();
         
-        this.controller = new GameController(this, this.gameStateManager, this.mainMenu, this.loadGameMenu, this.tutorialMenu, this.characterSelectionMenu, this.endGameMenu); 
+        this.controller = new GameController(this, this.gameStateManager, this.mainMenu, this.loadGameMenu, this.tutorialMenu, this.characterSelectionMenu,this.characterReplaceMenu, this.endGameMenu); 
     }
         
     public void start() 
     {
-		// Mostro il menù principale
 		this.mainMenu.show();	
 	}
 
@@ -121,7 +123,8 @@ public class Game
                 }
             }, 0, 100, TimeUnit.MILLISECONDS);
             
-        } catch (IOException | ClassNotFoundException e) 
+        } 
+        catch (IOException | ClassNotFoundException e) 
         {
             System.err.println("Errore nel caricamento del salvataggio: " + e.getMessage());
             e.printStackTrace();
@@ -156,7 +159,6 @@ public class Game
 
     public void startSelectionCharacter() 
     {
-        // Appare il menu per la selezione dei personaggi
         this.controller.startSelectionCharacter();
     }
 	
@@ -173,13 +175,13 @@ public class Game
         {
             try 
             {
-                this.updateGameSafe(); // logica separata
+                this.updateGameSafe();
             } 
             catch (Exception e) 
             {
                 e.printStackTrace();
             }
-        }, 0, 100, TimeUnit.MILLISECONDS); // ogni 100 ms
+        }, 0, 100, TimeUnit.MILLISECONDS);
     }
     
     private void startCurrentLevel() 
@@ -208,21 +210,29 @@ public class Game
         {
         	System.out.println("Livello " + (this.currentLevelIndex+1) + " completato.");
 
-        	// Mostrare qua il banner di vittoria per aver completato il livello
         	// TODO
-        	// Controllare se qualche alleato e' morto in caso sostituirli
-            //checkAndReplaceDeadAllies(this.selectedAllies);
+        	// Mostrare qua il banner di vittoria per aver completato il livello
+        	// -> potrebbe essere un frame a prte e non un bannerpanel per farlo scomparire quando vogliamo noi
+        	
+        	// Controlla se qualche alleato e' morto e nel caso chiede all'utente di sostituirli
+        	if(this.selectedAllies.size() < 3)
+        	{
+        		this.replaceDeadAllies();
+        	}
+        	
+        	// Imposta le posizioni a null per lo spwn nel livello successivo
         	for (Character character : this.selectedAllies) 
         	{
         	    character.setPosition(null);
         	}
+        	
         	this.currentLevelIndex++;
         	
             if (this.currentLevelIndex >= Game.TOTAL_LEVEL) 
             {           	
                 System.out.println("Tutti i livelli completati!");
                 this.stopGameLoop();
-                this.showEndGameMenu();
+                this.showEndGameMenu(true);
             } 
             else 
             {
@@ -233,14 +243,16 @@ public class Game
         {
             System.out.println("Il livello " + this.currentLevelIndex + " è fallito. Uscita.");
             this.stopGameLoop();
-            this.showEndGameMenu();
+            this.showEndGameMenu(false);
         }
     }
 
-    private void showEndGameMenu() 
+    private void showEndGameMenu(boolean result) 
     {
-        // Appare il menu per la selezione dei personaggi
+        this.endGameMenu.setGameResult(result);
+    	// Appare il menu per la selezione dei personaggi
         this.endGameMenu.show();
+        
     }
     
     private void stopGameLoop() 
@@ -251,27 +263,18 @@ public class Game
         }
     }
 
-    private void checkAndReplaceDeadAllies(List<Character> selectedAllies) 
-	{
-    	/*
-		// Implementa la logica per controllare e sostituire gli alleati morti
-		// Ad esempio, puoi rimuovere gli alleati morti dalla lista e aggiungere nuovi alleati
-		// ...
-    	
+    private void replaceDeadAllies() 
+	{    	
         // Calcola quanti alleati sono morti
-        int alliesToChange = Game.MAX_ALLIES_PER_ROUND - selectedAllies.size();
+        int alliesToChange = Game.MAX_ALLIES_PER_ROUND - this.selectedAllies.size();
 
-        if (alliesToChange > 0) {
-            System.out.println("Sostituzione di " + alliesToChange + " personaggi morti.");
+        if (alliesToChange > 0) 
+        {
+        	System.out.println("Inizio sostituzione alleati morti: " + alliesToChange+ " da sostituire");
+            this.controller.startReplaceDeadAllies(alliesToChange);
         }
-            // Seleziona nuovi alleati
-            // List<Character> newAllies =
-            // CharacterSelectionMenu.replaceDeadAlliesMenu(this.availableAllies ,
-            // alliesToChange);
-
-            // Aggiungi i nuovi alleati
-            // this.selectedAllies.addAll(newAllies);*/
-        this.controller.startSelectionCharacter();
+        else
+        	System.out.println("Non ci sono alleati morti ");
 	}
 
     public List<Character> createAllies() 
@@ -351,7 +354,10 @@ public class Game
 		return this.gameLevels;
 	}   
 	
-	
+	public List<Character> getSelectedAllies() {
+		return this.selectedAllies;
+	}
+
 	private void setGameLevelValue(int index, List<Character> allies, List<Character> enemy)
 	{
 		this.currentLevelIndex = index;

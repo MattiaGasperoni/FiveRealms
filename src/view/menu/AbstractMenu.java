@@ -165,7 +165,7 @@ public abstract class AbstractMenu extends JPanel{
         // Enhanced border with medieval look
         button.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(218, 165, 32), 2), 
+                BorderFactory.createLineBorder(new Color(218, 165, 32), 1), 
                 BorderFactory.createRaisedBevelBorder()
             ),
             BorderFactory.createEmptyBorder(8, 20, 8, 20)

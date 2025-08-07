@@ -13,8 +13,10 @@ import javax.swing.JButton;
  */
 public class EndGameMenu extends AbstractMenu
 {
-    private JButton mainMenuButton;
+    private static final long serialVersionUID = 1L;
+	private JButton mainMenuButton;
     private JButton exitButton;
+	private boolean result = false;
 
     /**
      * Constructs a new EndGameMenu with default settings
@@ -52,12 +54,27 @@ public class EndGameMenu extends AbstractMenu
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.insets = new Insets(0, 20, 10, 20);
-        this.mainPanel.add(super.createTitleLabel("Game Completed!"), gbc);
+        
+        if(this.result)
+        {
+        	this.mainPanel.add(super.createTitleLabel("Game Completed!"), gbc);
+        }
+        else
+        {
+        	this.mainPanel.add(super.createTitleLabel("Game Over!"), gbc);
+        }
         
         // Subtitle
         gbc.gridy = 2;
         gbc.insets = new Insets(5, 20, 30, 20);
-        this.mainPanel.add(super.createSubtitleLabel("Congratulations, you have completed all the levels!"), gbc);
+        if(this.result)
+        {
+            this.mainPanel.add(super.createSubtitleLabel("Congratulations, you have completed all the levels!"), gbc);
+        }
+        else
+        {
+            this.mainPanel.add(super.createSubtitleLabel("Better luck next time!"), gbc);
+        }
         
         // Buttons panel
         gbc.gridy = 3;
@@ -77,7 +94,8 @@ public class EndGameMenu extends AbstractMenu
      * Adds an ActionListener to the main menu button
      * @param listener The ActionListener to handle main menu button clicks
      */
-    public void addMainMenuListener(ActionListener listener) {
+    public void addMainMenuListener(ActionListener listener) 
+    {
         this.mainMenuButton.addActionListener(listener);
     }
 
@@ -85,7 +103,15 @@ public class EndGameMenu extends AbstractMenu
      * Adds an ActionListener to the exit button
      * @param listener The ActionListener to handle exit button clicks
      */
-    public void addExitListener(ActionListener listener) {
+    public void addExitListener(ActionListener listener) 
+    {
         this.exitButton.addActionListener(listener);
+    }
+    
+    // === GENERAL METHODS ===
+    
+    public void setGameResult(boolean result)
+    {
+    	this.result = result;
     }
 }

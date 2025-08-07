@@ -1,17 +1,32 @@
 package view;
 
-import javax.swing.*;
-import model.characters.Character;
-import model.gameStatus.Game;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import model.characters.Character;
+import model.gameStatus.Game;
 
-public class CharacterSelectionMenu
+public class CharacterReplaceMenu
 {
-
-    private JFrame frame;
+	private JFrame frame;
     private JButton nextButton;
     private final List<JPanel> selectedPanels = new ArrayList<>();
     private final List<String> selectedCharacters = new ArrayList<>();
@@ -20,11 +35,11 @@ public class CharacterSelectionMenu
      * Initializes and displays the character selection menu with all available allies
      * @param allAllies List of all available characters that can be selected
      */
-    public void start(List<Character> allAllies)
+    public void start(List<Character> allAllies,int alliesToChange)
     {
-        System.out.println("Open Characters Selection Menu Frame ->");
+        System.out.println("Open Characters Raplece Menu Frame ->");
 
-        frame = new JFrame("FiveRealms - Characters Selection Menu");
+        frame = new JFrame("FiveRealms - Characters Raplece Menu");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 800);
         frame.setLocationRelativeTo(null);
@@ -40,7 +55,7 @@ public class CharacterSelectionMenu
         gbc.insets = new Insets(10, 10, 10, 10);
 
         // Titolo con stile fantasy migliorato
-        JLabel info = new JLabel("SELECT 3 CHARACTERS", SwingConstants.CENTER);
+        JLabel info = new JLabel("SELECT "+alliesToChange+" CHARACTERS", SwingConstants.CENTER);
         info.setFont(new Font("Serif", Font.BOLD, 36));
         info.setForeground(new Color(245, 222, 179)); // Beige/oro chiaro
         gbc.gridx = 1;
@@ -199,4 +214,5 @@ public class CharacterSelectionMenu
     public void close() {
         frame.dispose();
     }
+
 }

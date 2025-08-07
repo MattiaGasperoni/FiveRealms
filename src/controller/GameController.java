@@ -2,6 +2,7 @@ package controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import model.characters.Character;
@@ -10,6 +11,7 @@ import model.gameStatus.Level;
 import model.gameStatus.saveSystem.GameState;
 import model.gameStatus.saveSystem.GameStateManager;
 import model.point.Point;
+import view.CharacterReplaceMenu;
 import view.CharacterSelectionMenu;
 import view.PauseMenu;
 import view.map.AbstractMap;
@@ -32,10 +34,11 @@ public class GameController
     private LoadGameMenu loadGameMenu;
     private TutorialMenu tutorialMenu;
     private CharacterSelectionMenu characterSelectionMenu;
+    private CharacterReplaceMenu characterReplaceMenu;
     private EndGameMenu endGameMenu;
     private PauseMenu pauseMenu;
 
-    public GameController(Game game, GameStateManager gameStateManager, MainMenu mainMenu, LoadGameMenu loadGameMenu,TutorialMenu tutorialMenu, CharacterSelectionMenu characterSelectionMenu, EndGameMenu endGameMenu) 
+    public GameController(Game game, GameStateManager gameStateManager, MainMenu mainMenu, LoadGameMenu loadGameMenu,TutorialMenu tutorialMenu, CharacterSelectionMenu characterSelectionMenu,CharacterReplaceMenu characterReplaceMenu, EndGameMenu endGameMenu) 
     {
         this.game             = game;
         this.gameStateManager = gameStateManager;
@@ -44,6 +47,7 @@ public class GameController
         this.loadGameMenu           = loadGameMenu;
         this.tutorialMenu           = tutorialMenu;
         this.characterSelectionMenu = characterSelectionMenu;
+        this.characterReplaceMenu   = characterReplaceMenu;
         this.endGameMenu            = endGameMenu;
         this.pauseMenu              = null;
 
@@ -280,13 +284,44 @@ public class GameController
         });
     }
     
+    public void startReplaceDeadAllies(int alliesToChange)
+    {        
+    	List<Character> availableAllies = this.getCharacterToChange(this.game.createAllies(), this.game.getSelectedAllies());
+        
+        this.characterReplaceMenu.start(availableAllies,alliesToChange);
+        
+        this.characterReplaceMenu.addNextButtonListener(event -> 
+        {
+            List<String> characterNames = this.characterReplaceMenu.getSelectedCharacterNames();
+
+            System.out.print(" You chose: " + String.join(", ", characterNames) + " -> ");
+            System.out.println(" End of character selection");
+            
+            List<Character> characterSelected = this.transformList(availableAllies, characterNames);
+            
+            this.game.setSelectedCharacters(characterSelected);
+            
+            this.characterReplaceMenu.close();
+
+            this.game.startNewLevel();
+        });
+    }
+    
+    
     private List<Character> transformList(List<Character> allAllies, List<String> selectedCharacters)
     {
         return allAllies.stream()
             .filter(ally -> selectedCharacters.contains(ally.getClass().getSimpleName()))
             .collect(Collectors.toList());
     }
-     
+    
+
+    private List<Character> getCharacterToChange(List<Character> allAllies, List<Character> currentAllies) 
+    {
+        List<Character> remainingAllies = new ArrayList<>(allAllies);
+        remainingAllies.removeAll(currentAllies);
+        return remainingAllies;
+    }
     /**
      * Saves the current game state, including allies, enemies, and the level.
      * @param allies List of ally characters.
