@@ -17,15 +17,15 @@ public abstract class AbstractMenu extends JPanel{
     protected static final String DEFAULT_BACKGROUND_PATH = "images/Background/background4.jpg";
     
     // Color scheme constants
-    protected static final Color BUTTON_BACKGROUND   = new Color(139, 69, 19);
-    protected static final Color BUTTON_TEXT         = Color.WHITE;
+    protected static final Color BUTTON_BACKGROUND   = new Color(92, 51, 23);       
+    protected static final Color BUTTON_TEXT         = new Color(245, 222, 179);   
     protected static final Color TITLE_TEXT          = new Color(210, 180, 140);
     protected static final Color SUBTITLE_TEXT       = Color.WHITE;
     protected static final Color TITLE_BACKGROUND    = new Color(0, 0, 0, 200);
     protected static final Color SUBTITLE_BACKGROUND = new Color(0, 0, 0, 150);
     
-    // Font constants
-    protected static final Font BUTTON_FONT   = new Font("Serif", Font.BOLD, 16);
+    // === COSTANTI FONT COMPLETAMENTE RINNOVATE ===
+    protected static final Font BUTTON_FONT   = new Font("Georgia", Font.BOLD | Font.ITALIC, 18);  
     protected static final Font TITLE_FONT    = new Font("Serif", Font.BOLD, 42);
     protected static final Font SUBTITLE_FONT = new Font("Serif", Font.ITALIC, 16);
     
@@ -145,9 +145,15 @@ public abstract class AbstractMenu extends JPanel{
      * @param size The preferred size for the button
      * @return Styled JButton
      */
+    /**
+     * Creates a styled button with custom size.
+     * @param text The text to display on the button
+     * @param size The preferred size for the button
+     * @return Styled JButton
+     */
     protected JButton createStyledButton(String text, Dimension size) 
     {
-        JButton button = new JButton(text);
+        JButton button = new JButton(text); 
         button.setFont(BUTTON_FONT);
         button.setForeground(BUTTON_TEXT);
         button.setBackground(BUTTON_BACKGROUND);
@@ -158,8 +164,11 @@ public abstract class AbstractMenu extends JPanel{
         
         // Enhanced border with medieval look
         button.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createRaisedBevelBorder(),
-            BorderFactory.createEmptyBorder(5, 15, 5, 15)
+            BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(218, 165, 32), 2), 
+                BorderFactory.createRaisedBevelBorder()
+            ),
+            BorderFactory.createEmptyBorder(8, 20, 8, 20)
         ));
         
         // Add hover effect
@@ -173,16 +182,20 @@ public abstract class AbstractMenu extends JPanel{
      */
     protected void addHoverEffect(JButton button) 
     {
-        Color originalColor = button.getBackground();
+        Color originalBackground = button.getBackground();
+        Color hoverBackground = new Color(139, 90, 43);   // Marrone più chiaro per hover
+        
         button.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseEntered(java.awt.event.MouseEvent e) {
-                button.setBackground(originalColor.brighter());
+                button.setBackground(hoverBackground);
+                button.setCursor(new Cursor(Cursor.HAND_CURSOR));
             }
             
             @Override
             public void mouseExited(java.awt.event.MouseEvent e) {
-                button.setBackground(originalColor);
+                button.setBackground(originalBackground);
+                button.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
         });
     }
