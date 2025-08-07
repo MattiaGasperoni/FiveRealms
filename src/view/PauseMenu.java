@@ -11,7 +11,7 @@ public class PauseMenu
     
     private JButton resumeButton;
     private JButton saveButton;
-    private JButton exitButton;
+    private JButton mainMenuButton;
 	private JButton menuIcon;
 	private JPanel pauseMenuPanel;	
 	
@@ -148,16 +148,16 @@ public class PauseMenu
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
         buttonPanel.setOpaque(false);
 
-        this.resumeButton = createButton("Resume", "⚔");
-        this.saveButton   = createButton("Save Game", "📜");
-        this.exitButton   = createButton("Exit", "🚪");
+        this.resumeButton   = createButton("Resume", "⚔");
+        this.saveButton     = createButton("Save Game", "📜");
+        this.mainMenuButton = createButton("Back to Main Menu", "🚪");
 
         buttonPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         buttonPanel.add(resumeButton);
         buttonPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         buttonPanel.add(saveButton);
         buttonPanel.add(Box.createRigidArea(new Dimension(0, 15)));
-        buttonPanel.add(exitButton);
+        buttonPanel.add(mainMenuButton);
 
         gbc.gridy++;
         this.pauseMenuPanel.add(titleLabel, gbc);
@@ -214,8 +214,8 @@ public class PauseMenu
      * Adds an ActionListener to the exit button
      * @param listener The ActionListener to handle exit button click events
      */
-    public void addExitListener(ActionListener listener) {
-        this.exitButton.addActionListener(listener);
+    public void addMainMenuListener(ActionListener listener) {
+        this.mainMenuButton.addActionListener(listener);
     }
     
     /**

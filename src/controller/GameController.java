@@ -130,7 +130,12 @@ public class GameController
         {
             System.out.println(" You chose to go back to main manu.");
             this.loadGameMenu.close();
-            this.mainMenuView.show();
+            
+            this.game = null;
+    	    
+    	    Game newGame = new Game();
+            
+    	    newGame.start();
         });
     	
     	this.loadGameMenu.addSaveFileClickListener(saveFile -> 
@@ -196,10 +201,15 @@ public class GameController
 			}
     	});
 
-    	this.pauseMenu.addExitListener(event -> 
+    	this.pauseMenu.addMainMenuListener(event -> 
         {
-            System.out.println(" You chose to close the game.");
-            System.exit(0);
+            System.out.println(" You chose to go back to main manu.");
+            this.game.closeAll();           
+    	    this.game = null;
+    	    
+    	    Game newGame = new Game();
+            
+    	    newGame.start();
         });
     }
     

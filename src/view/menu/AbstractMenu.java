@@ -7,9 +7,11 @@ import javax.swing.*;
  * Abstract base class for all menu screens in the FiveRealms game.
  * Provides common functionality, styling, and layout management for consistent UI experience.
  */
-public abstract class AbstractMenu {
+public abstract class AbstractMenu extends JPanel{
     
-    // === COMMON CONSTANTS ===
+    private static final long serialVersionUID = 1L;
+    
+	// === COMMON CONSTANTS ===
     protected static final int DEFAULT_WINDOW_WIDTH       = 900;
     protected static final int DEFAULT_WINDOW_HEIGHT      = 700;
     protected static final String DEFAULT_BACKGROUND_PATH = "images/Background/background4.jpg";

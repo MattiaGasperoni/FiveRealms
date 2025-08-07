@@ -209,7 +209,7 @@ public class Game
         	System.out.println("Livello " + (this.currentLevelIndex+1) + " completato.");
 
         	// Mostrare qua il banner di vittoria per aver completato il livello
-        	
+        	// TODO
         	// Controllare se qualche alleato e' morto in caso sostituirli
             //checkAndReplaceDeadAllies(this.selectedAllies);
         	for (Character character : this.selectedAllies) 
@@ -422,5 +422,10 @@ public class Game
 	    }
 	    System.out.println("Validooo");
 	    return true;
+	}
+	
+	public void closeAll()
+	{
+		this.gameLevels.get(this.currentLevelIndex).getLevelMap().closeWindow();
 	}
 }
