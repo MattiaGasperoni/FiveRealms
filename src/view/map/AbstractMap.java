@@ -258,10 +258,6 @@ public abstract class AbstractMap
         
         return label;
     }
-
-
-    
-
 	
 	private void updateInfoLabels() 
 	{
@@ -465,21 +461,18 @@ public abstract class AbstractMap
 	public void moveCharacter(Character character, Point target) 
 	{
 
-	    if (character == null || target == null) 
+	    if (target == null) 
 	    {
-	        throw new IllegalArgumentException("Character and target point must not be null");
+	        throw new IllegalArgumentException("Target point must not be null");
 	    }
 
 	    if (!this.characterMap.containsKey(character)) 
 	    {
 	        System.err.println("Character not found in the map: " + character.getClass().getSimpleName());
 	        return;
-	    }
-
-	    Point currentPosition = character.getPosition();
+	    }	    
 	    
-	    
-	    if (currentPosition.equals(target)) 
+	    if (character.getPosition().equals(target)) 
 	    {
 	        System.out.println("Il personaggio è già nella posizione target: " + target);
 	        return;
@@ -492,16 +485,8 @@ public abstract class AbstractMap
 	    }
 
 	    // Aggiorna la mappa con la nuova posizione
-	    this.characterMap.remove(character, currentPosition);
+	    this.removeCharacter(character);
 	    this.characterMap.put(character, target);
-	    
-	    // Rimuove l'immagine dal bottone corrente
-	    JButton currentButton = this.gridPanel.getGridButtons()[currentPosition.getX()][currentPosition.getY()];
-	    currentButton.setIcon(null);
-	    
-	    //this.removeCharacterTooltip(currentButton);
-	    // Rimuovi un tooltip di un bottone specifico
-	    this.tooltipManager.removeCharacterTooltip(currentButton);
 	    
 	    // Imposta l'immagine nel nuovo bottone
 	    JButton targetButton = this.gridPanel.getGridButtons()[target.getX()][target.getY()];
@@ -510,10 +495,7 @@ public abstract class AbstractMap
 	    //this.showCharacterTooltip(character, targetButton);
 	    this.tooltipManager.showCharacterTooltip(character, targetButton);
 
-
-	    System.out.print(character.getClass().getSimpleName() + " spostato con successo da " + character.getPosition() + " a " + target);
-	    
-	    this.updateInfoLabels();
+	    System.out.print(character.getClass().getSimpleName() + " spostato con successo da " + character.getPosition() + " a " + target);	    
 	}
 
 	
@@ -521,11 +503,11 @@ public abstract class AbstractMap
 	public void removeCharacter(Character character) 
 	{
 		Point target = character.getPosition();
-		
-	    if (character == null || target == null) {
-	        throw new IllegalArgumentException("Character and target point must not be null");
-	    }
 
+	    if (character == null || target == null) {
+	        throw new IllegalArgumentException("Character and/or target point must not be null");
+	    }
+	    
 	    System.out.println("\nTentativo di rimuovere il personaggio: " + character.getClass().getSimpleName() +
 	            " dalla posizione " + target + ", esso ha salute: " + character.getCurrentHealth());
 
@@ -571,8 +553,6 @@ public abstract class AbstractMap
 		return this.layeredPanel;
 	}
 	
-	
-	
 	public void setEnemiesList(List<Character> enemiesList) {
 		this.enemiesList = enemiesList;
 	}
@@ -581,7 +561,6 @@ public abstract class AbstractMap
 	public void setAlliesList(List<Character> alliesList) {
 		this.alliesList = alliesList;
 	}
-
 
 	// Metodo che ti dice se è occupata gia la posizione di un personaggio
 	public boolean isPositionOccupied(Point point) 

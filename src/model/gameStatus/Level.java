@@ -1,12 +1,18 @@
 package model.gameStatus;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Set;
 import controller.*;
 import model.characters.AbstractCharacter;
 import model.characters.Character;
 import model.point.Point;
 import view.*;
+import view.map.AbstractMap;
 import view.map.LevelMap;
 
 public class Level 
@@ -40,6 +46,7 @@ public class Level
     
     private PriorityQueue<Character> currentTurnOrder;
     private Character currentAttacker;
+    private List<Point> availablePositions;
        
     private final LevelMap levelMap;
     private final BattlePhaseView movementPhaseManager;
@@ -57,6 +64,14 @@ public class Level
         this.levelCompleted = false;
         this.levelFailed    = false;
         this.levelPause     = false;
+		
+        //for use in AITurn
+        this.availablePositions = new ArrayList<>();
+        for(int i = 0; i < AbstractMap.GRID_SIZE_WIDTH; i++) {
+        	for(int j = 0; j < AbstractMap.GRID_SIZE_HEIGHT; j++) {
+        		availablePositions.add(new Point(i,j));
+        	}
+        }
     }
 
     public void play() throws IOException 
@@ -221,32 +236,32 @@ public class Level
 			e.printStackTrace();
 		}System.out.println("Turno AI");
 		Character victim = alliesList.stream()
-				   .min(Comparator.comparing(charac -> charac.getDistanceInSquares(currentAttacker.getPosition()))) //NOTE: If that's the wrong order (hard to test right now), put .reversed() on it. Picks closest enemy.
+				   .min(Comparator.comparing(charac -> charac.getDistanceInSquares(currentAttacker.getPosition())))
 				   .orElse(null);
 		
 	    if (victim == null) {
 	    	this.currentTurnState = RoundState.TURN_COMPLETED;
 	        return;
 	    }
-		
-        List<Point> availablePositions = new ArrayList<>();
-
-        for(int i = 0; i < 20; i++) { //AbstractMap.GRID_SIZE_WIDTH
-        	for(int j = 0; j < 15; j++) {  //AbstractMap.GRID_SIZE_HEIGHT
-        		availablePositions.add(new Point(i,j));
-        	}
-        }
         
         Set<Point> occupiedPositions = new HashSet<>();
         alliesList.stream().forEach(character -> occupiedPositions.add(character.getPosition()));
         enemiesList.stream().forEach(character -> occupiedPositions.add(character.getPosition()));
-        movementPhaseManager.graphicMovementCharacterToPoint(currentAttacker, availablePositions.stream()
-				.filter(point -> currentAttacker.getDistanceInSquares(point) <= (currentAttacker.getSpeed() / AbstractCharacter.SPEED_TO_MOVEMENT))
-				.filter(point -> !occupiedPositions.contains(point)) //supposed to filter out already-occupied positions...
-				.min(Comparator.comparing(point -> victim.getDistanceInSquares(point)))
-				.orElse(currentAttacker.getPosition()));
         
-        try 
+        movementPhaseManager.graphicMovementCharacterToPoint(currentAttacker, this.availablePositions.stream()
+        	    .filter(point -> currentAttacker.getDistanceInSquares(point) <= (currentAttacker.getSpeed() / AbstractCharacter.SPEED_TO_MOVEMENT))
+        	    .filter(point -> !occupiedPositions.contains(point))
+        	    .filter(point -> victim.getDistanceInSquares(point) <= currentAttacker.getRange()) // Within attack range
+        	    .min(Comparator.comparing(point -> currentAttacker.getDistanceInSquares(point))) // Closest to current position
+        	    .orElseGet(() -> //if no immediate attack positions available, simply chase
+        	        availablePositions.stream()
+        	            .filter(point -> currentAttacker.getDistanceInSquares(point) <= (currentAttacker.getSpeed() / AbstractCharacter.SPEED_TO_MOVEMENT))
+        	            .filter(point -> !occupiedPositions.contains(point))
+        	            .min(Comparator.comparing(point -> victim.getDistanceInSquares(point))) // Closest to victim
+        	            .orElse(currentAttacker.getPosition())
+        	    ));
+        
+        try
         {
         	this.controller.fight(currentAttacker, victim, alliesList, enemiesList, levelMap);
         	

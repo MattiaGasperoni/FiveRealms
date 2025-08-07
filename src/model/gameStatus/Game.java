@@ -301,39 +301,35 @@ public class Game
         // Popolo le liste dei nemici e dei livelli principali
     	
         List<Character> level1Enemies = new ArrayList<>();
+        level1Enemies.add(new KnightBoss());
         level1Enemies.add(new Knight());
         level1Enemies.add(new Barbarian());
 
         List<Character> level2Enemies = new ArrayList<>();
         level2Enemies.add(new BarbarianBoss());
         level2Enemies.add(new Barbarian());
-        level2Enemies.add(new Knight());
         level2Enemies.add(new Barbarian());
         level2Enemies.add(new Archer());
 
         List<Character> level3Enemies = new ArrayList<>();
         level3Enemies.add(new ArcherBoss());
         level3Enemies.add(new Archer());
-        level3Enemies.add(new Knight());
         level3Enemies.add(new Archer());
         level3Enemies.add(new Juggernaut());
 
         List<Character> level4Enemies = new ArrayList<>();
         level4Enemies.add(new JuggernautBoss());
         level4Enemies.add(new Barbarian());
-        level4Enemies.add(new Archer());
         level4Enemies.add(new Wizard());
         level4Enemies.add(new Knight());
         level4Enemies.add(new Juggernaut());
 
         List<Character> level5Enemies = new ArrayList<>();
         level5Enemies.add(new WizardBoss());
-        level5Enemies.add(new Wizard());
-        level5Enemies.add(new Wizard());
-        level5Enemies.add(new Wizard());
-        level5Enemies.add(new Archer());
-        level5Enemies.add(new Archer());
-        level5Enemies.add(new Juggernaut());
+        level5Enemies.add(new JuggernautBoss());
+        level5Enemies.add(new KnightBoss());
+        level5Enemies.add(new BarbarianBoss());
+        level5Enemies.add(new ArcherBoss());
 
         
         // TODO
