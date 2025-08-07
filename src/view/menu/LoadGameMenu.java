@@ -104,6 +104,39 @@ public class LoadGameMenu extends AbstractMenu
         scrollPane.setPreferredSize(new Dimension(400, 200));
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        
+        // Personalizza la scrollbar in stile medievale
+        scrollPane.getVerticalScrollBar().setUI(new javax.swing.plaf.basic.BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(139, 69, 19, 200);        // Marrone per il thumb
+                this.trackColor = new Color(101, 67, 33, 150);        // Marrone scuro per il track
+                this.thumbHighlightColor = new Color(160, 82, 45);    // Marrone chiaro al hover
+                this.thumbLightShadowColor = new Color(101, 67, 33);  // Ombra del thumb
+                this.thumbDarkShadowColor = new Color(61, 43, 31);    // Ombra scura
+            }
+            // Override per i pulsanti di incremento e decremento
+            // Questi pulsanti sono le frecce della scrollbar
+            @Override
+            protected JButton createDecreaseButton(int orientation) {
+                JButton button = super.createDecreaseButton(orientation);
+                button.setBackground(new Color(139, 69, 19));
+                button.setForeground(new Color(255, 248, 220));
+                return button;
+            }
+            
+            @Override
+            protected JButton createIncreaseButton(int orientation) {
+                JButton button = super.createIncreaseButton(orientation);
+                button.setBackground(new Color(139, 69, 19));
+                button.setForeground(new Color(255, 248, 220));
+                return button;
+            }
+        });
+        
+        // Imposta la larghezza della scrollbar
+        scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(16, 0));
+        
         return scrollPane;
     }
     
@@ -157,20 +190,21 @@ public class LoadGameMenu extends AbstractMenu
         optionsButton.setPreferredSize(new Dimension(50, 40));
         optionsButton.setMaximumSize(new Dimension(50, 40));
         optionsButton.setFocusPainted(false);
-        optionsButton.setContentAreaFilled(true); // Se vuoi sfondo visibile
+        optionsButton.setContentAreaFilled(false); // Se vuoi sfondo visibile
         optionsButton.setOpaque(true);
         optionsButton.setBackground(new Color(139, 69, 19, 180));
         optionsButton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
         optionsButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        // Hover effect
-        optionsButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                optionsButton.setBackground(new Color(160, 82, 45, 200));
+        optionsButton.addMouseListener(new java.awt.event.MouseAdapter() 
+        {
+            public void mouseEntered(java.awt.event.MouseEvent evt) 
+            {
+                optionsButton.setBackground(new Color(160, 82, 45));
             }
-
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                optionsButton.setBackground(new Color(139, 69, 19, 180));
+            public void mouseExited(java.awt.event.MouseEvent evt) 
+            {
+                optionsButton.setBackground(new Color(139, 69, 19));
             }
         });
 
@@ -220,7 +254,7 @@ public class LoadGameMenu extends AbstractMenu
         popup.add(deleteItem);
 
         // Opzionalmente forza dimensioni minime del popup
-        popup.setPreferredSize(new Dimension(220, 100));
+        popup.setPreferredSize(new Dimension(100, 100));
 
         // Mostra popup sotto il pulsante
         popup.show(sourceButton, 0, sourceButton.getHeight());

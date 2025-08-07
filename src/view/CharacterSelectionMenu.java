@@ -42,10 +42,18 @@ public class CharacterSelectionMenu
         // Titolo con stile fantasy migliorato
         JLabel info = new JLabel("SELECT 3 CHARACTERS", SwingConstants.CENTER);
         info.setFont(new Font("Serif", Font.BOLD, 36));
-        info.setForeground(new Color(245, 222, 179)); // Beige/oro chiaro
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        bgLabel.add(info, gbc);
+        
+        info.setForeground(new Color(210, 180, 140));
+        info.setOpaque(true);
+        info.setBackground(new Color(0, 0, 0, 200));
+        info.setBorder(BorderFactory.createCompoundBorder(
+        	    BorderFactory.createLineBorder(new Color(92, 51, 23), 2),
+	            BorderFactory.createEmptyBorder(8, 20, 8, 20)
+	    ));
+	
+	    gbc.gridx = 1;
+	    gbc.gridy = 0;
+	    bgLabel.add(info, gbc);
 
         // Pulsante "Next" con stile fantasy
         nextButton = createFantasyButton("NEXT");
