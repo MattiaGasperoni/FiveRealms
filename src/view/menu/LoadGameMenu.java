@@ -101,7 +101,7 @@ public class LoadGameMenu extends AbstractMenu
         scrollPane.setOpaque(false);
         scrollPane.getViewport().setOpaque(false);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
-        scrollPane.setPreferredSize(new Dimension(400, 200));
+        scrollPane.setPreferredSize(new Dimension(420, 200));
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         
@@ -193,18 +193,19 @@ public class LoadGameMenu extends AbstractMenu
         optionsButton.setContentAreaFilled(false); // Se vuoi sfondo visibile
         optionsButton.setOpaque(true);
         optionsButton.setBackground(new Color(139, 69, 19, 180));
-        optionsButton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
+        optionsButton.setBorder(BorderFactory.createLineBorder(new Color(218, 165, 32), 1));
         optionsButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         optionsButton.addMouseListener(new java.awt.event.MouseAdapter() 
         {
             public void mouseEntered(java.awt.event.MouseEvent evt) 
             {
-                optionsButton.setBackground(new Color(160, 82, 45));
+                optionsButton.setBackground(new Color(160, 82, 45, 180));
             }
+            
             public void mouseExited(java.awt.event.MouseEvent evt) 
             {
-                optionsButton.setBackground(new Color(139, 69, 19));
+                optionsButton.setBackground(new Color(139, 69, 19, 180));
             }
         });
 

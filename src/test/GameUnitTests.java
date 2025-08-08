@@ -114,7 +114,7 @@ public class GameUnitTests {
         Character testCharacter = new Barbarian();
         testCharacter.becomeHero();
         
-        Point initialPosition = new Point(5, 5);
+        Point initialPosition = new Point(6, 5);
         Point targetPosition = new Point(7, 7);
         
         testCharacter.setPosition(initialPosition);
