@@ -114,7 +114,24 @@ public class EndGameMenu extends AbstractMenu
     
     public void setGameResult(boolean result)
     {
-    	System.out.print(result);
     	this.result = result;
+    	this.updateDisplay();
     }
+    
+
+	/**
+	 * Aggiorna il titolo e sottotitolo in base al risultato del gioco
+	 */
+	private void updateDisplay() 
+	{
+	    // Rimuovi tutti i componenti dal pannello principale
+	    this.mainPanel.removeAll();
+	    
+	    // Ricrea il layout con il nuovo risultato
+	    this.setupLayout();
+	    
+	    // Aggiorna la visualizzazione
+	    this.mainPanel.revalidate();
+	    this.mainPanel.repaint();
+	}
 }

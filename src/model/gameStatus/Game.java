@@ -213,7 +213,7 @@ public class Game
         {
             System.out.println("Livello " + (this.currentLevelIndex+1) + " completato.");
 
-            if (this.currentLevelIndex >= Game.TOTAL_LEVEL)
+            if (this.currentLevelIndex+1  >=  Game.TOTAL_LEVEL)
             {
                 System.out.println("Tutti i livelli completati!");
                 this.stopGameLoop();
@@ -275,7 +275,6 @@ public class Game
     
     private void showEndGameMenu(boolean result) 
     {
-    	System.out.print(result);
         this.endGameMenu.setGameResult(result);
     	// Appare il menu per la selezione dei personaggi
         this.endGameMenu.show();
