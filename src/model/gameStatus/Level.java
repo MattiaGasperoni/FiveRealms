@@ -320,6 +320,11 @@ public class Level
             System.out.println("Hai sconfitto tutti i nemici. Livello completato!\n");
             this.levelMap.updateBannerMessage("Hai sconfitto tutti i nemici. Livello Completato", true);
             this.currentLevelPhase = LevelPhase.DONE;
+            try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
             this.levelMap.closeWindow();
             return;
         }
