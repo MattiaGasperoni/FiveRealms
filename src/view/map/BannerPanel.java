@@ -2,6 +2,7 @@ package view.map;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Random;
 
 /**
  * Classe che gestisce sia il banner i completamento livello che quelo con i consigli per l'utente
@@ -39,18 +40,89 @@ public class BannerPanel extends JPanel
         this.showBannerWithTimer();
     }
     
-    /* Banner da mostare quando si completa un Livello */
-    public void showFullScreenMessage(String text) 
+    /* Banner da mostrare quando si completa un Livello */
+    public void showFullScreenMessage() 
     {
-    	this.resetToNormalMode();
+        this.resetToNormalMode();
         
-    	this.setBounds(0, 0, this.width, this.height);
-    	this.setBackground(new Color(255, 150, 50));
+        // Imposta dimensioni a schermo intero
+        this.setBounds(0, 0, this.width, this.height);
         
-    	this.messageLabel.setText(text);
-    	this.messageLabel.setFont(new Font("Arial", Font.BOLD, 32));
+        // Rimuovi tutti i componenti esistenti temporaneamente
+        this.removeAll();
         
-    	this.showBannerWithTimer();
+        // Pannello principale con sfondo medievale
+        JPanel bannerPanel = new JPanel() 
+        {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+            protected void paintComponent(Graphics g) 
+			{
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g.create();
+                
+                // Antialiasing per bordi lisci
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                
+                // Sfondo pergamena invecchiata con gradiente
+                GradientPaint parchmentGradient = new GradientPaint(
+                    0, 0, new Color(240, 225, 180),
+                    0, getHeight(), new Color(210, 185, 130)
+                );
+                g2d.setPaint(parchmentGradient);
+                g2d.fillRect(0, 0, getWidth(), getHeight());
+                
+                // Texture pergamena leggera
+                g2d.setColor(new Color(180, 155, 100, 20));
+                Random rand = new Random(123);
+                for (int i = 0; i < 100; i++) {
+                    int x = rand.nextInt(getWidth());
+                    int y = rand.nextInt(getHeight());
+                    int size = rand.nextInt(15) + 3;
+                    g2d.fillOval(x, y, size, size);
+                }
+                
+                // Bordo semplice
+                g2d.setStroke(new BasicStroke(6.0f));
+                g2d.setColor(new Color(139, 69, 19));
+                g2d.drawRect(40, 40, getWidth() - 80, getHeight() - 80);
+                
+                g2d.dispose();
+            }
+        };
+        
+        bannerPanel.setLayout(new GridBagLayout());
+        bannerPanel.setOpaque(false);
+        GridBagConstraints gbc = new GridBagConstraints();
+        
+        // Congratulations!
+        JLabel congratsLabel = new JLabel("Congratulations!");
+        congratsLabel.setFont(new Font("Serif", Font.BOLD, 54));
+        congratsLabel.setForeground(new Color(139, 69, 19));
+        congratsLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.insets = new Insets(0, 0, 40, 0);
+        bannerPanel.add(congratsLabel, gbc);
+        
+        // The next level is starting!
+        JLabel nextLevelLabel = new JLabel("The next level is starting!");
+        nextLevelLabel.setFont(new Font("Serif", Font.ITALIC, 32));
+        nextLevelLabel.setForeground(new Color(160, 82, 45));
+        nextLevelLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        
+        gbc.gridy = 1;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        bannerPanel.add(nextLevelLabel, gbc);
+        
+        // Aggiungi il banner alla finestra principale
+        this.add(bannerPanel);
+        this.revalidate();
+        this.repaint();
+        
+        this.showBannerWithTimer();
     }
     
     private JLabel createMessageLabel() 
@@ -63,8 +135,8 @@ public class BannerPanel extends JPanel
         
     private Timer createAutoHideTimer() 
     {
-    	// Nasconde automaticamente il banner dopo 3 secondi
-        Timer timer = new Timer(3000, e -> setVisible(false));
+    	// Nasconde automaticamente il banner dopo 7 secondi
+        Timer timer = new Timer(7000, e -> setVisible(false));
         timer.setRepeats(false);
         return timer;
     }

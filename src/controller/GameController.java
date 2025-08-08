@@ -390,4 +390,11 @@ public class GameController
         	levelMap.updateToolTip();
         }
     }
+
+	public int getLevelIndex() 
+	{
+		return this.game.getCurrentLevelIndex();
+	}
+    
+    
 }

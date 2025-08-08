@@ -191,7 +191,6 @@ public class Game
         try 
         {
             Level livello = this.gameLevels.get(this.currentLevelIndex);
-            System.out.print("Inizia il livelloooooooooooooooooooo");
 
             livello.play();
         } 
@@ -213,7 +212,7 @@ public class Game
         {
             System.out.println("Livello " + (this.currentLevelIndex+1) + " completato.");
 
-            if (this.currentLevelIndex+1  >=  Game.TOTAL_LEVEL)
+            if ((this.currentLevelIndex+1)  >=  Game.TOTAL_LEVEL)
             {
                 System.out.println("Tutti i livelli completati!");
                 this.stopGameLoop();

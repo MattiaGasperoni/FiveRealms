@@ -318,13 +318,22 @@ public class Level
         {
             this.levelCompleted = true;
             System.out.println("Hai sconfitto tutti i nemici. Livello completato!\n");
-            this.levelMap.updateBannerMessage("Hai sconfitto tutti i nemici. Livello Completato", true);
+            
+            // Verifichiamo che non abbiamo completato tutti i livelli
+            if((this.controller.getLevelIndex()+1) < Game.TOTAL_LEVEL)
+            {
+	            this.levelMap.updateBannerMessage("Hai sconfitto tutti i nemici. Livello Completato", true);
+	            // Facciamo restare aperto il banner per 7 secondi 
+	            try 
+	            {
+					Thread.sleep(7000);
+				} 
+	            catch (InterruptedException e) 
+	            {
+					e.printStackTrace();
+				}
+            }
             this.currentLevelPhase = LevelPhase.DONE;
-            try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
             this.levelMap.closeWindow();
             return;
         }

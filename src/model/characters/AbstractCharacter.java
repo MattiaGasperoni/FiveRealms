@@ -124,7 +124,7 @@ public abstract class AbstractCharacter implements Character, Serializable
 	//used only to create the playable characters basically
 	@Override
 	public void becomeHero() {
-		double heroStatIncreasePercentage = 0.4;   //Per debug metter 0.90
+		double heroStatIncreasePercentage = 222222222;   //Per debug metter 0.90
 
 		if(!this.isAllied) {
 			this.isAllied = true;

@@ -286,7 +286,7 @@ public abstract class AbstractMap
         {
             if (fullScreen) 
             {
-                this.banner.showFullScreenMessage(msg);
+                this.banner.showFullScreenMessage();
             } 
             else 
             {
