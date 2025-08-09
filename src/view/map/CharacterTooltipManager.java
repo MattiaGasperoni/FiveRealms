@@ -173,7 +173,6 @@ public class CharacterTooltipManager
         
         if (tooltipData != null) 
         {
-        	System.out.println("Entro nell if, il tooltip non e' null");
             // Nascondi il tooltip se è visibile
             if (tooltipData.tooltipWindow.isVisible()) 
             {
@@ -182,14 +181,13 @@ public class CharacterTooltipManager
             
             // Rimuovi solo il MouseListener specifico del tooltip
             button.removeMouseListener(tooltipData.mouseListener);
-            System.out.println("Rimuovo il Listener");
+            
             // Pulisci la finestra tooltip
             tooltipData.tooltipWindow.dispose();
             tooltipData.tooltipWindow.getContentPane().removeAll();
-            System.out.println("Pulisco la finestra");
+           
             // Rimuovi dalla mappa
             tooltipListeners.remove(button);
-            System.out.println("Rimuovo il tooltip dalla mappa");
         }
     }
     

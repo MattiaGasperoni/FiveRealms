@@ -1,6 +1,9 @@
 package view.map;
 
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -363,7 +366,10 @@ public abstract class AbstractMap
     public void closeWindow() 
     {
         if (this.frame != null) 
-            this.frame.dispose();
+        {
+        	this.frame.dispose();
+        	this.removeAllEvent();
+        }
         
     }
     
@@ -543,6 +549,58 @@ public abstract class AbstractMap
 	    for(Entry<Character, Point> entry : this.characterMap.entrySet())
 	    {
 		    this.tooltipManager.showCharacterTooltip(entry.getKey(), this.gridPanel.getGridButtons()[entry.getValue().getX()][entry.getValue().getY()]);
+	    }
+	}
+	
+	
+	public void removeAllEvent() {
+	    JButton[][] buttonGrid = this.gridPanel.getGridButtons();
+
+	    for (JButton[] row : buttonGrid)
+	    {
+	        for (JButton button : row) 
+	        {
+	            if (button == null) 
+	            {
+	                continue; // salta eventuali celle vuote
+	            }
+
+	            // Rimuove ActionListener se presenti
+	            ActionListener[] als = button.getActionListeners();
+	            if (als != null && als.length > 0) 
+	            {
+	                for (ActionListener al : als) 
+	                {
+	                    button.removeActionListener(al);
+	                }
+	            }
+
+	            // Rimuove MouseListener se presenti
+	            MouseListener[] mls = button.getMouseListeners();
+	            if (mls != null && mls.length > 0) 
+	            {
+	                for (MouseListener ml : mls) 
+	                {
+	                    button.removeMouseListener(ml);
+	                }
+	            }
+
+	            // Rimuove MouseMotionListener se presenti
+	            MouseMotionListener[] mmls = button.getMouseMotionListeners();
+	            if (mmls != null && mmls.length > 0) 
+	            {
+	                for (MouseMotionListener mml : mmls) 
+	                {
+	                    button.removeMouseMotionListener(mml);
+	                }
+	            }
+
+	            // Rimuove tooltip solo se esiste
+	            if (button.getToolTipText() != null) 
+	            {
+	            	this.tooltipManager.removeCharacterTooltip(button);
+	            }
+	        }
 	    }
 	}
 
