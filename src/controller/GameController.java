@@ -8,17 +8,17 @@ import java.util.stream.Collectors;
 import model.characters.Character;
 import model.gameStatus.Game;
 import model.gameStatus.Level;
-import model.gameStatus.saveSystem.GameState;
-import model.gameStatus.saveSystem.GameStateManager;
+import model.gameStatus.saveSystem.GameSave;
+import model.gameStatus.saveSystem.GameSaveManager;
 import model.point.Point;
-import view.CharacterReplaceMenu;
-import view.CharacterSelectionMenu;
 import view.PauseMenu;
 import view.map.AbstractMap;
 import view.menu.EndGameMenu;
 import view.menu.LoadGameMenu;
 import view.menu.MainMenu;
 import view.menu.TutorialMenu;
+import view.selectionMenu.CharacterReplaceMenu;
+import view.selectionMenu.CharacterSelectionMenu;
 
 /**
  * Controller class that coordinates user actions with the game logic.
@@ -28,7 +28,7 @@ import view.menu.TutorialMenu;
 public class GameController 
 {
     private Game game;
-    private GameStateManager gameStateManager;
+    private GameSaveManager gameStateManager;
     
     private MainMenu mainMenuView;
     private LoadGameMenu loadGameMenu;
@@ -38,7 +38,7 @@ public class GameController
     private EndGameMenu endGameMenu;
     private PauseMenu pauseMenu;
 
-    public GameController(Game game, GameStateManager gameStateManager, MainMenu mainMenu, LoadGameMenu loadGameMenu,TutorialMenu tutorialMenu, CharacterSelectionMenu characterSelectionMenu,CharacterReplaceMenu characterReplaceMenu, EndGameMenu endGameMenu) 
+    public GameController(Game game, GameSaveManager gameStateManager, MainMenu mainMenu, LoadGameMenu loadGameMenu,TutorialMenu tutorialMenu, CharacterSelectionMenu characterSelectionMenu,CharacterReplaceMenu characterReplaceMenu, EndGameMenu endGameMenu) 
     {
         this.game             = game;
         this.gameStateManager = gameStateManager;
@@ -335,7 +335,7 @@ public class GameController
     {
     	Level currentLevel = this.game.getGameLevels().get(this.game.getCurrentLevelIndex());
     	
-    	GameState currentGameState = new GameState(this.game.getCurrentLevelIndex(), currentLevel.getAllies(), currentLevel.getEnemies());
+    	GameSave currentGameState = new GameSave(this.game.getCurrentLevelIndex(), currentLevel.getAllies(), currentLevel.getEnemies());
     	
         this.gameStateManager.saveGameState(currentGameState,null);
         
@@ -347,7 +347,7 @@ public class GameController
      * @throws IOException If an error occurs during loading.
      * @throws ClassNotFoundException 
      */
-    public GameState loadGame() throws IOException, ClassNotFoundException 
+    public GameSave loadGame() throws IOException, ClassNotFoundException 
     {
         return gameStateManager.loadGameState(null); 
     }

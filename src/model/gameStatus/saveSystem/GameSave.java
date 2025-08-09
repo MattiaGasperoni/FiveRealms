@@ -9,7 +9,7 @@ import java.util.Objects;
 /**
  * Class representing the state of the game at a specific moment.
  */
-public class GameState implements Serializable 
+public class GameSave implements Serializable 
 {
     private static final long serialVersionUID = 1L;
 
@@ -28,7 +28,7 @@ public class GameState implements Serializable
      * @param allies  The list of allied characters. If null, it will be initialized as an empty list.
      * @param enemies The list of enemy characters. If null, it will be initialized as an empty list.
      */
-    public GameState(int level, List<Character> allies, List<Character> enemies) 
+    public GameSave(int level, List<Character> allies, List<Character> enemies) 
     {
         this.level   = level;
         this.allies  = Collections.unmodifiableList(Objects.requireNonNullElse(allies, Collections.emptyList()));
@@ -73,7 +73,7 @@ public class GameState implements Serializable
     {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
-        GameState gameState = (GameState) obj;
+        GameSave gameState = (GameSave) obj;
         return level == gameState.level &&
                Objects.equals(allies, gameState.allies) &&
                Objects.equals(enemies, gameState.enemies);

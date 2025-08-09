@@ -9,63 +9,74 @@ import java.util.concurrent.TimeUnit;
 import model.characters.*;
 import model.characters.Character;
 import model.characters.bosses.*;
-import model.gameStatus.saveSystem.GameStateManager;
-import view.CharacterReplaceMenu;
-import view.CharacterSelectionMenu;
+import model.gameStatus.saveSystem.GameSaveManager;
 import view.map.*;
 import view.menu.EndGameMenu;
 import view.menu.LoadGameMenu;
 import view.menu.MainMenu;
 import view.menu.TutorialMenu;
+import view.selectionMenu.CharacterReplaceMenu;
+import view.selectionMenu.CharacterSelectionMenu;
 import controller.*;
 
 public class Game 
 {
-    public static final int TOTAL_LEVEL = 5;          // Numero di livelli del gioco
-    public static final int MAX_ALLIES_PER_ROUND = 3; // Numero di personaggi giocabili per round
+    // Costanti di gioco
+    public static final int TOTAL_LEVEL = 5;
+    public static final int MAX_ALLIES_PER_ROUND = 3;
 
-    private List<Level> gameLevels;          // Lista dei livelli del gioco
-    private List<Character> availableAllies; // Lista di tutti i personaggi giocabili
-    private List<Character> selectedAllies;  // Lista dei personaggi con cui l'utente giocherà il livello
-
+    // Stato del gioco
+    private List<Level> gameLevels;
+    private List<Character> availableAllies;
+    private List<Character> selectedAllies;
     private boolean waitingForCharacterReplacement = false;
+    private int currentLevelIndex = 0;
 
-    private GameStateManager gameStateManager;
+    // Gestione logica
+    private GameSaveManager gameSaveManager;
     private GameController controller;           
-    
-    private int currentLevelIndex;
     private ScheduledExecutorService gameExecutor;
 
-
-    // Oggetti Grafici
+    // UI
     private MainMenu mainMenu;
     private TutorialMenu tutorialMenu;
     private CharacterSelectionMenu characterSelectionMenu;
     private CharacterReplaceMenu characterReplaceMenu;
     private EndGameMenu endGameMenu;
-	private LoadGameMenu loadGameMenu;
+    private LoadGameMenu loadGameMenu;
+
     
 
     public Game() 
     {
-        this.gameLevels      = new ArrayList<>();
-        this.availableAllies = new ArrayList<>();
-        this.selectedAllies  = new ArrayList<>();
-       
+        this.gameLevels        = new ArrayList<>();
+        this.availableAllies   = new ArrayList<>();
+        this.selectedAllies    = new ArrayList<>();
         this.currentLevelIndex = 0;
+        this.gameSaveManager   = new GameSaveManager();
         
-        // Inizializzazione Oggetti Grafici
+        this.initUI();
+        
+    	this.initController();
+}
+    
+    private void initUI() 
+    {
         this.mainMenu               = new MainMenu();
         this.loadGameMenu           = new LoadGameMenu();
         this.tutorialMenu           = new TutorialMenu();
         this.endGameMenu            = new EndGameMenu();
-        
         this.characterSelectionMenu = new CharacterSelectionMenu();
         this.characterReplaceMenu   = new CharacterReplaceMenu();
-        
-        this.gameStateManager       = new GameStateManager();
-        
-        this.controller = new GameController(this, this.gameStateManager, this.mainMenu, this.loadGameMenu, this.tutorialMenu, this.characterSelectionMenu,this.characterReplaceMenu, this.endGameMenu); 
+    }
+
+    private void initController() 
+    {
+        this.controller = new GameController(
+            this, this.gameSaveManager,
+            this.mainMenu, this.loadGameMenu, this.tutorialMenu,
+            this.characterSelectionMenu, this.characterReplaceMenu, this.endGameMenu
+        );
     }
         
     public void start() 
@@ -92,12 +103,12 @@ public class Game
             this.initializeGameLevels();
 
             // Carichiamo i dati del salvataggio specifico
-            this.gameStateManager.loadFileInfo(saveFile);
+            this.gameSaveManager.loadFileInfo(saveFile);
             
             // Estraiamo i dati usando i getter
-            List<Character> allies  = this.gameStateManager.getLoadedAllies();
-            List<Character> enemies = this.gameStateManager.getLoadedEnemies();
-            int numLevel            = this.gameStateManager.getLoadedLevel();
+            List<Character> allies  = this.gameSaveManager.getLoadedAllies();
+            List<Character> enemies = this.gameSaveManager.getLoadedEnemies();
+            int numLevel            = this.gameSaveManager.getLoadedLevel();
             
             // Reinizializza i character riottenendo le immagini
             allies  = this.reinitializeCharacters(allies);
@@ -110,7 +121,7 @@ public class Game
             this.startCurrentLevel();
 
             // Puliamo la cache per liberare memoria
-            this.gameStateManager.clearLoadedGameState();
+            this.gameSaveManager.clearLoadedGameState();
 
             // Avviamo il game loop
             this.gameExecutor.scheduleAtFixedRate(() -> 
@@ -312,12 +323,19 @@ public class Game
     
     public void addSelectedCharacters(List<Character> selectedAllies) 
     {
-    	for(Character character : selectedAllies)
-    	{
-    		this.selectedAllies.add(character);
-    		character.becomeHero();
-    	}
-	}
+        for (Character character : selectedAllies) 
+        {
+            if (character != null && character.isAlive()) 
+            {
+                this.selectedAllies.add(character);
+                character.becomeHero();
+            } 
+            else 
+            {
+                System.out.println("Skipping invalid or dead character: " + (character == null ? "null" : character.getClass().getSimpleName()));
+            }
+        }
+    }
     
     private void initializeGameLevels()
     {

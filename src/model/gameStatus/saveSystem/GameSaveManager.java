@@ -3,20 +3,18 @@ package model.gameStatus.saveSystem;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import model.characters.*;
 import model.characters.Character;
 
-public class GameStateManager 
+public class GameSaveManager 
 {
     // Nome della cartella dove vengono salvati i file di salvataggio
     public static final String DIRECTORY_NAME = "saves";
     public static final String FILE_EXTENSION = ".sav";
 
-    private GameState currentLoadedGameState = null;
+    private GameSave currentLoadedGameState = null;
 
     /**
      * Salva lo stato del gioco usando la serializzazione Java.
@@ -24,7 +22,7 @@ public class GameStateManager
      * @param fileName Nome del file (opzionale, se null viene generato automaticamente).
      * @throws IOException Se si verifica un errore durante il salvataggio.
      */
-    public void saveGameState(GameState gameState, String fileName) throws IOException 
+    public void saveGameState(GameSave gameState, String fileName) throws IOException 
     {
         // Crea la directory se non esiste
         File directory = new File(DIRECTORY_NAME);
@@ -68,7 +66,7 @@ public class GameStateManager
      * @throws IOException Se si verifica un errore durante il caricamento.
      * @throws ClassNotFoundException Se la classe GameState non può essere trovata durante la deserializzazione.
      */
-    public GameState loadGameState(String fileName) throws IOException, ClassNotFoundException 
+    public GameSave loadGameState(String fileName) throws IOException, ClassNotFoundException 
     {
         // Se fileName è null, carica l'ultimo salvataggio
         if (fileName == null) 
@@ -95,7 +93,7 @@ public class GameStateManager
 
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(saveFile))) 
         {
-            GameState gameState = (GameState) ois.readObject();
+            GameSave gameState = (GameSave) ois.readObject();
             System.out.println("=== Game state loaded successfully from " + fileName + " ===");
             return gameState;
         } 
@@ -182,7 +180,7 @@ public class GameStateManager
      * @throws IOException Se si verifica un errore durante il caricamento.
      * @throws ClassNotFoundException Se la classe GameState non può essere trovata.
      */
-    public GameState loadLatestGameState() throws IOException, ClassNotFoundException 
+    public GameSave loadLatestGameState() throws IOException, ClassNotFoundException 
     {
         File latestSaveFile = getLatestSaveFile();
         if (latestSaveFile == null) 
@@ -325,7 +323,7 @@ public class GameStateManager
      * @return Il GameState completo.
      * @throws IllegalStateException Se nessun file è stato caricato.
      */
-    public GameState getCurrentLoadedGameState() {
+    public GameSave getCurrentLoadedGameState() {
         if (currentLoadedGameState == null) {
             throw new IllegalStateException("No game state loaded. Call loadFileInfo() or getFileInfo() first.");
         }

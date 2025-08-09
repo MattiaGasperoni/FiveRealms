@@ -322,6 +322,7 @@ public class Level
             // Verifichiamo che non abbiamo completato tutti i livelli
             if((this.controller.getLevelIndex()+1) < Game.TOTAL_LEVEL)
             {
+            	this.levelMap.removeAllEvent();
 	            this.levelMap.updateBannerMessage("Hai sconfitto tutti i nemici. Livello Completato", true);
 	            // Facciamo restare aperto il banner per 7 secondi 
 	            try 

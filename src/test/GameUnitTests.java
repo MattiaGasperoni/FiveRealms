@@ -10,7 +10,7 @@ import java.util.List;
 
 import model.gameStatus.Game;
 import model.gameStatus.Level;
-import model.gameStatus.saveSystem.GameStateManager;
+import model.gameStatus.saveSystem.GameSaveManager;
 import model.characters.Character;
 import model.characters.Barbarian;
 import model.characters.Archer;
