@@ -2,6 +2,6 @@ package model.equipment.potions;
 
 public interface Potion {
 	
-	public int getPotionValue();
+	public double getPotionValue();
 
 }

@@ -6,14 +6,14 @@ public abstract class AbstractPotion implements Potion, Serializable {
     
 	private static final long serialVersionUID = 1L;  // per salvare lo stato del gioco
 
-    private final int potionValue;
+    private final double potionValue;
     
-    public AbstractPotion(int potionValue) {
-    	this.potionValue = potionValue;
+    public AbstractPotion(double d) {
+    	this.potionValue = d;
     }
 
 	@Override
-	public int getPotionValue() {
+	public double getPotionValue() {
 		return this.potionValue;
 	}
    

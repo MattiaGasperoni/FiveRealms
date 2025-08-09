@@ -19,7 +19,5 @@ public class BarbarianBoss extends Barbarian{
 	public void reduceCurrentHealth(int value) {
 		super.reduceCurrentHealth(value);
 		super.increasePower(this.STAT_INCREASE_PERCENTAGE);
-		super.increaseDefence(this.STAT_INCREASE_PERCENTAGE);
-		super.increaseSpeed(this.STAT_INCREASE_PERCENTAGE);
 	}
 }

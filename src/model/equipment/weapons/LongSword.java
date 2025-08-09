@@ -3,7 +3,7 @@ package model.equipment.weapons;
 public class LongSword extends AbstractWeapon{
 
 	public LongSword() {
-		super(-3,10,8,1);
+		super(0,20,10,1);
 	}
 
 	

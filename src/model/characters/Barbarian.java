@@ -7,7 +7,7 @@ import model.point.Point;
 public class Barbarian extends AbstractCharacter{
 
 	public Barbarian() {
-		super(rand.nextInt(120,140), rand.nextInt(20,40), rand.nextInt(70,90), rand.nextInt(10,30)); //Random
+		super(rand.nextInt(160,180), rand.nextInt(30,50), rand.nextInt(145,165), rand.nextInt(40,60)); //Random
 		this.availableWeapons.add(new Axe());
 		this.availableWeapons.add(new LongSword());
 		super.spawnWeapon();

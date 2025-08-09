@@ -7,7 +7,7 @@ import model.point.Point;
 public class Knight extends AbstractCharacter{
 
 	public Knight() {
-		super(rand.nextInt(80,90), rand.nextInt(40,50), rand.nextInt(70,80), rand.nextInt(50,60)); //Random
+		super(rand.nextInt(120,140), rand.nextInt(50,70), rand.nextInt(130,150), rand.nextInt(70,90)); //Random
 		this.availableWeapons.add(new Spear());
 		this.availableWeapons.add(new LongSword());
 		super.spawnWeapon();

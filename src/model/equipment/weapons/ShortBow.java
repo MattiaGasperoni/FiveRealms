@@ -3,7 +3,7 @@ package model.equipment.weapons;
 public class ShortBow extends AbstractWeapon{
 
 	public ShortBow() {
-		super(5,6,-1,8);
+		super(10,15,0,6);
 	}
 	
 }

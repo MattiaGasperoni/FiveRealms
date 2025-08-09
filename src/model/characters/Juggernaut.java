@@ -7,7 +7,7 @@ import model.point.Point;
 public class Juggernaut extends AbstractCharacter{
 
 	public Juggernaut() {
-		super(rand.nextInt(80,100), rand.nextInt(10,30), rand.nextInt(50,70), rand.nextInt(70,90)); //Random
+		super(rand.nextInt(160,180), rand.nextInt(40,60), rand.nextInt(135,155), rand.nextInt(110,130)); //Random
 		this.availableWeapons.add(new ShortSword());
 		this.availableWeapons.add(new Axe());
 		super.spawnWeapon();
