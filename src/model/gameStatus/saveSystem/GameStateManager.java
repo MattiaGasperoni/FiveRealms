@@ -229,7 +229,7 @@ public class GameStateManager
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH-mm_dd-MM-yyyy");
         String timestamp = now.format(formatter);
         
-        return "Level" + level + "_" + timestamp + FILE_EXTENSION;
+        return "Level" + (level+1) + "_" + timestamp + FILE_EXTENSION;
     }
     
     

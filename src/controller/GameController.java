@@ -202,6 +202,8 @@ public class GameController
             {
             	// Chiudiamo la finestra del menu di pausa
 				this.pauseMenu.hide();
+				Level currentLevel = this.game.getGameLevels().get(this.game.getCurrentLevelIndex());
+	        	currentLevel.setLevelPaused(false);
 			}
     	});
 
