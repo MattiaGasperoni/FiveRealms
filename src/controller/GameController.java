@@ -28,7 +28,6 @@ import view.selectionMenu.CharacterSelectionMenu;
 public class GameController 
 {
     private Game game;
-    private GameSaveManager gameStateManager;
     
     private MainMenu mainMenuView;
     private LoadGameMenu loadGameMenu;
@@ -37,31 +36,49 @@ public class GameController
     private CharacterReplaceMenu characterReplaceMenu;
     private EndGameMenu endGameMenu;
     private PauseMenu pauseMenu;
+	private GameSaveManager gameSaveManager;
+    
 
-    public GameController(Game game, GameSaveManager gameStateManager, MainMenu mainMenu, LoadGameMenu loadGameMenu,TutorialMenu tutorialMenu, CharacterSelectionMenu characterSelectionMenu,CharacterReplaceMenu characterReplaceMenu, EndGameMenu endGameMenu) 
+    public GameController(Game game, GameSaveManager gsm) 
     {
-        this.game             = game;
-        this.gameStateManager = gameStateManager;
-        
-        this.mainMenuView           = mainMenu;
-        this.loadGameMenu           = loadGameMenu;
-        this.tutorialMenu           = tutorialMenu;
-        this.characterSelectionMenu = characterSelectionMenu;
-        this.characterReplaceMenu   = characterReplaceMenu;
-        this.endGameMenu            = endGameMenu;
-        this.pauseMenu              = null;
-
+        this.game = game;
+        this.gameSaveManager = gsm;
+        this.initUI();
+              
         this.checkExistSave();
         
         this.setupMainMenuListeners();
         this.setupEndGameListeners();
         this.setupLoadMenuListeners();
     }
+    
+    
+    private void initUI() 
+    {
+        this.mainMenuView           = new MainMenu();
+        this.loadGameMenu           = new LoadGameMenu();
+        this.tutorialMenu           = new TutorialMenu();
+        this.endGameMenu            = new EndGameMenu();
+        this.characterSelectionMenu = new CharacterSelectionMenu();
+        this.characterReplaceMenu   = new CharacterReplaceMenu();
+    }
         
     private void checkExistSave()
     {
     	// Controlla se esistono salvataggi e abilita/disabilita il pulsante
-        this.mainMenuView.setLoadButtonEnabled(this.gameStateManager.hasSaved());
+        this.mainMenuView.setLoadButtonEnabled(this.gameSaveManager.hasSaved());
+    }
+    
+    public void mainMenuShow()
+    {
+		this.mainMenuView.show();	
+    }
+    
+    public void endGameMenuShow(boolean result)
+    {
+        this.endGameMenu.setGameResult(result);
+    	// Appare il menu per la selezione dei personaggi
+        this.endGameMenu.show();   	
     }
     
     private void setupMainMenuListeners() 
@@ -124,7 +141,7 @@ public class GameController
     	this.loadGameMenu.addChooseSaveListener(event -> 
         {            
             // Carica i salvataggi disponibili
-            File[] saveFiles = this.gameStateManager.getSaveFiles();
+            File[] saveFiles = this.gameSaveManager.getSaveFiles();
             
             //Mostra i salvataggi
             this.loadGameMenu.showSaveFile(saveFiles);
@@ -262,8 +279,6 @@ public class GameController
         this.game.startSelectionCharacter();
     }
     
-
-    
     public void startSelectionCharacter()
     {
         List<Character> availableCharacter = this.game.createAllies();
@@ -278,20 +293,33 @@ public class GameController
             this.game.setSelectedCharacters(characterSelected);
             
             this.characterSelectionMenu.close();
-
+            
+            this.characterSelectionMenu = null;
+            
             this.game.startNewLevel();
         });
     }
     
     public void startReplaceDeadAllies(int alliesToChange)
-    {        
+    {       
+    	if(this.characterReplaceMenu == null)
+    	{
+    		this.characterReplaceMenu = new CharacterReplaceMenu();
+    	}
+    	System.out.print("Personaggi da scegliere: "+alliesToChange);
     	List<Character> availableAllies = this.getCharacterToChange(this.game.createAllies(), this.game.getSelectedAllies());
         
-        this.characterReplaceMenu.start(availableAllies,alliesToChange);
+        this.characterReplaceMenu.start(availableAllies, alliesToChange);
         
         this.characterReplaceMenu.addNextButtonListener(event -> 
         {            
             List<Character> characterSelected = this.transformList(availableAllies, this.characterReplaceMenu.getSelectedCharacterNames());
+            
+            
+            for (Character elemento : characterSelected) 
+            {
+                System.out.println("squadra del prossimo livello : "+elemento.getClass().getSimpleName()+" "+ (elemento.isAlive() ? "vivo": "morto"));
+            }
             
             this.game.addSelectedCharacters(characterSelected);
             
@@ -302,10 +330,18 @@ public class GameController
         	}
         	      
             this.characterReplaceMenu.close();
-            System.out.print("Fine sostituzione personaggio");
-
+           
+            
+            if (this.game.getSelectedAllies().size() > 3)
+            {
+            	 System.err.print("BUG: rimozione ultimo pg inserito");
+            	this.game.getSelectedAllies().removeLast();
+            }
+            	
             // Segnala che la sostituzione è completata
             this.game.markCharacterReplacementCompleted();
+            
+            this.characterReplaceMenu = null;
         });
     }
     
@@ -337,7 +373,7 @@ public class GameController
     	
     	GameSave currentGameState = new GameSave(this.game.getCurrentLevelIndex(), currentLevel.getAllies(), currentLevel.getEnemies());
     	
-        this.gameStateManager.saveGameState(currentGameState,null);
+        this.gameSaveManager.saveGameState(currentGameState,null);
         
     }
 
@@ -349,7 +385,7 @@ public class GameController
      */
     public GameSave loadGame() throws IOException, ClassNotFoundException 
     {
-        return gameStateManager.loadGameState(null); 
+        return gameSaveManager.loadGameState(null); 
     }
     
     /**

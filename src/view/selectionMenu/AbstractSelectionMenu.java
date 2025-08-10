@@ -232,19 +232,24 @@ public abstract class AbstractSelectionMenu
 		panel.add(lbl, BorderLayout.SOUTH);
 		
 		// Character selection logic
-		panel.addMouseListener(new MouseAdapter() {
-		public void mouseClicked(MouseEvent e) {
-		if (selectedPanels.contains(panel)) {
-		  selectedPanels.remove(panel);
-		  selectedCharacters.remove(name);
-		  panel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
-		} else if (selectedPanels.size() < maxSelectableCharacters) {
-		  selectedPanels.add(panel);
-		  selectedCharacters.add(name);
-		  panel.setBorder(BorderFactory.createLineBorder(Color.ORANGE, 3)); // glow selezione
-		}
-		nextButton.setEnabled(selectedPanels.size() == maxSelectableCharacters);
-		}
+		panel.addMouseListener(new MouseAdapter() 
+		{
+			public void mouseClicked(MouseEvent e) 
+			{		
+				if (selectedPanels.contains(panel)) 
+				{
+				  selectedPanels.remove(panel);
+				  selectedCharacters.remove(name);
+				  panel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
+				} 
+				else if (selectedPanels.size() < maxSelectableCharacters) 
+				{
+				  selectedPanels.add(panel);
+				  selectedCharacters.add(name);
+				  panel.setBorder(BorderFactory.createLineBorder(Color.ORANGE, 3)); // glow selezione
+				}
+				nextButton.setEnabled(selectedPanels.size() == maxSelectableCharacters);
+			}
 		
 		public void mouseEntered(MouseEvent e) {
 		if (!selectedPanels.contains(panel)) {
@@ -287,7 +292,8 @@ public abstract class AbstractSelectionMenu
     /**
      * Closes and disposes of the character selection menu frame.
      */
-    public void close() {
+    public void close() 
+    {
         if (this.frame != null) 
         {
         	this.frame.dispose();

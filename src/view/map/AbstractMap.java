@@ -394,6 +394,11 @@ public abstract class AbstractMap
 	 */
 	public void spawnCharacter(List<Character> spawnList)
 	{
+		for (Character elemento : spawnList) 
+        {
+            System.out.println("personaggi da spawnare nella mappa"+elemento.getClass().getSimpleName()+" "+ (elemento.isAlive() ? "vivo": "morto"));
+        }
+		
 	    if (spawnList == null || spawnList.isEmpty()) 
 	    {
 	        System.err.println("Spawn list is null or empty.");

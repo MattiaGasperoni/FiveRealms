@@ -11,12 +11,6 @@ import model.characters.Character;
 import model.characters.bosses.*;
 import model.gameStatus.saveSystem.GameSaveManager;
 import view.map.*;
-import view.menu.EndGameMenu;
-import view.menu.LoadGameMenu;
-import view.menu.MainMenu;
-import view.menu.TutorialMenu;
-import view.selectionMenu.CharacterReplaceMenu;
-import view.selectionMenu.CharacterSelectionMenu;
 import controller.*;
 
 public class Game 
@@ -37,16 +31,6 @@ public class Game
     private GameController controller;           
     private ScheduledExecutorService gameExecutor;
 
-    // UI
-    private MainMenu mainMenu;
-    private TutorialMenu tutorialMenu;
-    private CharacterSelectionMenu characterSelectionMenu;
-    private CharacterReplaceMenu characterReplaceMenu;
-    private EndGameMenu endGameMenu;
-    private LoadGameMenu loadGameMenu;
-
-    
-
     public Game() 
     {
         this.gameLevels        = new ArrayList<>();
@@ -55,33 +39,13 @@ public class Game
         this.currentLevelIndex = 0;
         this.gameSaveManager   = new GameSaveManager();
         
-        this.initUI();
         
-    	this.initController();
-}
-    
-    private void initUI() 
-    {
-        this.mainMenu               = new MainMenu();
-        this.loadGameMenu           = new LoadGameMenu();
-        this.tutorialMenu           = new TutorialMenu();
-        this.endGameMenu            = new EndGameMenu();
-        this.characterSelectionMenu = new CharacterSelectionMenu();
-        this.characterReplaceMenu   = new CharacterReplaceMenu();
-    }
-
-    private void initController() 
-    {
-        this.controller = new GameController(
-            this, this.gameSaveManager,
-            this.mainMenu, this.loadGameMenu, this.tutorialMenu,
-            this.characterSelectionMenu, this.characterReplaceMenu, this.endGameMenu
-        );
+        this.controller = new GameController(this, this.gameSaveManager);
     }
         
     public void start() 
     {
-		this.mainMenu.show();	
+		this.controller.mainMenuShow();	
 	}
 
     public void startNewGame() throws IOException 
@@ -234,6 +198,11 @@ public class Game
                 if(this.selectedAllies.size() < 3)
                 {
                     this.setWaitingForCharacterReplacement(true);
+                    for (Character elemento : this.selectedAllies) 
+                    {
+                        System.out.println("Alleati rimasti in vita dal livello"+elemento.getClass().getSimpleName()+" "+ (elemento.isAlive() ? "vivo": "morto"));
+                    }
+
                     this.controller.startReplaceDeadAllies(Game.MAX_ALLIES_PER_ROUND - this.selectedAllies.size());
                 }
                 else
@@ -285,10 +254,7 @@ public class Game
     
     private void showEndGameMenu(boolean result) 
     {
-        this.endGameMenu.setGameResult(result);
-    	// Appare il menu per la selezione dei personaggi
-        this.endGameMenu.show();
-        
+    	this.controller.endGameMenuShow(result);
     }
     
     private void stopGameLoop() 
