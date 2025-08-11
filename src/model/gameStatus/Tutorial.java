@@ -40,6 +40,7 @@ public class Tutorial
      */
     public boolean play() 
     {
+    	
         // Mostra la mappa del tutorial
         this.tutorialMap.start();
         
