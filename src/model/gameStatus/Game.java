@@ -31,9 +31,6 @@ public class Game
     private GameController controller;           
     private ScheduledExecutorService gameExecutor;
 
-    
-    private MusicManager musicManager;
-
     public Game() 
     {
         this.gameLevels        = new ArrayList<>();
@@ -44,15 +41,12 @@ public class Game
         this.currentLevelIndex = 0;
         
         this.gameSaveManager   = new GameSaveManager();
-        this.musicManager      = new MusicManager();
         
         this.controller   = new GameController(this, this.gameSaveManager);
-        
     }
         
     public void start() 
     {
-    	this.musicManager.play("background", true);
 		this.controller.mainMenuShow();	
 	}
 
@@ -174,7 +168,7 @@ public class Game
         try 
         {
             Level livello = this.gameLevels.get(this.currentLevelIndex);
-            musicManager.play("level" + (this.currentLevelIndex+1), true);
+            this.controller.startLevelMusic(this.currentLevelIndex+1);
             livello.play();
         } 
         catch (IOException e) 
@@ -194,7 +188,9 @@ public class Game
         if (livello.isCompleted() && !this.isWaitingForCharacterReplacement())
         {
             System.out.println("Livello " + (this.currentLevelIndex+1) + " completato.");
-
+            
+            this.controller.stopLevelMusic();
+            
             if ((this.currentLevelIndex+1)  >=  Game.TOTAL_LEVEL)
             {
                 System.out.println("Tutti i livelli completati!");
@@ -262,9 +258,7 @@ public class Game
     
     private void showEndGameMenu(boolean result) 
     {
-    	this.musicManager.play((result ? "win" : "lose"), false);
-    	this.controller.endGameMenuShow(result);
-    	
+    	this.controller.endGameMenuShow(result);	
     }
     
     private void stopGameLoop() 

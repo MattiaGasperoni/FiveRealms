@@ -558,7 +558,8 @@ public abstract class AbstractMap
 	}
 	
 	
-	public void removeAllEvent() {
+	public void removeAllEvent() 
+	{
 	    JButton[][] buttonGrid = this.gridPanel.getGridButtons();
 
 	    for (JButton[] row : buttonGrid)
@@ -607,6 +608,8 @@ public abstract class AbstractMap
 	            }
 	        }
 	    }
+	    
+	    this.tooltipManager = null;
 	}
 
 

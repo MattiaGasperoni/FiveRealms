@@ -79,7 +79,7 @@ public class Level
     public void play() throws IOException 
     {
         this.levelMap.start();
-
+        
         this.levelMap.spawnCharacter(this.enemiesList);
         this.levelMap.spawnCharacter(this.alliesList);
         

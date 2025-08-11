@@ -3,8 +3,6 @@ package model.point;
 import java.io.Serializable;
 import java.util.Objects;
 
-import model.equipment.weapons.Weapon;
-
 public class Point  implements Serializable{
 
     private static final long serialVersionUID = 1L;

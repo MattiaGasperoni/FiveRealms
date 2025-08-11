@@ -21,6 +21,7 @@ public class MusicManager
         this.tracks.put("level4", "music/level4.wav");
         this.tracks.put("level5", "music/level5.wav");
         this.tracks.put("background", "music/background.wav");
+        this.tracks.put("tutorial", "music/tutorial.wav");  //TODO: aggiungere musica per il tutorial
         this.tracks.put("win",  "music/win.wav");
         this.tracks.put("lose", "music/lose.wav");
     }

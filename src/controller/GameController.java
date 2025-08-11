@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import model.characters.Character;
 import model.gameStatus.Game;
 import model.gameStatus.Level;
+import model.gameStatus.MusicManager;
 import model.gameStatus.saveSystem.GameSave;
 import model.gameStatus.saveSystem.GameSaveManager;
 import model.point.Point;
@@ -21,418 +23,417 @@ import view.selectionMenu.CharacterReplaceMenu;
 import view.selectionMenu.CharacterSelectionMenu;
 
 /**
- * Controller class that coordinates user actions with the game logic.
- * It interacts with the GameStateManager to handle game saving/loading,
- * and manages the movement of characters on the map.
+ * Coordinates user actions with the game logic.
+ * <p>
+ * The controller manages the interaction between the game's model layer
+ * and various UI menus, including saving/loading, character management,
+ * and in-game operations such as movement and combat.
  */
 public class GameController 
 {
+
+    /* ==============================
+       Fields & Dependencies
+       ============================== */
     private Game game;
-    
-    private MainMenu mainMenuView;
+    private final GameSaveManager gameSaveManager;
+    private final MusicManager musicManager;
+
+    // View references
+    private MainMenu mainMenu;
     private LoadGameMenu loadGameMenu;
     private TutorialMenu tutorialMenu;
     private CharacterSelectionMenu characterSelectionMenu;
     private CharacterReplaceMenu characterReplaceMenu;
     private EndGameMenu endGameMenu;
     private PauseMenu pauseMenu;
-	private GameSaveManager gameSaveManager;
-    
 
+    /* ==============================
+       Constructor
+       ============================== */
+
+    /**
+     * Creates a GameController instance.
+     *
+     * @param game initial game instance
+     * @param gsm  save manager for game persistence
+     */
     public GameController(Game game, GameSaveManager gsm) 
     {
-        this.game = game;
+        this.game            = game;
         this.gameSaveManager = gsm;
+        this.musicManager    = new MusicManager();
+
         this.initUI();
-              
         this.checkExistSave();
-        
         this.setupMainMenuListeners();
         this.setupEndGameListeners();
         this.setupLoadMenuListeners();
     }
-    
-    
+
+    /* ==============================
+       Initialization
+       ============================== */
+
+    /** Initializes UI components. */
     private void initUI() 
     {
-        this.mainMenuView           = new MainMenu();
-        this.loadGameMenu           = new LoadGameMenu();
-        this.tutorialMenu           = new TutorialMenu();
-        this.endGameMenu            = new EndGameMenu();
+        this.mainMenu     = new MainMenu();
+        this.loadGameMenu = new LoadGameMenu();
+        this.tutorialMenu = new TutorialMenu();
+        this.endGameMenu  = new EndGameMenu();
         this.characterSelectionMenu = new CharacterSelectionMenu();
         this.characterReplaceMenu   = new CharacterReplaceMenu();
     }
-        
-    private void checkExistSave()
+
+    /** Enables/disables Load button depending on save existence. */
+    private void checkExistSave() 
     {
-    	// Controlla se esistono salvataggi e abilita/disabilita il pulsante
-        this.mainMenuView.setLoadButtonEnabled(this.gameSaveManager.hasSaved());
+        this.mainMenu.setLoadButtonEnabled(this.gameSaveManager.hasSaved());
     }
-    
-    public void mainMenuShow()
+
+    /* ==============================
+       Menu Navigation
+       ============================== */
+
+    /** Displays the main menu. */
+    public void mainMenuShow() 
     {
-		this.mainMenuView.show();	
+    	this.musicManager.play("background", true);
+        this.mainMenu.show();
     }
-    
-    public void endGameMenuShow(boolean result)
+
+    /**
+     * Displays the end-game menu with the given result.
+     *
+     * @param result true if the player won, false otherwise
+     */
+    public void endGameMenuShow(boolean result) 
     {
+    	this.musicManager.play((result ? "win" : "lose"), true);
         this.endGameMenu.setGameResult(result);
-    	// Appare il menu per la selezione dei personaggi
-        this.endGameMenu.show();   	
+        this.endGameMenu.show();
     }
-    
+
+    /* ==============================
+       Listener Setup
+       ============================== */
+
+    /** Configures listeners for the main menu. */
     private void setupMainMenuListeners() 
     {
-        mainMenuView.addStartListener(event -> 
+    	this.mainMenu.addStartListener(e -> 
         {
-            System.out.println(" You chose to start a new game.");
-            this.mainMenuView.close();
-            try
+        	this.log("Starting a new game...");
+            this.mainMenu.close();
+            try 
             {
-                this.game.startNewGame();
+            	this.game.startNewGame();
             } 
-            catch (IOException error) 
+            catch (IOException ex) 
             {
-                error.printStackTrace();
+                ex.printStackTrace();
             }
         });
 
-        mainMenuView.addLoadListener(event -> 
+    	this.mainMenu.addLoadListener(e -> 
         {
-            System.out.println(" You chose to load a game.");
-            this.mainMenuView.close();
-            this.loadGameMenu.show();
+        	this.log("Loading game menu...");
+        	this.mainMenu.close();
+        	this.loadGameMenu.show();
         });
 
-        mainMenuView.addExitListener(event -> 
-        {
-            System.out.println(" You chose to close the game.");
-            this.mainMenuView.close();
-            System.exit(0);
-        });
+        this.mainMenu.addExitListener(e -> this.exitGame());
     }
-    
-    private void setupEndGameListeners()
+
+    /** Configures listeners for the end-game menu. */
+    private void setupEndGameListeners() 
     {
-    	this.endGameMenu.addMainMenuListener(event -> 
-    	{
-    	    System.out.println(" You chose to return to Main Menu.");
-    	    
-    	    this.endGameMenu.close();
-    	    
-    	    this.game = null;
-    	    
-    	    Game newGame = new Game();
-            
-    	    newGame.start();
-    	    
-    	});
-
-    	this.endGameMenu.addExitListener(event -> 
-        {
-            System.out.println(" You chose to close the game.");
-            this.endGameMenu.close();
-            System.exit(0);
-        });
+    	this.endGameMenu.addMainMenuListener(e -> this.restartGameFromMenu());
+    	this.endGameMenu.addExitListener(e -> this.exitGame());
     }
-    
+
+    /** Configures listeners for the load-game menu. */
     private void setupLoadMenuListeners() 
     {
-    	this.loadGameMenu.addChooseSaveListener(event -> 
-        {            
-            // Carica i salvataggi disponibili
+    	this.loadGameMenu.addChooseSaveListener(e -> 
+    	{
             File[] saveFiles = this.gameSaveManager.getSaveFiles();
-            
-            //Mostra i salvataggi
             this.loadGameMenu.showSaveFile(saveFiles);
         });
 
-    	this.loadGameMenu.addMainMenuListener(event -> 
-        {
-            System.out.println(" You chose to go back to main manu.");
-            this.loadGameMenu.close();
-            
-            this.game = null;
-    	    
-    	    Game newGame = new Game();
-            
-    	    newGame.start();
-        });
-    	
-    	this.loadGameMenu.addSaveFileClickListener(saveFile -> 
+    	this.loadGameMenu.addMainMenuListener(e -> this.restartGameFromMenu());
+
+    	this.loadGameMenu.addSaveFileClickListener(file -> 
     	{
-    		System.out.println("Loading game from: " + saveFile.getAbsolutePath());
-    		try 
-    		{
-                // Chiudi il menu di caricamento
-    			this.loadGameMenu.close();
-                // Qui implementi la logica di caricamento del gioco
-    			System.out.println("Mo si bestemmia");
-    			this.game.startLoadGame(saveFile);
-            } 
-    		catch (Exception error)
-    		{
-    			 error.printStackTrace();            
-		    }
-    	});
-    	
-
-    }
-    
-    public void setPauseMenu(PauseMenu pauseMenu)
-    {
-    	this.pauseMenu = pauseMenu;
-    	this.setupPauseMenuListeners();
-    }
-    
-    private void setupPauseMenuListeners()
-    {
-    	this.pauseMenu.addPauseListener(event -> 
-        {
-        	// Mostriamo la finestra del menu di pausa
-        	this.pauseMenu.show();
-        	Level currentLevel = this.game.getGameLevels().get(this.game.getCurrentLevelIndex());
-        	currentLevel.setLevelPaused(true);
-        });
-    	
-    	
-    	this.pauseMenu.addResumeListener(event -> 
-        {
-        	// Chiudiamo la finestra del menu di pausa
-        	this.pauseMenu.hide();
-        	Level currentLevel = this.game.getGameLevels().get(this.game.getCurrentLevelIndex());
-        	currentLevel.setLevelPaused(false);
-        });
-
-    	
-    	this.pauseMenu.addSaveListener(event -> 
-    	{    	    
+    		this.log("Loading game from: " + file.getAbsolutePath());
             try 
             {
-                this.saveGame();
+            	this.loadGameMenu.close();
+                this.game.startLoadGame(file);
             } 
-            catch (IOException ex)
+            catch (Exception ex) 
             {
-                System.err.println("Error saving game: " + ex.getMessage());
+                ex.printStackTrace();
             }
-            finally
-            {
-            	// Chiudiamo la finestra del menu di pausa
-				this.pauseMenu.hide();
-				Level currentLevel = this.game.getGameLevels().get(this.game.getCurrentLevelIndex());
-	        	currentLevel.setLevelPaused(false);
-			}
-    	});
-
-    	this.pauseMenu.addMainMenuListener(event -> 
-        {
-            System.out.println(" You chose to go back to main manu.");
-            this.game.closeAll();           
-    	    this.game = null;
-    	    
-    	    Game newGame = new Game();
-            
-    	    newGame.start();
         });
     }
-    
+
+    /** Sets the pause menu and configures its listeners. */
+    public void setPauseMenu(PauseMenu pauseMenu) 
+    {
+        this.pauseMenu = pauseMenu;
+        this.setupPauseMenuListeners();
+    }
+
+    /** Configures listeners for the pause menu. */
+    private void setupPauseMenuListeners() 
+    {
+    	this.pauseMenu.addPauseListener(e -> 
+        {
+        	this.musicManager.stop();
+        	this.pauseMenu.show();
+        	this.getCurrentLevel().setLevelPaused(true);
+        });
+
+    	this.pauseMenu.addResumeListener(e -> 
+        {
+        	this.pauseMenu.hide();
+        	this.musicManager.play("level" + this.getLevelIndex(), true);
+        	this.getCurrentLevel().setLevelPaused(false);
+        });
+
+    	this.pauseMenu.addSaveListener(e -> 
+        {
+            try 
+            {
+            	this.saveGame();
+            } 
+            catch (IOException ex) 
+            {
+            	this.log("Error saving game: " + ex.getMessage());
+            } 
+            finally 
+            {
+            	this.pauseMenu.hide();
+            	this.musicManager.play("level" + this.getLevelIndex(), true);
+            	this.getCurrentLevel().setLevelPaused(false);
+            }
+        });
+
+    	this.pauseMenu.addMainMenuListener(e -> this.restartGameFromMenu());
+    }
+
+    /* ==============================
+       Game Flow
+       ============================== */
+
+    /** Starts a new game with optional tutorial. */
     public void startNewGame() 
     {
-    	
-        this.tutorialMenu.show();
+    	this.tutorialMenu.show();
 
-	    this.tutorialMenu.addYesListener(event -> 
-	     {
-	         this.tutorialMenu.close();
-	         	         
-	         // Avvia il tutorial
-	         this.game.startTutorial(); 
-	         
-	     });
-
-        this.tutorialMenu.addNoListener(event -> 
-        {
-            this.tutorialMenu.close();
-            
-            // Inizia la selezione dei personaggi
-            this.game.startSelectionCharacter();
+    	this.tutorialMenu.addYesListener(e -> 
+    	{
+    		this.tutorialMenu.close();
+    		this.musicManager.play("tutorial", true);
+    		this.game.startTutorial();
         });
 
-        this.tutorialMenu.addMainMenuListener(event -> 
-        {
-    	    this.tutorialMenu.close();
-    	    
-    	    this.game = null;
-    	    
-    	    Game newGame = new Game();
-            
-    	    newGame.start();
+    	this.tutorialMenu.addNoListener(e -> 
+    	{
+    		this.tutorialMenu.close();
+    		this.game.startSelectionCharacter();
         });
+
+    	this.tutorialMenu.addMainMenuListener(e -> this.restartGameFromMenu());
     }
-        
-    /**
-     * Metodo chiamato dalla TutorialMap quando tutti i popup sono completati
-     * Ora può mostrare il menu di selezione dei personaggi
-     */
+
+    /** Called when tutorial popups are completed. */
     public void onTutorialPopupsCompleted() 
     {
-        this.game.startSelectionCharacter();
+    	this.musicManager.stop();
+    	this.game.startSelectionCharacter();
     }
-    
-    public void startSelectionCharacter()
+
+    /** Starts the character selection phase. */
+    public void startSelectionCharacter() 
     {
-        List<Character> availableCharacter = this.game.createAllies();
-        this.characterSelectionMenu.start(availableCharacter);
+    	this.musicManager.play("background", true);
+        List<Character> available = this.game.createAllies();
         
-        this.characterSelectionMenu.addNextButtonListener(event -> 
+        this.characterSelectionMenu.start(available);
+
+        this.characterSelectionMenu.addNextButtonListener(e -> 
         {
-            List<String> characterNames = this.characterSelectionMenu.getSelectedCharacterNames();
-            
-            List<Character> characterSelected = transformList(availableCharacter, characterNames);
-            
-            this.game.setSelectedCharacters(characterSelected);
-            
+            List<Character> chosen = transformList(available, this.characterSelectionMenu.getSelectedCharacterNames());
+            this.game.setSelectedCharacters(chosen);
             this.characterSelectionMenu.close();
-            
             this.characterSelectionMenu = null;
-            
+            this.musicManager.stop();
             this.game.startNewLevel();
         });
     }
-    
-    public void startReplaceDeadAllies(int alliesToChange)
-    {       
-    	if(this.characterReplaceMenu == null)
-    	{
-    		this.characterReplaceMenu = new CharacterReplaceMenu();
-    	}
-    	System.out.print("Personaggi da scegliere: "+alliesToChange);
-    	List<Character> availableAllies = this.getCharacterToChange(this.game.createAllies(), this.game.getSelectedAllies());
-        
-        this.characterReplaceMenu.start(availableAllies, alliesToChange);
-        
-        this.characterReplaceMenu.addNextButtonListener(event -> 
-        {            
-            List<Character> characterSelected = this.transformList(availableAllies, this.characterReplaceMenu.getSelectedCharacterNames());
-            
-            
-            for (Character elemento : characterSelected) 
+
+    /** Starts the replacement of dead allies. */
+    public void startReplaceDeadAllies(int alliesToChange) 
+    {
+    	this.musicManager.play("background", true);
+
+        if (this.characterReplaceMenu == null) 
+        {
+        	this.characterReplaceMenu = new CharacterReplaceMenu();
+        }
+        List<Character> available = getCharacterToChange(game.createAllies(), game.getSelectedAllies());
+
+        this.characterReplaceMenu.start(available, alliesToChange);
+
+        this.characterReplaceMenu.addNextButtonListener(e ->
+        {
+            List<Character> chosen = transformList(available, characterReplaceMenu.getSelectedCharacterNames());
+            this.game.addSelectedCharacters(chosen);
+            this.game.getSelectedAllies().forEach(c -> c.setPosition(null));
+
+            if (this.game.getSelectedAllies().size() > 3) 
             {
-                System.out.println("squadra del prossimo livello : "+elemento.getClass().getSimpleName()+" "+ (elemento.isAlive() ? "vivo": "morto"));
-            }
-            
-            this.game.addSelectedCharacters(characterSelected);
-            
-            // Imposta le posizioni a null per lo spawn nel livello successivo
-        	for (Character character : this.game.getSelectedAllies()) 
-        	{
-        	    character.setPosition(null);
-        	}
-        	      
-            this.characterReplaceMenu.close();
-           
-            
-            if (this.game.getSelectedAllies().size() > 3)
-            {
-            	 System.err.print("BUG: rimozione ultimo pg inserito");
+            	this.log("BUG: Removing last inserted character due to overflow.");
             	this.game.getSelectedAllies().removeLast();
             }
-            	
-            // Segnala che la sostituzione è completata
+            this.musicManager.stop();
             this.game.markCharacterReplacementCompleted();
-            
+            this.characterReplaceMenu.close();
             this.characterReplaceMenu = null;
+
+
         });
     }
-    
-    
-    private List<Character> transformList(List<Character> allAllies, List<String> selectedCharacters)
-    {
-        return allAllies.stream()
-            .filter(ally -> selectedCharacters.contains(ally.getClass().getSimpleName()))
-            .collect(Collectors.toList());
-    }
-    
 
-    private List<Character> getCharacterToChange(List<Character> allAllies, List<Character> currentAllies) 
-    {
-        List<Character> remainingAllies = new ArrayList<>(allAllies);
-        remainingAllies.removeAll(currentAllies);
-        return remainingAllies;
-    }
-    /**
-     * Saves the current game state, including allies, enemies, and the level.
-     * @param allies List of ally characters.
-     * @param enemies List of enemy characters.
-     * @param level The current game level.
-     * @throws IOException If an error occurs during saving.
-     */
+    /* ==============================
+       Persistence
+       ============================== */
+
+    /** Saves the current game state. */
     public void saveGame() throws IOException 
     {
-    	Level currentLevel = this.game.getGameLevels().get(this.game.getCurrentLevelIndex());
-    	
-    	GameSave currentGameState = new GameSave(this.game.getCurrentLevelIndex(), currentLevel.getAllies(), currentLevel.getEnemies());
-    	
-        this.gameSaveManager.saveGameState(currentGameState,null);
-        
+        Level currentLevel = this.getCurrentLevel();
+        GameSave state = new GameSave(this.game.getCurrentLevelIndex(), currentLevel.getAllies(), currentLevel.getEnemies());
+        this.gameSaveManager.saveGameState(state, null);
     }
 
-    /**
-     * Loads the most recent saved game state.
-     * @return The loaded GameState object.
-     * @throws IOException If an error occurs during loading.
-     * @throws ClassNotFoundException 
-     */
+    /** Loads the most recent saved game state. */
     public GameSave loadGame() throws IOException, ClassNotFoundException 
     {
-        return gameSaveManager.loadGameState(null); 
+        return this.gameSaveManager.loadGameState(null);
     }
     
-    /**
-     * Moves the given character to a new point on the map.
-     * @param map The game map where the character resides.
-     * @param character The character to be moved.
-     * @param point The destination point on the map.
-     */
+    /** Start the specific level music */
+    public void startLevelMusic(int levelIndex) 
+	{
+		this.musicManager.play("level" + levelIndex, true);
+	}
+    
+    /** Stops the current level music. */
+    public void stopLevelMusic()
+    {
+		this.musicManager.stop();
+	}
+
+    /* ==============================
+       Gameplay Actions
+       ============================== */
+
+    /** Moves a character to a new point on the map. */
     public void move(AbstractMap map, Character character, Point point) 
     {
-        if (map == null || character == null || point == null) 
-        {
-            throw new IllegalArgumentException("Map, character, and point must not be null");
-        }        
-        map.moveCharacter(character, point);  // Move the character on the map
-        character.moveTo(point);  // Update the character's position
+    	this.validateNotNull(map, character, point);
+        map.moveCharacter(character, point);
+        character.moveTo(point);
     }
-    
+
+    /** Removes a character from the map and the given list. */
     public void remove(AbstractMap map, Character deadCharacter, Point point, List<Character> listOfTheDead) 
     {
-        if (map == null || deadCharacter == null || point == null || listOfTheDead == null) 
-        {
-            throw new IllegalArgumentException("Map, deadCharacter, point and listOfTheDead must not be null");
-        } 
+    	this.validateNotNull(map, deadCharacter, point, listOfTheDead);
         listOfTheDead.remove(deadCharacter);
-        map.removeCharacter(deadCharacter); 
-        
+        map.removeCharacter(deadCharacter);
     }
-    
-    public void fight(Character attackingCharacter, Character attackedCharacter, List<Character> alliedList, List<Character> enemyList, AbstractMap levelMap) 
+
+    /** Executes a fight action between two characters. */
+    public void fight(Character attacker, Character defender, List<Character> allies, List<Character> enemies, AbstractMap map) 
     {
-        Character deadCharacter = attackingCharacter.fight(attackedCharacter);
-        
-        if(deadCharacter != null)
+        Character dead = attacker.fight(defender);
+        if (dead != null) 
         {
-            this.remove(levelMap, deadCharacter, deadCharacter.getPosition(), (deadCharacter.isAllied()? alliedList : enemyList));
-        }
-        else
+        	this.remove(map, dead, dead.getPosition(), dead.isAllied() ? allies : enemies);
+        } 
+        else 
         {
-        	levelMap.updateToolTip();
+            map.updateToolTip();
         }
     }
 
-	public int getLevelIndex() 
-	{
-		return this.game.getCurrentLevelIndex();
-	}
-    
-    
+    /* ==============================
+       Utility & Helpers
+       ============================== */
+
+    /** Restarts the game by returning to the main menu. */
+    private void restartGameFromMenu() 
+    {
+    	this.log("Returning to main menu...");
+        if (this.game != null) 
+        {
+        	this.game.closeAll();
+        }
+        this.game = new Game();
+        this.game.start();
+    }
+
+    /** Exits the application. */
+    private void exitGame() 
+    {
+    	this.log("Exiting game...");
+        System.exit(0);
+    }
+
+    /** Logs messages to stdout (placeholder for real logger). */
+    private void log(String msg) 
+    {
+        System.out.println(msg);
+    }
+
+    /** Validates that arguments are not null. */
+    private void validateNotNull(Object... objs) 
+    {
+        for (Object o : objs) {
+            if (o == null) throw new IllegalArgumentException("Argument must not be null");
+        }
+    }
+
+    /** Retrieves the current level from the game. */
+    private Level getCurrentLevel() 
+    {
+        return this.game.getGameLevels().get(this.getLevelIndex());
+    }
+
+    /** Filters the given list of allies by selected names. */
+    private List<Character> transformList(List<Character> allAllies, List<String> selectedNames) 
+    {
+        return allAllies.stream()
+                .filter(ally -> selectedNames.contains(ally.getClass().getSimpleName()))
+                .collect(Collectors.toList());
+    }
+
+    /** Returns a list of allies excluding the current ones. */
+    private List<Character> getCharacterToChange(List<Character> allAllies, List<Character> currentAllies) 
+    {
+        List<Character> remaining = new ArrayList<>(allAllies);
+        remaining.removeAll(currentAllies);
+        return remaining;
+    }
+
+    /** Returns the current level index. */
+    public int getLevelIndex() 
+    {
+        return this.game.getCurrentLevelIndex();
+    }
 }

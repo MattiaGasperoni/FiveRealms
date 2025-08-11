@@ -9,8 +9,8 @@ import java.util.function.Consumer;
 
 public class LoadGameMenu extends AbstractMenu
 {   
-    
-    private JScrollPane saveListScrollPane;
+	private static final long serialVersionUID = 1L;
+	private JScrollPane saveListScrollPane;
     private JPanel saveListPanel;
     private JButton chooseSaveButton;
     private JButton mainMenuButton;
