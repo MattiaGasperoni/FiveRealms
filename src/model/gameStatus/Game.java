@@ -202,9 +202,11 @@ public class Game
                 if(this.selectedAllies.size() < 3)
                 {
                     this.setWaitingForCharacterReplacement(true);
+                    
+                    System.out.println("\n[GAME] Alleati rimasti dal livello" + (this.currentLevelIndex+1) + ":");
                     for (Character elemento : this.selectedAllies) 
                     {
-                        System.out.println("Alleati rimasti in vita dal livello"+elemento.getClass().getSimpleName()+" "+ (elemento.isAlive() ? "vivo": "morto"));
+                        System.out.println(elemento.getClass().getSimpleName()+", "+ (elemento.isAlive() ? "vivo": "morto") + ", "+(elemento.isAllied() ? "alleato": "nemico"));
                     }
 
                     this.controller.startReplaceDeadAllies(Game.MAX_ALLIES_PER_ROUND - this.selectedAllies.size());
@@ -445,5 +447,14 @@ public class Game
 	public void closeAll()
 	{
 		this.gameLevels.get(this.currentLevelIndex).getLevelMap().closeWindow();
+	}
+
+	public List<Character> getAvailableAllies() 
+	{
+		if (this.availableAllies.isEmpty()) 
+		{
+			this.createAllies();
+		}
+		return this.availableAllies;
 	}
 }

@@ -26,7 +26,7 @@ public class MusicManager
         this.tracks.put("lose", "music/lose.wav");
     }
 
-    public void play(String trackName, boolean loop) 
+    public synchronized void play(String trackName, boolean loop) 
     {
         this.stop(); // ferma musica attuale
         
@@ -34,7 +34,7 @@ public class MusicManager
         
         if (path == null) 
         {
-            System.out.println("Traccia non trovata: " + trackName);
+            System.err.println("Traccia non trovata: " + trackName);
             return;
         }
         
@@ -58,11 +58,18 @@ public class MusicManager
         }
     }
 
-    public void stop() 
+    public synchronized  void stop() 
     {
-        if ( this.clip != null &&  this.clip.isRunning()) 
+        if (this.clip != null) 
         {
-        	 this.clip.stop();
+            if (this.clip.isRunning()) 
+            {
+                this.clip.stop();
+            }
+            
+            this.clip.close();
+            this.clip = null;
         }
     }
+
 }

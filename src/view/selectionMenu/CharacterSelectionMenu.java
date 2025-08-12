@@ -1,8 +1,6 @@
 package view.selectionMenu;
 
-import model.characters.Character;
 import model.gameStatus.Game;
-import java.util.List;
 
 /**
  * Character selection menu for initial team selection.
@@ -17,10 +15,10 @@ public class CharacterSelectionMenu extends AbstractSelectionMenu
      * @param allAllies List of all available characters that can be selected
      */
     @Override
-    public void start(List<Character> allAllies) 
+    public void start() 
     {
         this.maxSelectableCharacters = Game.MAX_ALLIES_PER_ROUND;
-        super.start(allAllies);
+        super.start();
     }
     
     @Override

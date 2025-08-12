@@ -393,12 +393,7 @@ public abstract class AbstractMap
 	 * @param spawnList List of characters to spawn.
 	 */
 	public void spawnCharacter(List<Character> spawnList)
-	{
-		for (Character elemento : spawnList) 
-        {
-            System.out.println("personaggi da spawnare nella mappa"+elemento.getClass().getSimpleName()+" "+ (elemento.isAlive() ? "vivo": "morto"));
-        }
-		
+	{		
 	    if (spawnList == null || spawnList.isEmpty()) 
 	    {
 	        System.err.println("Spawn list is null or empty.");
@@ -421,7 +416,6 @@ public abstract class AbstractMap
 	private void spawnCharacterHelper(Character character, List<Point> positionList) 
 	{
 	    Point chosenPosition = character.getPosition();
-	    System.out.println("Chosen position: " + chosenPosition);
 
 	    if (chosenPosition == null) 
 	    {
@@ -609,7 +603,7 @@ public abstract class AbstractMap
 	        }
 	    }
 	    
-	    this.tooltipManager = null;
+	    this.tooltipManager.removeAllTooltips(); // Pulisce tutti i tooltip gestiti
 	}
 
 

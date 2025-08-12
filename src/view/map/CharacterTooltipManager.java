@@ -154,9 +154,13 @@ public class CharacterTooltipManager
             }
             
             @Override
-            public void mouseExited(MouseEvent e) {
-                tooltipWindow.setVisible(false);
-            }
+            public void mouseExited(MouseEvent e) 
+            {
+            	if (tooltipWindow != null && tooltipWindow.isVisible()) 
+            	{
+                    tooltipWindow.setVisible(false);
+                }
+        	}
         };
         
         // Aggiungi il listener al bottone
@@ -274,4 +278,15 @@ public class CharacterTooltipManager
         
         return row;
     }
+    
+    
+    public void removeAllTooltips() {
+        for (TooltipListenerData data : tooltipListeners.values()) {
+            if (data.tooltipWindow != null && data.tooltipWindow.isVisible()) {
+                data.tooltipWindow.setVisible(false);
+            }
+        }
+        tooltipListeners.clear();
+    }
+
 }

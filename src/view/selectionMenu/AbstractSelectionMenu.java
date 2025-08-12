@@ -1,7 +1,6 @@
 package view.selectionMenu;
 
 import javax.swing.*;
-import model.characters.Character;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -21,7 +20,7 @@ public abstract class AbstractSelectionMenu
     
     protected JFrame frame;
     protected JButton nextButton;
-    protected final List<JPanel> selectedPanels = new ArrayList<>();
+    protected final List<JPanel> selectedPanels     = new ArrayList<>();
     protected final List<String> selectedCharacters = new ArrayList<>();
     protected int maxSelectableCharacters;
     
@@ -29,9 +28,8 @@ public abstract class AbstractSelectionMenu
      * Template method that defines the structure for starting the menu.
      * Subclasses can override specific parts while maintaining the overall flow.
      * 
-     * @param allAllies List of all available characters that can be selected
      */
-    public void start(List<Character> allAllies) 
+    public void start() 
     {        
         this.initializeFrame();
         this.setupBackground();

@@ -6,7 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import model.characters.Archer;
+import model.characters.Barbarian;
 import model.characters.Character;
+import model.characters.Juggernaut;
+import model.characters.Knight;
+import model.characters.Wizard;
 import model.gameStatus.Game;
 import model.gameStatus.Level;
 import model.gameStatus.MusicManager;
@@ -149,7 +154,13 @@ public class GameController
     /** Configures listeners for the end-game menu. */
     private void setupEndGameListeners() 
     {
-    	this.endGameMenu.addMainMenuListener(e -> this.restartGameFromMenu());
+    	this.endGameMenu.addMainMenuListener(e -> 
+    	{
+			this.musicManager.stop();
+			this.endGameMenu.close();
+            this.restartGameFromMenu();
+		}); 
+    	
     	this.endGameMenu.addExitListener(e -> this.exitGame());
     }
 
@@ -162,7 +173,11 @@ public class GameController
             this.loadGameMenu.showSaveFile(saveFiles);
         });
 
-    	this.loadGameMenu.addMainMenuListener(e -> this.restartGameFromMenu());
+    	this.loadGameMenu.addMainMenuListener(e -> 
+    	{
+        	this.loadGameMenu.close();
+            this.restartGameFromMenu();
+		});    
 
     	this.loadGameMenu.addSaveFileClickListener(file -> 
     	{
@@ -199,7 +214,7 @@ public class GameController
     	this.pauseMenu.addResumeListener(e -> 
         {
         	this.pauseMenu.hide();
-        	this.musicManager.play("level" + this.getLevelIndex(), true);
+        	this.musicManager.play("level" + (this.getLevelIndex()+1), true);
         	this.getCurrentLevel().setLevelPaused(false);
         });
 
@@ -216,12 +231,17 @@ public class GameController
             finally 
             {
             	this.pauseMenu.hide();
-            	this.musicManager.play("level" + this.getLevelIndex(), true);
+            	this.musicManager.play("level" + (this.getLevelIndex()+1), true);
             	this.getCurrentLevel().setLevelPaused(false);
             }
         });
 
-    	this.pauseMenu.addMainMenuListener(e -> this.restartGameFromMenu());
+    	this.pauseMenu.addMainMenuListener(e -> 
+    	{
+    		this.pauseMenu.hide();
+    		this.game.closeAll();
+	    	this.restartGameFromMenu();
+    	});
     }
 
     /* ==============================
@@ -246,7 +266,11 @@ public class GameController
     		this.game.startSelectionCharacter();
         });
 
-    	this.tutorialMenu.addMainMenuListener(e -> this.restartGameFromMenu());
+    	this.tutorialMenu.addMainMenuListener(e -> 
+    	{
+    		this.tutorialMenu.close();
+    		this.restartGameFromMenu();
+    	});
     }
 
     /** Called when tutorial popups are completed. */
@@ -262,7 +286,7 @@ public class GameController
     	this.musicManager.play("background", true);
         List<Character> available = this.game.createAllies();
         
-        this.characterSelectionMenu.start(available);
+        this.characterSelectionMenu.start();
 
         this.characterSelectionMenu.addNextButtonListener(e -> 
         {
@@ -284,25 +308,71 @@ public class GameController
         {
         	this.characterReplaceMenu = new CharacterReplaceMenu();
         }
-        List<Character> available = getCharacterToChange(game.createAllies(), game.getSelectedAllies());
-
-        this.characterReplaceMenu.start(available, alliesToChange);
+        List<Character> available = this.getAvailableAllies();
+       
+        // Debug: stampa tutti available
+    	System.out.println("\n[CONTROLLER] Lista Available: ");
+    	for (Character elemento : available) 
+    	{
+    	    System.out.println(elemento.getClass().getSimpleName() + ", " 
+    	        + (elemento.isAlive()  ? "vivo" : "morto") + ", " 
+    	        + (elemento.isAllied() ? "alleato" : "nemico"));
+    	}
+        
+    	this.characterReplaceMenu.start(alliesToChange);
 
         this.characterReplaceMenu.addNextButtonListener(e ->
         {
-            List<Character> chosen = transformList(available, characterReplaceMenu.getSelectedCharacterNames());
-            this.game.addSelectedCharacters(chosen);
-            this.game.getSelectedAllies().forEach(c -> c.setPosition(null));
+        	List<Character> chosen = transformList(available, this.characterReplaceMenu.getSelectedCharacterNames());
 
-            if (this.game.getSelectedAllies().size() > 3) 
-            {
-            	this.log("BUG: Removing last inserted character due to overflow.");
-            	this.game.getSelectedAllies().removeLast();
-            }
-            this.musicManager.stop();
-            this.game.markCharacterReplacementCompleted();
-            this.characterReplaceMenu.close();
-            this.characterReplaceMenu = null;
+        	// Debug: stampa tutti quelli scelti dal menu (anche sbagliati)
+        	System.out.println("\n[CONTROLLER] Alleati in transformList:");
+        	for (Character elemento : chosen) 
+        	{
+        	    System.out.println(elemento.getClass().getSimpleName() + ", " 
+        	        + (elemento.isAlive() ? "vivo" : "morto") + ", " 
+        	        + (elemento.isAllied() ? "alleato" : "nemico"));
+        	}
+
+        	System.out.println("\nAggiunti personaggi in selectedCharacter");
+        	// Aggiunta e controlli come prima
+        	this.game.addSelectedCharacters(chosen);
+        	
+        	System.out.println("\n[CONTROLLER] Personaggi in selectedCharacter:");
+        	for (Character c : this.game.getSelectedAllies()) 
+        	{
+        	    System.out.println(c.getClass().getSimpleName() + ", " 
+        	        + (c.isAlive() ? "vivo" : "morto") + ", " 
+        	        + (c.isAllied() ? "alleato" : "nemico"));
+        	}
+        	
+        	System.out.println("\nFiltraggio selectedCharacter per sicurezza...");
+        	// Filtro per debug: scarta quelli non validi
+        	this.game.getSelectedAllies().stream()
+        	    .filter(c -> c != null && c.isAlive() && c.isAllied())
+        	    .toList();
+
+        	// Debug: mostra chi rimane dopo il filtro
+        	this.game.getSelectedAllies().forEach(c -> System.out.println("✅ Personaggio valido: " + c.getClass().getSimpleName()));
+        	
+        	
+        	this.game.getSelectedAllies().forEach(c -> c.setPosition(null));
+
+        	
+        	if (this.game.getSelectedAllies().size() > 3) 
+        	{
+        	    System.err.println("\nBUG: Removing last inserted character due to overflow.");
+        	    for (int i = this.game.getSelectedAllies().size(); i > 3; i--) 
+			    {
+			        this.game.getSelectedAllies().removeLast();
+			    }
+        	    
+        	}
+
+        	this.musicManager.stop();
+        	this.game.markCharacterReplacementCompleted();
+        	this.characterReplaceMenu.close();
+        	this.characterReplaceMenu = null;
 
 
         });
@@ -312,7 +382,7 @@ public class GameController
        Persistence
        ============================== */
 
-    /** Saves the current game state. */
+	/** Saves the current game state. */
     public void saveGame() throws IOException 
     {
         Level currentLevel = this.getCurrentLevel();
@@ -380,10 +450,7 @@ public class GameController
     private void restartGameFromMenu() 
     {
     	this.log("Returning to main menu...");
-        if (this.game != null) 
-        {
-        	this.game.closeAll();
-        }
+        
         this.game = new Game();
         this.game.start();
     }
@@ -423,17 +490,21 @@ public class GameController
                 .collect(Collectors.toList());
     }
 
-    /** Returns a list of allies excluding the current ones. */
-    private List<Character> getCharacterToChange(List<Character> allAllies, List<Character> currentAllies) 
-    {
-        List<Character> remaining = new ArrayList<>(allAllies);
-        remaining.removeAll(currentAllies);
-        return remaining;
-    }
-
     /** Returns the current level index. */
     public int getLevelIndex() 
     {
         return this.game.getCurrentLevelIndex();
     }
+    
+    
+    private List<Character> getAvailableAllies() 
+    {
+		List<Character> allies = new ArrayList<>();
+		allies.add(new Barbarian());
+		allies.add(new Archer());
+		allies.add(new Knight());
+		allies.add(new Wizard());
+		allies.add(new Juggernaut());
+		return allies;
+	}
 }
