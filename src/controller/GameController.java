@@ -104,6 +104,7 @@ public class GameController
     /** Displays the main menu. */
     public void mainMenuShow() 
     {
+    	this.musicManager.stop();
     	this.musicManager.play("background", true);
         this.mainMenu.show();
     }
@@ -115,6 +116,7 @@ public class GameController
      */
     public void endGameMenuShow(boolean result) 
     {
+    	this.musicManager.stop();
     	this.musicManager.play((result ? "win" : "lose"), true);
         this.endGameMenu.setGameResult(result);
         this.endGameMenu.show();
@@ -145,7 +147,9 @@ public class GameController
         {
         	this.log("Loading game menu...");
         	this.mainMenu.close();
+        	this.musicManager.stop();
         	this.loadGameMenu.show();
+        	this.musicManager.play("background", true);
         });
 
         this.mainMenu.addExitListener(e -> this.exitGame());
@@ -176,6 +180,7 @@ public class GameController
     	this.loadGameMenu.addMainMenuListener(e -> 
     	{
         	this.loadGameMenu.close();
+        	this.musicManager.stop();
             this.restartGameFromMenu();
 		});    
 
@@ -256,18 +261,21 @@ public class GameController
     	this.tutorialMenu.addYesListener(e -> 
     	{
     		this.tutorialMenu.close();
+    		this.musicManager.stop();
     		this.musicManager.play("tutorial", true);
     		this.game.startTutorial();
         });
 
     	this.tutorialMenu.addNoListener(e -> 
     	{
+    		this.musicManager.stop();
     		this.tutorialMenu.close();
     		this.game.startSelectionCharacter();
         });
 
     	this.tutorialMenu.addMainMenuListener(e -> 
     	{
+    		this.musicManager.stop();
     		this.tutorialMenu.close();
     		this.restartGameFromMenu();
     	});

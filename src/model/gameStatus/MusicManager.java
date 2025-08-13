@@ -20,13 +20,13 @@ public class MusicManager
         this.tracks.put("level3", "music/level3.wav");
         this.tracks.put("level4", "music/level4.wav");
         this.tracks.put("level5", "music/level5.wav");
+        this.tracks.put("tutorial", "music/tutorial.wav");
         this.tracks.put("background", "music/background.wav");
-        this.tracks.put("tutorial", "music/tutorial.wav");  //TODO: aggiungere musica per il tutorial
         this.tracks.put("win",  "music/win.wav");
         this.tracks.put("lose", "music/lose.wav");
     }
 
-    public synchronized void play(String trackName, boolean loop) 
+    public void play(String trackName, boolean loop) 
     {
         this.stop(); // ferma musica attuale
         
@@ -34,7 +34,7 @@ public class MusicManager
         
         if (path == null) 
         {
-            System.err.println("Traccia non trovata: " + trackName);
+            System.out.println("Traccia non trovata: " + trackName);
             return;
         }
         
@@ -58,18 +58,11 @@ public class MusicManager
         }
     }
 
-    public synchronized  void stop() 
+    public void stop() 
     {
-        if (this.clip != null) 
+        if ( this.clip != null) 
         {
-            if (this.clip.isRunning()) 
-            {
-                this.clip.stop();
-            }
-            
-            this.clip.close();
-            this.clip = null;
+        	 this.clip.stop();
         }
     }
-
 }
