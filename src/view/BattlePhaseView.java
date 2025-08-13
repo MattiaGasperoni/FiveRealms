@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import controller.GameController;
+import model.characters.AbstractCharacter;
 import model.characters.Character;
 import model.point.Point;
 import view.map.LevelMap;
@@ -57,7 +59,7 @@ public class BattlePhaseView
             {
                 Point point = new Point(row, col);
                 
-                if (this.isValidMovementPosition(point, character, moveRange))
+                if (character.getDistanceInSquares(point) <= character.getSpeed() / AbstractCharacter.SPEED_TO_MOVEMENT)
                 {
                     availableMoves.add(point);
                 }
@@ -73,7 +75,7 @@ public class BattlePhaseView
         }
         
         // Coloriamo le posizioni in cui ci possiamo spostare
-        this.levelMap.colourPositionAvailable(availableMoves,"gray");
+        this.levelMap.colourPositionAvailable(availableMoves, new Color(80, 80, 80, 160)); //color gray
         
             
         // FASE 2: Associamo ai bottoni delle posizioni libere un ActionLister
@@ -114,7 +116,7 @@ public class BattlePhaseView
     
     /**
      * Allows the given character to choose a target from the list of candidates.
-     * <p>
+     * 
      * Highlights all valid targets within range, assigns click listeners to allow selection,
      * and invokes the {@code onTargetChosen} callback with the selected target.
      * If no valid targets are available, the callback is invoked with {@code null}.
@@ -146,9 +148,27 @@ public class BattlePhaseView
 		List<Point> enemyPositions = reachableEnemies.stream()
 		                                           .map(Character::getPosition)
 		                                           .collect(Collectors.toList());
+
+		//Get 
+		List<Point> positionsInAttackRange = new ArrayList<>();
+		JButton[][] buttonGrid = this.levelMap.getGridButtons();
+		
+        for (int row = 0; row < buttonGrid.length; row++) 
+        {
+            for (int col = 0; col < buttonGrid[row].length; col++)
+            {
+                Point point = new Point(row, col);
+                
+                if (attacker.isWithinAttackRange(point))
+                {
+                	positionsInAttackRange.add(point);
+                }
+            }
+        }
 		
 		// Evidenziamo di rosso i nemici attaccabili
-		levelMap.colourPositionAvailable(enemyPositions, "red");
+		levelMap.colourPositionAvailable(positionsInAttackRange, new Color(139, 0, 0, 80)); // dark red
+		levelMap.colourPositionAvailable(enemyPositions, new Color(255, 0, 0, 80)); // red
 
         for (Character enemy : enemiesList) 
         {
@@ -198,12 +218,12 @@ public class BattlePhaseView
     /* Metodi Helper */
     /*===============*/
     
-    private boolean isValidMovementPosition(Point point, Character character, int moveRange) 
+    /*private boolean isValidMovementPosition(Point point, Character character, int moveRange) 
     {
         return point.distanceFrom(character.getPosition()) <= moveRange &&
                !this.levelMap.isPositionOccupied(point) &&
                !point.equals(character.getPosition());
-    }
+    }*/
     
     private List<Character> getEnemiesInRange(Character attacker, List<Character> enemies) 
     {

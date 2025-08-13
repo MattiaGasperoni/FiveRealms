@@ -68,6 +68,12 @@ public abstract class AbstractCharacter implements Character, Serializable
 	public int getDistanceInSquares(Point point) {
 		return this.position.distanceFrom(point);
 	}
+	
+	//for ease of use
+	@Override
+	public int getDistanceInSquares(Character character) {
+		return this.position.distanceFrom(character.getPosition());
+	}
 
 	@Override
 	public void usePotion() {
@@ -84,6 +90,7 @@ public abstract class AbstractCharacter implements Character, Serializable
 			}else if(potion instanceof PotionSpeed){
 				this.increaseSpeed(this.potion.getPotionValue());
 			}
+			this.potion = null; //removes potion after using it
 		}
 	}
 
@@ -151,7 +158,7 @@ public abstract class AbstractCharacter implements Character, Serializable
 		
 		if(this.isAllied() == attackedCharacter.isAllied())
 			throw new IllegalArgumentException("You cannot attack someone belonging to your own faction!");
-		if (!this.isWithinAttackRange(this, attackedCharacter))
+		if (!this.isWithinAttackRange(attackedCharacter))
 			throw new IllegalArgumentException("You cannot attack someone outside of your weapon's attack range!");
 
 		//use your potion IF: you have one, but NOT if it's an health potion and you're at max health (that would be useless)
@@ -161,7 +168,7 @@ public abstract class AbstractCharacter implements Character, Serializable
 		
 		attackedCharacter.reduceCurrentHealth(this.getPower() - attackedCharacter.getDefence()); // start of combat
 
-		if (attackedCharacter.isAlive() && this.isWithinAttackRange(attackedCharacter, this)) //if attacked character is still alive and its weapon can reach you, it counterattacks
+		if (attackedCharacter.isAlive() && attackedCharacter.isWithinAttackRange(this)) //if attacked character is still alive and its weapon can reach you, it counterattacks
 			this.reduceCurrentHealth(attackedCharacter.getPower() - this.getDefence());
 
 		if (!attackedCharacter.isAlive()) {
@@ -186,14 +193,21 @@ public abstract class AbstractCharacter implements Character, Serializable
 
 		if (!this.isAlive()) {
 			deadCharacter = this;
-			attackedCharacter.gainExperience(AbstractCharacter.EXP_LEVELUP_THRESHOLD/3);
+			attackedCharacter.gainExperience(AbstractCharacter.EXP_LEVELUP_THRESHOLD/2);
 		}
 		
 		return deadCharacter;
 	}
 
-	private boolean isWithinAttackRange(Character attackingCharacter, Character attackedCharacter) {
-		return attackingCharacter.getDistanceInSquares(attackedCharacter.getPosition()) <= attackingCharacter.getRange();
+	@Override
+	public boolean isWithinAttackRange(Point attackedPoint) {
+		return this.getDistanceInSquares(attackedPoint) <= this.getRange();
+	}
+	
+	//for ease of use
+	@Override
+	public boolean isWithinAttackRange(Character attackedCharacter) {
+		return this.getDistanceInSquares(attackedCharacter) <= this.getRange();
 	}
 
 	protected void increaseMaxHealth(double percentage) {		
@@ -308,6 +322,7 @@ public abstract class AbstractCharacter implements Character, Serializable
 		return this.image;
 	}
 
+	@Override
 	public void setImagePath(String image) { //updates the icon-image too as there's no point to having them be different
 		this.imagePath = image;
 		//Pre-process images 

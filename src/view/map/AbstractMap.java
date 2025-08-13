@@ -298,7 +298,7 @@ public abstract class AbstractMap
         }
     }
 
-    public void colourPositionAvailable(List<Point> availableMoves, String colour) 
+    public void colourPositionAvailable(List<Point> availableMoves, Color colour) 
     {
         if (availableMoves == null || availableMoves.isEmpty()) 
         {
@@ -320,16 +320,9 @@ public abstract class AbstractMap
             if (y >= 0 && y < rows && x >= 0 && x < cols) 
             {
                 JButton button = buttonGrid[y][x];
-                Color semiTransparentGray;
-
-                if(colour.equals("red")) {
-                    semiTransparentGray = new Color(255, 0, 0, 100);
-                }else {
-                	semiTransparentGray = new Color(80, 80, 80, 160); //Abbassare l ultimo valore per farlo piu trasparente
-                }
 
 				// Per rendere la trasparenza visibile bisogna disegnare su un componente non opaco
-                button.setBackground(semiTransparentGray);
+                button.setBackground(colour);
                 button.setOpaque(true);                 // Importante: deve essere false!
                 button.setContentAreaFilled(true);       // Importante: true per disegnare il colore
                 button.setBorderPainted(false);          // opzionale

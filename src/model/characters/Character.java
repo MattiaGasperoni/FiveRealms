@@ -49,4 +49,8 @@ public interface Character {
 	public Character fight(Character attackedCharacter) throws IllegalArgumentException;
 	
 	public void reinitializeAfterLoad();
+	public int getDistanceInSquares(Character character);
+	public boolean isWithinAttackRange(Point attackedPoint);
+	public boolean isWithinAttackRange(Character attackedCharacter);
+	public void setImagePath(String image);
 }
