@@ -76,6 +76,7 @@ public class BattlePhaseView
         // Coloriamo le posizioni in cui ci possiamo spostare
         this.levelMap.colourPositionAvailable(availableMoves, new Color(80, 80, 80, 160)); //color gray
         
+        this.levelMap.colourCharacterPosition(character);
             
         // FASE 2: Associamo ai bottoni delle posizioni libere un ActionLister
         for (Point validPoint : availableMoves)

@@ -365,7 +365,7 @@ public abstract class AbstractMap
         {
             JButton button = buttonGrid[y][x];
 
-            button.setBackground(new Color(0,255,0)); //verde
+            button.setBackground(new Color(0,180,0,160)); //verde
             button.setOpaque(true);
             button.setContentAreaFilled(true);
             button.setBorderPainted(false);
