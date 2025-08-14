@@ -46,7 +46,6 @@ public class BattlePhaseView
     public void movementPhase(Character character, Runnable onMovementCompleted)
     {
         List<Point> availableMoves = new ArrayList<>();
-        int moveRange = character.getSpeed() / 10;
         JButton[][] buttonGrid = this.levelMap.getGridButtons();
 
         // Per prevenire click multipli

@@ -32,12 +32,12 @@ public class CharacterReplaceMenu extends AbstractSelectionMenu
     @Override
     protected String getTitleText() 
     {
-        return "SELECT " + this.alliesToChange + " CHARACTERS";
+        return "REPLACE " + this.alliesToChange + " CHARACTERS";
     }
     
     @Override
     protected boolean requiresSpecialTitleStyling() 
     {
-        return false; // CharacterReplaceMenu doesn't have the special background styling
+        return true; // CharacterReplaceMenu doesn't have the special background styling
     }
 }

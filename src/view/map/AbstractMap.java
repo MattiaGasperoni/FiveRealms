@@ -75,19 +75,19 @@ public abstract class AbstractMap
     
     
 	public void start() 
-    {
+    {		 
+    	initializeFrame();
 		 if (this.numLevel == 0)
 		 {
 		        System.out.print(" Open Tutorial Frame ->");
 		 } 
-		 else{
+		 else
+		 {
 		        System.out.print("Open Level " + this.numLevel + " Frame ->");
+		        this.pauseMenu = new PauseMenu(this.getFrame(), this.getLayeredPanel());
+		        this.controller.setPauseMenu(this.pauseMenu);
 		 }
-		 
-    	initializeFrame();
-    	
-        this.pauseMenu = new PauseMenu(this.getFrame(), this.getLayeredPanel());
-        this.controller.setPauseMenu(this.pauseMenu);
+        
         
         this.frame.setVisible(true);
     }
@@ -98,7 +98,14 @@ public abstract class AbstractMap
      */
     private void initializeFrame()
     {
-        this.frame = new JFrame("Five Realms");                      		//Creo la finestra
+    	if (this.numLevel != 0)
+	    {
+    		this.frame = new JFrame("Five Realms - Level "+this.numLevel); 
+	    } 
+	    else
+	    {
+	    	this.frame = new JFrame("Five Realms - Tutorial "); 
+	    }
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);   		//Quando la finestra viene chiusa, il programma termina
         this.frame.setResizable(false);
 
@@ -323,7 +330,7 @@ public abstract class AbstractMap
 
 				// Per rendere la trasparenza visibile bisogna disegnare su un componente non opaco
                 button.setBackground(colour);
-                button.setOpaque(true);                 // Importante: deve essere false!
+                button.setOpaque(true);                  // Importante: deve essere false!
                 button.setContentAreaFilled(true);       // Importante: true per disegnare il colore
                 button.setBorderPainted(false);          // opzionale
                 button.setFocusPainted(false);
@@ -335,6 +342,41 @@ public abstract class AbstractMap
         this.gridPanel.revalidate();
         this.gridPanel.repaint();
     }
+    
+    public void colourCharacterPosition(Character character) 
+    {
+        if (character == null || character.getPosition() == null) 
+        {
+            System.err.println("Il personaggio o la sua posizione è null.");
+            return;
+        }
+
+        JButton[][] buttonGrid = this.gridPanel.getGridButtons();
+
+        int rows = buttonGrid.length;
+        int cols = buttonGrid[0].length;
+
+        Point position = character.getPosition();
+        int y = position.getX();
+        int x = position.getY();
+
+        // Controllo bounds
+        if (y >= 0 && y < rows && x >= 0 && x < cols) 
+        {
+            JButton button = buttonGrid[y][x];
+
+            button.setBackground(new Color(0,255,0)); //verde
+            button.setOpaque(true);
+            button.setContentAreaFilled(true);
+            button.setBorderPainted(false);
+            button.setFocusPainted(false);
+            button.setRolloverEnabled(false);
+        }
+
+        this.gridPanel.revalidate();
+        this.gridPanel.repaint();
+    }
+
     
     public void resetGridColors() 
     {

@@ -115,6 +115,8 @@ public class CharacterTooltipManager
 	    statsPanel.add(createStatRow("⚡", "SPD", String.valueOf(character.getSpeed()), new Color(50, 205, 50)));
 	    statsPanel.add(Box.createVerticalStrut(2));
 	    statsPanel.add(createStatRow("🗡", "Arma", character.getWeapon().getClass().getSimpleName(), new Color(184, 134, 11)));
+	    statsPanel.add(Box.createVerticalStrut(2));
+	    statsPanel.add(createStatRow("🏹", "Range", String.valueOf(character.getRange()), new Color(184, 134, 11)));
 	    
         mainPanel.add(nameLabel, BorderLayout.NORTH);
         mainPanel.add(separator, BorderLayout.CENTER);

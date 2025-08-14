@@ -140,7 +140,7 @@ public class Level
     private void initializeBattleRound() 
     {
         System.out.println("\n\n=== INIZIA UN NUOVO ROUND ===");
-        
+        this.levelMap.resetGridColors();
         // Generiamo l'ordine di movimento/attacco dei personaggi per questo round 
         this.currentTurnOrder = this.getTurnOrder(this.alliesList, this.enemiesList);
         
@@ -156,8 +156,10 @@ public class Level
     
     // Inizia il turno del personaggio i-esimo del round
     private void startNextTurn() 
-    {    	    	
-        if (this.currentTurnOrder.isEmpty()) 
+    {    	  
+    	this.levelMap.resetGridColors();
+        
+    	if (this.currentTurnOrder.isEmpty()) 
         {
             System.out.println("Tutti i personaggi hanno giocato, Round completato!");
             this.currentTurnState = RoundState.TURN_COMPLETED;
@@ -192,7 +194,9 @@ public class Level
         
         // Se ci sono personaggi vivi, impostiamo il nuovo attaccante e iniziamo il turno
         this.currentAttacker = nextAttacker;
-        System.out.println("\n=== TURNO DI: " + currentAttacker.getClass().getSimpleName() + " ===");
+        System.out.println("\n=== TURNO DI: " + this.currentAttacker.getClass().getSimpleName() + " ===");
+        
+        this.levelMap.colourCharacterPosition(this.currentAttacker);
         
         if (this.currentAttacker.isAllied())
         {
@@ -280,7 +284,6 @@ public class Level
     private void checkEndTurn()
     {
         System.out.print("\n\n=== CONTROLLO DI FINE TURNO DI UN PERSONAGGIO -> ");
-
         
         if (this.alliesList.isEmpty() || this.enemiesList.isEmpty())
         {

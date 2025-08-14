@@ -30,7 +30,7 @@ public class CharacterSelectionMenu extends AbstractSelectionMenu
     @Override
     protected String getTitleText() 
     {
-        return "SELECT 3 CHARACTERS";
+        return "SELECT "+Game.MAX_ALLIES_PER_ROUND+" CHARACTERS";
     }
     
     @Override
