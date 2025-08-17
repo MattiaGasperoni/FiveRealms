@@ -42,7 +42,7 @@ public class Tutorial
     {
     	
         // Mostra la mappa del tutorial
-        this.tutorialMap.start();
+        this.tutorialMap.show();
         
         // Spawna i personaggi
         this.tutorialMap.spawnCharacter(this.alliesList);
@@ -117,7 +117,7 @@ public class Tutorial
     {
     	this.tutorialCompleted = true;
         System.out.println("Tutorial completed!");
-        this.tutorialMap.closeWindow();
+        this.tutorialMap.close();
         this.controller.onTutorialPopupsCompleted();
     }
     

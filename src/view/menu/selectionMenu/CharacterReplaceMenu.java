@@ -1,5 +1,4 @@
-package view.selectionMenu;
-
+package view.menu.selectionMenu;
 
 /**
  * Character replacement menu for changing team members.
@@ -16,11 +15,11 @@ public class CharacterReplaceMenu extends AbstractSelectionMenu
      * @param allAllies List of all available characters that can be selected
      * @param alliesToChange Number of characters that need to be selected for replacement
      */
-    public void start(int alliesToChange) 
+    public void show(int alliesToChange) 
     {
         this.alliesToChange          = alliesToChange;
         this.maxSelectableCharacters = alliesToChange;
-        super.start();
+        super.show();
     }
     
     @Override

@@ -1,6 +1,9 @@
-package view.selectionMenu;
+package view.menu.selectionMenu;
 
 import javax.swing.*;
+
+import view.menu.Menu;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -10,7 +13,7 @@ import java.util.List;
  * Abstract base class for character selection menus.
  * Provides common functionality for selecting characters with fantasy-themed UI styling.
  */
-public abstract class AbstractSelectionMenu 
+public abstract class AbstractSelectionMenu implements Menu 
 {
     // UI Constants for consistent styling
     protected static final Font TITLE_FONT = new Font("Serif", Font.BOLD, 32);
@@ -24,18 +27,41 @@ public abstract class AbstractSelectionMenu
     protected final List<String> selectedCharacters = new ArrayList<>();
     protected int maxSelectableCharacters;
     
+    
     /**
-     * Template method that defines the structure for starting the menu.
-     * Subclasses can override specific parts while maintaining the overall flow.
-     * 
+     * Makes the menu visible to the user by displaying its frame.
      */
-    public void start() 
-    {        
+    @Override
+    public void show() 
+    {
         this.initializeFrame();
         this.setupBackground();
         this.frame.setVisible(true);
     }
+
+    /**
+     * Closes the menu by disposing its frame, releasing any resources associated with it.
+     */
+    @Override
+    public void close() 
+    {
+        if (this.frame != null) 
+        {
+            this.frame.dispose();
+        }
+    }
+
+    /**
+     * Returns the root JPanel of this menu.
+     *
+     * @return the JPanel representing this menu
+     */
+    @Override
+    public JPanel getPanel() {
+        return this.frame != null ? (JPanel) this.frame.getContentPane() : null;
+    }
     
+        
     /**
      * Initialize the main frame with common properties.
      */
@@ -287,16 +313,7 @@ public abstract class AbstractSelectionMenu
         return new ArrayList<>(this.selectedCharacters);
     }
 
-    /**
-     * Closes and disposes of the character selection menu frame.
-     */
-    public void close() 
-    {
-        if (this.frame != null) 
-        {
-        	this.frame.dispose();
-        }
-    }
+
     
     // Abstract methods that subclasses must implement
     

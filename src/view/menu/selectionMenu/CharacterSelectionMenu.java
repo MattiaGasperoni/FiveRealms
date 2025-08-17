@@ -1,4 +1,4 @@
-package view.selectionMenu;
+package view.menu.selectionMenu;
 
 import model.gameStatus.Game;
 
@@ -15,10 +15,10 @@ public class CharacterSelectionMenu extends AbstractSelectionMenu
      * @param allAllies List of all available characters that can be selected
      */
     @Override
-    public void start() 
+    public void show() 
     {
         this.maxSelectableCharacters = Game.MAX_ALLIES_PER_ROUND;
-        super.start();
+        super.show();
     }
     
     @Override

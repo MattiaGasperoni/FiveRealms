@@ -1,10 +1,10 @@
-package view;
+package view.menu;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-public class PauseMenu 
+public class PauseMenu implements Menu
 {
     private JFrame frame;
     private JLayeredPane layeredPanel;
@@ -28,6 +28,47 @@ public class PauseMenu
         this.initialize();
     }
 
+    
+    /**
+     * Makes the Pause menu panel visible to the user.
+     * If the panel exists, it sets its visibility to true and repaints the layered panel.
+     */
+    @Override
+    public void show() 
+    {
+        if (this.pauseMenuPanel != null) 
+        {
+            this.pauseMenuPanel.setVisible(true);
+            this.layeredPanel.repaint();
+        }
+    }
+
+    /**
+     * Hides the Pause menu panel from the user.
+     * If the panel exists, it sets its visibility to false and repaints the layered panel.
+     */
+    @Override
+    public void close() 
+    {
+        if (this.pauseMenuPanel != null) 
+        {
+            this.pauseMenuPanel.setVisible(false);
+            this.layeredPanel.repaint();
+        }
+    }
+
+    /**
+     * Returns the JPanel representing the Pause menu panel.
+     *
+     * @return the Pause menu JPanel, or null if it has not been initialized
+     */
+    @Override
+    public JPanel getPanel() 
+    {
+        return this.pauseMenuPanel;
+    }
+
+    
     /**
      * Initializes and sets up the pause menu interface with fantasy-themed styling
      * Creates the pause menu panel, buttons, and pause trigger button
@@ -170,29 +211,7 @@ public class PauseMenu
         this.layeredPanel.add(this.menuIcon, Integer.valueOf(3));
     }
     
-    /**
-     * Makes the Pause menu panel visible to the user
-     */
-    public void show() 
-    {
-        if (this.pauseMenuPanel != null) 
-        {
-            this.pauseMenuPanel.setVisible(true);
-            this.layeredPanel.repaint();
-        }
-    }
-    
-    /**
-     * Makes the Pause menu panel invisible to the user
-     */
-    public void hide() 
-    {
-        if (this.pauseMenuPanel != null) 
-        {
-            this.pauseMenuPanel.setVisible(false);
-            this.layeredPanel.repaint();
-        }
-    }
+
     
     /**
      * Adds an ActionListener to the resume button
@@ -315,5 +334,8 @@ public class PauseMenu
         this.menuIcon.setFocusPainted(false);
         this.menuIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
+
+
+
 
 }

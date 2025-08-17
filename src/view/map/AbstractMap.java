@@ -14,13 +14,14 @@ import javax.swing.*;
 import controller.GameController;
 import model.characters.Character;
 import model.point.Point;
-import view.PauseMenu;
+import view.menu.PauseMenu;
+
 
 /**
  * Abstract class representing a map in the game.
  * It includes a grid of buttons and a control panel with game management options.
  */
-public abstract class AbstractMap 
+public abstract class AbstractMap implements view.map.Map
 {
     
     public static final int GRID_SIZE_HEIGHT  = 15;  // Righe della griglia 
@@ -74,24 +75,34 @@ public abstract class AbstractMap
     }
     
     
-	public void start() 
-    {		 
-    	initializeFrame();
-		 if (this.numLevel == 0)
-		 {
-		        System.out.print(" Open Tutorial Frame ->");
-		 } 
-		 else
-		 {
-		        System.out.print("Open Level " + this.numLevel + " Frame ->");
-		        this.pauseMenu = new PauseMenu(this.getFrame(), this.getLayeredPanel());
-		        this.controller.setPauseMenu(this.pauseMenu);
-		 }
-        
-        
+    @Override
+    public void show() 
+    {
+        // Initialize the level frame
+        this.initializeFrame();
+
+        // If this is not the tutorial level, initialize the PauseMenu
+        if (this.numLevel != 0) 
+        {
+            this.pauseMenu = new PauseMenu(this.getFrame(), this.getLayeredPanel());
+            this.controller.setPauseMenu(this.pauseMenu);
+        }
+
+        // Display the frame
         this.frame.setVisible(true);
     }
     
+    @Override
+    public void close() 
+    {
+        // If the frame exists, dispose of it and remove all attached events
+        if (this.frame != null) 
+        {
+        	this.removeAllEvent();
+            this.frame.dispose();
+        }
+    }
+   
     
     /**
      * Initializes the main frame and layout.
@@ -395,18 +406,7 @@ public abstract class AbstractMap
         this.gridPanel.repaint();
     }
 
-    /**
-	 * Closes the game window.
-	 */
-    public void closeWindow() 
-    {
-        if (this.frame != null) 
-        {
-        	this.frame.dispose();
-        	this.removeAllEvent();
-        }
-        
-    }
+
     
   
     /**

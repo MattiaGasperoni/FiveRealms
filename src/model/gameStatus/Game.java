@@ -446,7 +446,7 @@ public class Game
 	
 	public void closeAll()
 	{
-		this.gameLevels.get(this.currentLevelIndex).getLevelMap().closeWindow();
+		this.gameLevels.get(this.currentLevelIndex).getLevelMap().close();
 	}
 
 	public List<Character> getAvailableAllies() 

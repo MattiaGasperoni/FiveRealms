@@ -78,7 +78,7 @@ public class Level
 
     public void play() throws IOException 
     {
-        this.levelMap.start();
+        this.levelMap.show();
         
         this.levelMap.spawnCharacter(this.enemiesList);
         this.levelMap.spawnCharacter(this.alliesList);
@@ -314,7 +314,7 @@ public class Level
             this.levelFailed = true;
             System.out.println("Tutti i tuoi personaggi sono morti. Game Over.\n");
             this.currentLevelPhase = LevelPhase.DONE;
-            this.levelMap.closeWindow();
+            this.levelMap.close();
             return;
         } 
         else if (this.enemiesList.isEmpty()) 
@@ -338,7 +338,7 @@ public class Level
 				}
             }
             this.currentLevelPhase = LevelPhase.DONE;
-            this.levelMap.closeWindow();
+            this.levelMap.close();
             return;
         }
 

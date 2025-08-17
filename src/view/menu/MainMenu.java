@@ -71,7 +71,8 @@ public class MainMenu extends AbstractMenu
      * Adds an ActionListener to the start game button.
      * @param listener The ActionListener to handle start button click events
      */
-    public void addStartListener(ActionListener listener) {
+    public void addStartListener(ActionListener listener) 
+    {
         this.startButton.addActionListener(listener);
     }
     
@@ -79,7 +80,8 @@ public class MainMenu extends AbstractMenu
      * Adds an ActionListener to the load game button.
      * @param listener The ActionListener to handle load button click events
      */
-    public void addLoadListener(ActionListener listener) {
+    public void addLoadListener(ActionListener listener) 
+    {
         this.loadButton.addActionListener(listener);
     }
     
@@ -87,7 +89,8 @@ public class MainMenu extends AbstractMenu
      * Adds an ActionListener to the exit button.
      * @param listener The ActionListener to handle exit button click events
      */
-    public void addExitListener(ActionListener listener) {
+    public void addExitListener(ActionListener listener) 
+    {
         this.exitButton.addActionListener(listener);
     }
     

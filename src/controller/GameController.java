@@ -18,14 +18,14 @@ import model.gameStatus.MusicManager;
 import model.gameStatus.saveSystem.GameSave;
 import model.gameStatus.saveSystem.GameSaveManager;
 import model.point.Point;
-import view.PauseMenu;
 import view.map.AbstractMap;
 import view.menu.EndGameMenu;
 import view.menu.LoadGameMenu;
 import view.menu.MainMenu;
+import view.menu.PauseMenu;
 import view.menu.TutorialMenu;
-import view.selectionMenu.CharacterReplaceMenu;
-import view.selectionMenu.CharacterSelectionMenu;
+import view.menu.selectionMenu.CharacterReplaceMenu;
+import view.menu.selectionMenu.CharacterSelectionMenu;
 
 /**
  * Coordinates user actions with the game logic.
@@ -218,7 +218,7 @@ public class GameController
 
     	this.pauseMenu.addResumeListener(e -> 
         {
-        	this.pauseMenu.hide();
+        	this.pauseMenu.close();
         	this.musicManager.play("level" + (this.getLevelIndex()+1), true);
         	this.getCurrentLevel().setLevelPaused(false);
         });
@@ -235,7 +235,7 @@ public class GameController
             } 
             finally 
             {
-            	this.pauseMenu.hide();
+            	this.pauseMenu.close();
             	this.musicManager.play("level" + (this.getLevelIndex()+1), true);
             	this.getCurrentLevel().setLevelPaused(false);
             }
@@ -243,7 +243,7 @@ public class GameController
 
     	this.pauseMenu.addMainMenuListener(e -> 
     	{
-    		this.pauseMenu.hide();
+    		this.pauseMenu.close();
     		this.game.closeAll();
 	    	this.restartGameFromMenu();
     	});
@@ -294,7 +294,7 @@ public class GameController
     	this.musicManager.play("background", true);
         List<Character> available = this.game.createAllies();
         
-        this.characterSelectionMenu.start();
+        this.characterSelectionMenu.show();
 
         this.characterSelectionMenu.addNextButtonListener(e -> 
         {
@@ -327,7 +327,7 @@ public class GameController
     	        + (elemento.isAllied() ? "alleato" : "nemico"));
     	}
         
-    	this.characterReplaceMenu.start(alliesToChange);
+    	this.characterReplaceMenu.show(alliesToChange);
 
         this.characterReplaceMenu.addNextButtonListener(e ->
         {

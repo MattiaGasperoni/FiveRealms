@@ -7,8 +7,8 @@ import javax.swing.*;
  * Abstract base class for all menu screens in the FiveRealms game.
  * Provides common functionality, styling, and layout management for consistent UI experience.
  */
-public abstract class AbstractMenu extends JPanel{
-    
+public abstract class AbstractMenu extends JPanel implements Menu   
+{
     private static final long serialVersionUID = 1L;
     
 	// === COMMON CONSTANTS ===
@@ -45,12 +45,44 @@ public abstract class AbstractMenu extends JPanel{
     protected AbstractMenu(String title) 
     {
         this.windowTitle = title;
-        this.frame = createMainFrame();
+        this.frame     = createMainFrame();
         this.mainPanel = createMainPanel();
         initializeComponents();
         setupLayout();
         finalizeFrame();
     }
+    
+    /**
+     * Makes the menu visible to the user by displaying its frame.
+     */
+    @Override
+    public void show() 
+    {
+        this.frame.setVisible(true);
+    }
+
+    /**
+     * Closes the menu by disposing its frame, releasing any resources associated with it.
+     */
+    @Override
+    public void close() 
+    {
+        if (this.frame != null) 
+        {
+            this.frame.dispose();
+        }
+    }
+
+    /**
+     * Returns the root JPanel of this menu.
+     *
+     * @return the JPanel representing this menu
+     */
+    @Override
+    public JPanel getPanel() {
+        return this;
+    }
+
     
     /**
      * Creates and configures the main application frame.
@@ -290,32 +322,5 @@ public abstract class AbstractMenu extends JPanel{
     protected String getBackgroundImagePath() 
     {
         return DEFAULT_BACKGROUND_PATH;
-    }
-    
-    // === PUBLIC INTERFACE ===
-    
-    /**
-     * Makes the menu visible to the user.
-     */
-    public void show() 
-    {
-    	this.frame.setVisible(true);
-    }
-    
-    /**
-     * Closes and disposes of the menu frame.
-     */
-    public void close() 
-    {
-    	this.frame.dispose();
-    }
-    
-    /**
-     * Gets the main frame (useful for modal dialogs).
-     * @return The main JFrame
-     */
-    public JFrame getFrame() 
-    {
-        return this.frame;
     }
 }
