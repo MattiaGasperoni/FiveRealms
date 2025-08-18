@@ -8,7 +8,6 @@ import view.map.TutorialMap;
 
 public class Tutorial 
 {
-    // Messaggi dl Tutorial
     private static final String[] TUTORIAL_MESSAGES = 
     {
         "Welcome, soldier! Listen carefully.",
@@ -35,28 +34,18 @@ public class Tutorial
         this.controller        = controller;
     }
     
-    /**
-     * Avvia il tutorial completo
-     */
     public boolean play() 
     {
     	
-        // Mostra la mappa del tutorial
         this.tutorialMap.show();
         
-        // Spawna i personaggi
         this.tutorialMap.spawnCharacter(this.alliesList);
         this.tutorialMap.spawnCharacter(this.enemiesList);
         
-        // Avvia la sequenza di popup tutorial
         this.startTutorialSequence();
         
         return this.tutorialCompleted;
     }
-    
-    /**
-     * Inizia la sequenza dei popup tutorial
-     */
     
     private void startTutorialSequence() 
     {
@@ -64,9 +53,6 @@ public class Tutorial
         this.showNextStep();
     }
     
-    /**
-     * Mostra il prossimo step del tutorial
-     */
     private void showNextStep() 
     {
         if (this.currentStep >= TUTORIAL_MESSAGES.length) 
@@ -101,18 +87,12 @@ public class Tutorial
         }
     }
     
-    /**
-     * Passa al prossimo step
-     */
     private void nextStep() 
     {
     	this.currentStep++;
         this.showNextStep();
     }
     
-    /**
-     * Completa il tutorial
-     */
     private void completeTutorial() 
     {
     	this.tutorialCompleted = true;
@@ -121,9 +101,6 @@ public class Tutorial
         this.controller.onTutorialPopupsCompleted();
     }
     
-    /**
-     * Controlla se il tutorial è completato
-     */
     public boolean isCompleted() 
     {
         return this.tutorialCompleted;

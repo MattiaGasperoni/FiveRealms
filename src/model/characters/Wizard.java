@@ -2,7 +2,6 @@ package model.characters;
 
 import model.equipment.weapons.Wand;
 import model.equipment.weapons.Staff;
-import model.point.Point;
 
 public class Wizard extends AbstractCharacter{
 

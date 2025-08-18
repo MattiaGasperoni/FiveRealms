@@ -16,10 +16,6 @@ public class GameSave implements Serializable
     private final int level;
     private final List<Character> allies;
     private final List<Character> enemies;
-    
-    /*
-     * Eventualmente aggiungere la data di salvataggio e il nome/descrizione del salvataggio
-     */
 
     /**
      * Constructs a new GameState.

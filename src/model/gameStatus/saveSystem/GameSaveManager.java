@@ -10,14 +10,12 @@ import model.characters.Character;
 
 public class GameSaveManager 
 {
-    // Nome della cartella dove vengono salvati i file di salvataggio
     public static final String DIRECTORY_NAME = "saves";
     public static final String FILE_EXTENSION = ".sav";
 
     private GameSave currentLoadedGameState = null;
 
     /**
-     * Salva lo stato del gioco usando la serializzazione Java.
      * @param gameState Lo stato del gioco da salvare.
      * @param fileName Nome del file (opzionale, se null viene generato automaticamente).
      * @throws IOException Se si verifica un errore durante il salvataggio.

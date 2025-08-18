@@ -13,8 +13,10 @@ public class BarbarianBoss extends Barbarian{
 		super.increaseDefence(0.2);
 		super.increaseSpeed(0.2);
 	}
-	
-	//GIMMICK Berserker: Gets stronger every time he gets hit
+
+	/**
+	 *GIMMICK Berserker: Gets stronger every time he gets hit
+	 */
 	@Override
 	public void reduceCurrentHealth(int value) {
 		super.reduceCurrentHealth(value);

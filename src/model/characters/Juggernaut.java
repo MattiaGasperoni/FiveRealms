@@ -2,7 +2,6 @@ package model.characters;
 
 import model.equipment.weapons.Axe;
 import model.equipment.weapons.ShortSword;
-import model.point.Point;
 
 public class Juggernaut extends AbstractCharacter{
 

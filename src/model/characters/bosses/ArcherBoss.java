@@ -15,8 +15,10 @@ public class ArcherBoss extends Archer{
 		super.increaseDefence(0.2);
 		super.increaseSpeed(0.5);
 	}
-	
-	//GIMMICK Soulburn: Deals an additional 10% of target's remaining hp as damage after hitting in a Fight
+
+	/**
+	 *GIMMICK Soulburn: Deals an additional 10% of target's remaining hp as damage after hitting in a Fight
+	 */
 	public Character fight(Character attackedCharacter) throws IllegalArgumentException {
 		Character deadCharacter = super.fight(attackedCharacter);
 		if(attackedCharacter.isAlive())

@@ -13,7 +13,9 @@ public class JuggernautBoss extends Juggernaut{
 		super.increaseSpeed(0.1);
 	}
 
-	//GIMMICK Ablative Armor: Starts off with extremely high defence, which gets reduced every time he gets hit, even if it deals no damage, but he also gets faster.
+	/**
+	 *GIMMICK Ablative Armor: Starts off with extremely high defence, which gets reduced every time he gets hit, even if it deals no damage, but he also gets faster.
+	 */
 	@Override
 	public void reduceCurrentHealth(int value) {
 		super.reduceCurrentHealth(value);

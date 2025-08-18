@@ -10,8 +10,6 @@ import model.characters.Character;
 
 public class TutorialMap extends AbstractMap 
 {
-    
-    // Constanti per la grafica
     private static final Color ALLY_HIGHLIGHT   = Color.RED;
     private static final Color ENEMY_HIGHLIGHT  = Color.BLUE;
     private static final Color POPUP_BG         = new Color(245, 230, 200);
@@ -26,12 +24,7 @@ public class TutorialMap extends AbstractMap
     {
         super(enemiesList, alliesList, 0, controller);
     }
-    
-    // ==================== METODI GRAFICI PUBBLICI ====================
-    
-    /**
-     * Mostra un popup con messaggio e callback
-     */
+        
     public void showTutorialPopup(String message, Runnable onClose) 
     {
         JDialog dialog = createDialog();
@@ -44,25 +37,16 @@ public class TutorialMap extends AbstractMap
         dialog.setVisible(true);
     }
     
-    /**
-     * Evidenzia le righe degli alleati
-     */
     public void highlightAlliesArea(Runnable afterAction) 
     {
         highlightRows(0, AbstractMap.GRID_SIZE_HEIGHT / 2, ALLY_HIGHLIGHT, afterAction);
     }
     
-    /**
-     * Evidenzia le righe dei nemici
-     */
     public void highlightEnemiesArea(Runnable afterAction) 
     {
         highlightRows(AbstractMap.GRID_SIZE_WIDTH / 2, AbstractMap.GRID_SIZE_WIDTH - 1, ENEMY_HIGHLIGHT, afterAction);
     }
     
-    /**
-     * Rimuove tutti gli highlight
-     */
     public void clearHighlights() 
     {
         for (int i = 0; i < AbstractMap.GRID_SIZE_WIDTH; i++) 
@@ -78,7 +62,6 @@ public class TutorialMap extends AbstractMap
         }
     }
     
-    // ==================== METODI PRIVATI DI SUPPORTO ====================
     
     private JDialog createDialog() 
 {
@@ -144,7 +127,7 @@ public class TutorialMap extends AbstractMap
             }
         }
         
-        // Timer per rimuovere l'highlight
+        // Timer to remove highlight
         Timer timer = new Timer(HIGHLIGHT_DURATION, e -> {
             clearHighlights();
             if (afterAction != null) {

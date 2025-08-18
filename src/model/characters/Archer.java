@@ -1,7 +1,6 @@
 package model.characters;
 import model.equipment.weapons.LongBow;
 import model.equipment.weapons.ShortBow;
-import model.point.Point;
 
 public class Archer extends AbstractCharacter{
 

@@ -34,7 +34,7 @@ public class Point  implements Serializable{
         if (other == null) {
             throw new IllegalArgumentException("Other point cannot be null.");
         }
-        return Math.abs(this.x - other.x) + Math.abs(this.y - other.y); // Distanza di Manhattan
+        return Math.abs(this.x - other.x) + Math.abs(this.y - other.y);
     }
 	
 	@Override

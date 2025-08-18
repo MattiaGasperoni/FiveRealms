@@ -28,7 +28,8 @@ public class MusicManager
 
     public void play(String trackName, boolean loop) 
     {
-        this.stop(); // ferma musica attuale
+    	//stops any current music (otherwise risks overlapping)
+        this.stop();
         
         String path = tracks.get(trackName);
         

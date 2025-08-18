@@ -13,8 +13,10 @@ public class WizardBoss extends Wizard{
 		super.increaseSpeed(0.2);
 		super.setWeapon(super.availableWeapons.get(1));
 	}
-	
-	//GIMMICK Unnatural Body: Takes halved damage from attacks
+
+	/**
+	 *GIMMICK Unnatural Body: Takes halved damage from attacks
+	 */
 	@Override
 	public void reduceCurrentHealth(int value) {
 		super.reduceCurrentHealth(value/2);

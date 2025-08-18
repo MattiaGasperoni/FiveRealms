@@ -2,7 +2,6 @@ package model.characters;
 
 import model.equipment.weapons.LongSword;
 import model.equipment.weapons.Spear;
-import model.point.Point;
 
 public class Knight extends AbstractCharacter{
 

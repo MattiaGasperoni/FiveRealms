@@ -2,7 +2,6 @@ package model.characters;
 
 import model.equipment.weapons.Axe;
 import model.equipment.weapons.LongSword;
-import model.point.Point;
 
 public class Barbarian extends AbstractCharacter{
 

@@ -17,7 +17,6 @@ public class GridPanel extends JPanel
 	 */
 	private static final long serialVersionUID = 1L;
 	private JButton[][] gridButtons;  // 2D array for grid buttons
-    //private JLayeredPane layeredPane; // Riferimento al JLayeredPane
 
     /**
      * Constructor for the GridPanel.
@@ -46,17 +45,11 @@ public class GridPanel extends JPanel
         for (int i = 0; i < AbstractMap.GRID_SIZE_WIDTH; i++) 
         {
             for (int j = 0; j < AbstractMap.GRID_SIZE_HEIGHT; j++) 
-            {
-                //int row = i;
-                //int col = j;
-                
+            {   
                 JButton button = new JButton(); // Create button
                                 
                 button.setContentAreaFilled(false);
                 button.setBorderPainted(false);
-                
-                // Genera l'effeto grafico buggato quando uccidi un nemico
-                //button.addActionListener(e -> showButtonCoordinates(row, col));
                 
                 this.gridButtons[i][j] = button;
                 
@@ -68,18 +61,6 @@ public class GridPanel extends JPanel
         this.repaint();
     }
 
-
-
-	/**
-     * Displays a dialog with the button's coordinates when clicked.
-     * @param row The row index of the button.
-     * @param col The column index of the button.
-     */
-     /*private void showButtonCoordinates(int row, int col) {
-        JOptionPane.showMessageDialog(layeredPane, "Position: [" + row + ", " + col + "]");
-     }*/
-    
-
     /**
      * Gets the array of grid buttons.
      * @return 2D array of grid buttons.
@@ -89,7 +70,6 @@ public class GridPanel extends JPanel
     }
 
 
-    // Metodo che scorre tutti i pulsanti e se hanno un immagine allora li mette in una Mappa
 	public Map<JButton, Point>  getImageButtonList() 
 	{
 		Map<JButton, Point> buttonsWithImage = new HashMap<>();
