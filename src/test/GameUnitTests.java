@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.gameStatus.Game;
-import model.gameStatus.Level;
+import model.gameStatus.GameLevel;
 import model.gameStatus.saveSystem.GameSaveManager;
 import model.characters.Character;
 import model.characters.Barbarian;

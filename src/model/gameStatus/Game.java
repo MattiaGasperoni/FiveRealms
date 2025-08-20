@@ -20,7 +20,7 @@ public class Game
 	/** Maximum number of allied characters allowed per round */
 	public static final int MAX_ALLIES_PER_ROUND = 3;
 
-	private List<Level> gameLevels;
+	private List<GameLevel> gameLevels;
 	private List<Character> availableAllies;
 	private List<Character> selectedAllies;
 	/** Flag indicating if the game is waiting for character replacement between levels */
@@ -151,7 +151,7 @@ public class Game
 			 ally.becomeHero();
 		 }
 
-		 Tutorial tutorial = new Tutorial(new TutorialMap(tutorialEnemies, tutorialAllies, this.controller),this.controller);
+		 GameTutorial tutorial = new GameTutorial(new TutorialMap(tutorialEnemies, tutorialAllies, this.controller),this.controller);
 
 		 return tutorial.play();
 	 }
@@ -199,7 +199,7 @@ public class Game
 	 {
 		 try 
 		 {
-			 Level livello = this.gameLevels.get(this.currentLevelIndex);
+			 GameLevel livello = this.gameLevels.get(this.currentLevelIndex);
 			 this.controller.startLevelMusic(this.currentLevelIndex+1);
 			 livello.play();
 		 } 
@@ -218,7 +218,7 @@ public class Game
 	  */
 	 private void updateGameSafe()
 	 {
-		 Level livello = this.gameLevels.get(this.currentLevelIndex);
+		 GameLevel livello = this.gameLevels.get(this.currentLevelIndex);
 
 		 livello.update();
 
@@ -419,11 +419,11 @@ public class Game
 		 level5Enemies.add(new BarbarianBoss());
 		 level5Enemies.add(new ArcherBoss());
 
-		 this.gameLevels.add(new Level(new LevelMap(level1Enemies, this.selectedAllies, 1, this.controller), this.controller));
-		 this.gameLevels.add(new Level(new LevelMap(level2Enemies, this.selectedAllies, 2, this.controller), this.controller));
-		 this.gameLevels.add(new Level(new LevelMap(level3Enemies, this.selectedAllies, 3, this.controller), this.controller));
-		 this.gameLevels.add(new Level(new LevelMap(level4Enemies, this.selectedAllies, 4, this.controller), this.controller));
-		 this.gameLevels.add(new Level(new LevelMap(level5Enemies, this.selectedAllies, 5, this.controller), this.controller));
+		 this.gameLevels.add(new GameLevel(new LevelMap(level1Enemies, this.selectedAllies, 1, this.controller), this.controller));
+		 this.gameLevels.add(new GameLevel(new LevelMap(level2Enemies, this.selectedAllies, 2, this.controller), this.controller));
+		 this.gameLevels.add(new GameLevel(new LevelMap(level3Enemies, this.selectedAllies, 3, this.controller), this.controller));
+		 this.gameLevels.add(new GameLevel(new LevelMap(level4Enemies, this.selectedAllies, 4, this.controller), this.controller));
+		 this.gameLevels.add(new GameLevel(new LevelMap(level5Enemies, this.selectedAllies, 5, this.controller), this.controller));
 	 }
 
 	 /**
@@ -449,7 +449,7 @@ public class Game
 	  * 
 	  * @return the list of game levels
 	  */
-	 public List<Level> getGameLevels() {
+	 public List<GameLevel> getGameLevels() {
 		 return this.gameLevels;
 	 }   
 
@@ -476,7 +476,7 @@ public class Game
 
 		 this.gameLevels.get(index).setEnemiesList(enemy);
 
-		 for (Level level : this.gameLevels)
+		 for (GameLevel level : this.gameLevels)
 		 {
 			 level.setAlliesList(allies);
 		 }

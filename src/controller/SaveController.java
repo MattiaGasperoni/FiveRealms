@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import model.gameStatus.Game;
-import model.gameStatus.Level;
+import model.gameStatus.GameLevel;
 import model.gameStatus.saveSystem.GameSave;
 import model.gameStatus.saveSystem.GameSaveManager;
 
@@ -57,7 +57,7 @@ public class SaveController
      */
     public void saveGame(Game game) throws IOException 
     {
-        Level currentLevel = this.getCurrentLevel(game);
+        GameLevel currentLevel = this.getCurrentLevel(game);
         
         GameSave gameState = new GameSave(
             game.getCurrentLevelIndex(),
@@ -126,7 +126,7 @@ public class SaveController
      * @param game the game instance
      * @return the current level
      */
-    private Level getCurrentLevel(Game game) 
+    private GameLevel getCurrentLevel(Game game) 
     {
         return game.getGameLevels().get(game.getCurrentLevelIndex());
     }

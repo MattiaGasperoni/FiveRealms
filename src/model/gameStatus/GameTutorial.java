@@ -6,7 +6,7 @@ import controller.GameController;
 import model.characters.Character;
 import view.map.TutorialMap;
 
-public class Tutorial 
+public class GameTutorial implements Level
 {
     private static final String[] TUTORIAL_MESSAGES = 
     {
@@ -24,7 +24,7 @@ public class Tutorial
     private int currentStep;
 	private GameController controller;
     
-    public Tutorial(TutorialMap map, GameController controller)
+    public GameTutorial(TutorialMap map, GameController controller)
     {
         this.tutorialCompleted = false;
         this.tutorialMap       = map;
