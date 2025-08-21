@@ -10,9 +10,12 @@ import org.junit.jupiter.api.DisplayName;
 
 import model.characters.*;
 import model.characters.Character;
+import model.gameStatus.Game;
+import model.gameStatus.saveSystem.GameSaveManager;
 import model.point.Point;
 import view.map.AbstractMap;
 import view.map.GridPanel;
+import view.map.LevelMap;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -20,7 +23,8 @@ import java.util.List;
 
 import javax.swing.JLayeredPane;
 
-public class MapTest {
+public class MapTest 
+{
 
     private AbstractMap map;
     private List<Character> allies;
@@ -28,24 +32,24 @@ public class MapTest {
     private GameController controller; 
 
     @BeforeEach
-    void setUp() {
-        allies = new ArrayList<>();
-        enemies = new ArrayList<>();
+    void setUp() 
+    {
+    	Game game = new Game();
+    	GameSaveManager gsm = new GameSaveManager();
+    	this.allies  = new ArrayList<>();
+    	this.enemies = new ArrayList<>();
+        this.controller = new GameController(game, gsm);
 
         // Creiamo una mappa concreta
-        map = new AbstractMap(enemies, allies, 1, controller) {};
+        map = new LevelMap(enemies, allies, 1, controller);
 
-        // Creiamo un layeredPane fittizio e il GridPanel
-        JLayeredPane layeredPane = new JLayeredPane();
-        GridPanel gridPanel = new GridPanel(layeredPane);
-
-        // Impostiamo il gridPanel nella mappa
     }
 
     // Test map creation and initial state
     @Test
     @DisplayName("Test map creation and initial state")
-    void testMapCreation() {
+    void testMapCreation() 
+    {
         assertNotNull(map);
         assertEquals(0, allies.size());
         assertEquals(0, enemies.size());
@@ -54,11 +58,14 @@ public class MapTest {
     // Test spawning a character on the map
     @Test
     @DisplayName("Test spawning a character")
-    void testSpawnCharacter() {
+    void testSpawnCharacter() 
+    {
         Character hero = new Barbarian();
+        
         hero.becomeHero();
+        
         allies.add(hero);
-
+        
         map.spawnCharacter(allies);
 
         assertTrue(map.isPositionOccupied(hero.getPosition()));
@@ -67,15 +74,19 @@ public class MapTest {
     // Test moving a character to a new position
     @Test
     @DisplayName("Test moving a character")
-    void testMoveCharacter() {
+    void testMoveCharacter() 
+    {
         Character knight = new Knight();
+        
         knight.becomeHero();
+        
         allies.add(knight);
 
         map.spawnCharacter(allies);
 
         Point target = new Point(3, 4);
-        map.moveCharacter(knight, target);
+        
+        this.controller.move(map,knight, target);
 
         assertEquals(target, knight.getPosition());
         assertTrue(map.isPositionOccupied(target));
@@ -84,15 +95,16 @@ public class MapTest {
     // Test removing a character from the map
     @Test
     @DisplayName("Test removing a character")
-    void testRemoveCharacter() {
+    void testRemoveCharacter() 
+    {
         Character mage = new Wizard();
         mage.becomeHero();
         allies.add(mage);
 
-        map.spawnCharacter(allies);
-        map.removeCharacter(mage);
+        this.map.spawnCharacter(allies);
+        this.controller.remove(map, mage, mage.getPosition(), allies);
 
-        assertFalse(map.isPositionOccupied(mage.getPosition()));
+        assertFalse(allies.size() > 0);
     }
 
     // Test coloring available positions

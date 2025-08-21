@@ -96,6 +96,9 @@ public abstract class AbstractMap implements view.map.Map {
 
 		this.tooltipManager = new CharacterTooltipManager();
 		this.controller = controller;
+		
+		// TEMP
+		this.initializeFrame();
 	}
 
 	/**
@@ -105,7 +108,7 @@ public abstract class AbstractMap implements view.map.Map {
 	@Override
 	public void show() {
 		// Initialize the level frame
-		this.initializeFrame();
+		
 
 		// If this is not the tutorial level, initialize the PauseMenu
 		if (this.numLevel != 0) {

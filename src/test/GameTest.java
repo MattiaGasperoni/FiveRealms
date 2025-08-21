@@ -27,7 +27,8 @@ public class GameTest {
     @Test
     @DisplayName("Creation and initialization of allies")
     // Check that the created allies list contains all expected character types
-    void testCreateAllies() {
+    void testCreateAllies() 
+    {
         List<Character> allies = game.createAllies();
         assertNotNull(allies);
         assertEquals(5, allies.size());
@@ -41,7 +42,8 @@ public class GameTest {
     @Test
     @DisplayName("Character selection and setup")
     // Select some characters, make them heroes, set positions, and verify they are allied and alive
-    void testCharacterSelection() {
+    void testCharacterSelection() 
+    {
         List<Character> selected = new ArrayList<>();
         selected.add(new Barbarian());
         selected.add(new Archer());
@@ -66,7 +68,8 @@ public class GameTest {
     @Test
     @DisplayName("Character placement and movement")
     // Place a character and verify they can move within map boundaries
-    void testCharacterMovement() {
+    void testCharacterMovement() 
+    {
         Character c = new Barbarian();
         c.becomeHero();
 
@@ -86,7 +89,8 @@ public class GameTest {
     @Test
     @DisplayName("Combat system and damage calculation")
     // Calculate damage dealt and verify defender's health remains valid
-    void testCombat() {
+    void testCombat() 
+    {
         Character attacker = new Barbarian();
         Character defender = new Knight();
 
@@ -102,8 +106,9 @@ public class GameTest {
     @Test
     @DisplayName("Victory and defeat conditions")
     // Check victory/defeat conditions based on presence of allies and enemies
-    void testVictoryDefeat() {
-        List<Character> allies = new ArrayList<>();
+    void testVictoryDefeat() 
+    {
+        List<Character> allies  = new ArrayList<>();
         List<Character> enemies = new ArrayList<>();
 
         allies.add(new Barbarian());
@@ -117,7 +122,8 @@ public class GameTest {
     @Test
     @DisplayName("Game state validation")
     // Verify initial game state and map dimensions are consistent
-    void testGameState() {
+    void testGameState() 
+    {
         assertNotNull(game);
         assertTrue(Game.TOTAL_LEVEL > 0);
         assertTrue(Game.MAX_ALLIES_PER_ROUND > 0);
