@@ -1,4 +1,4 @@
-package model.gameStatus;
+package model.gameStatus.level;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,6 +10,7 @@ import java.util.Set;
 import controller.*;
 import model.characters.AbstractCharacter;
 import model.characters.Character;
+import model.gameStatus.Game;
 import model.point.Point;
 import view.*;
 import view.map.AbstractMap;

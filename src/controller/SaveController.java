@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import model.gameStatus.Game;
-import model.gameStatus.GameLevel;
+import model.gameStatus.level.GameLevel;
 import model.gameStatus.saveSystem.GameSave;
 import model.gameStatus.saveSystem.GameSaveManager;
 

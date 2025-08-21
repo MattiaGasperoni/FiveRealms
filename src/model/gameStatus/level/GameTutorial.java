@@ -1,4 +1,4 @@
-package model.gameStatus;
+package model.gameStatus.level;
 
 import java.util.List;
 

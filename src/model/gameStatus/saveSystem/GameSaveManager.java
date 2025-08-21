@@ -8,21 +8,32 @@ import java.util.Comparator;
 import java.util.List;
 import model.characters.Character;
 
+/**
+ * Manages game save and load operations including file management and state caching.
+ * Handles serialization/deserialization of game states to/from disk files.
+ */
 public class GameSaveManager 
 {
+    /** Directory name where save files are stored */
     public static final String DIRECTORY_NAME = "saves";
+    
+    /** File extension for save files */
     public static final String FILE_EXTENSION = ".sav";
 
+    /** Currently loaded game state kept in cache */
     private GameSave currentLoadedGameState = null;
 
     /**
-     * @param gameState Lo stato del gioco da salvare.
-     * @param fileName Nome del file (opzionale, se null viene generato automaticamente).
-     * @throws IOException Se si verifica un errore durante il salvataggio.
+     * Saves the current game state to a file.
+     * Creates the save directory if it doesn't exist.
+     * 
+     * @param gameSave the game state to save
+     * @param fileName name of the file (optional, if null generates automatically)
+     * @throws IOException if an error occurs during saving
      */
-    public void saveGameState(GameSave gameState, String fileName) throws IOException 
+    public void saveGameState(GameSave gameSave, String fileName) throws IOException 
     {
-        // Crea la directory se non esiste
+        // Create directory if it doesn't exist
         File directory = new File(DIRECTORY_NAME);
         
         if (!directory.exists()) 
@@ -30,13 +41,13 @@ public class GameSaveManager
             directory.mkdirs();
         }
 
-        // Genera il nome del file se non fornito
+        // Generate filename if not provided
         if (fileName == null) 
         {
-            fileName = this.generateSaveFileName(gameState.getLevel());
+            fileName = this.generateSaveFileName(gameSave.getLevel());
         }
 
-        // Assegnamo al nome del file l'estensione corretta
+        // Assign correct extension to filename
         if (!fileName.endsWith(FILE_EXTENSION))
         {
             fileName += FILE_EXTENSION;
@@ -46,27 +57,27 @@ public class GameSaveManager
         
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(saveFile)))
         {
-            oos.writeObject(gameState);
+            oos.writeObject(gameSave);
             System.out.println("=== Game state saved successfully to " + fileName + " ===");
         } 
         catch (IOException e) 
         {
         	e.printStackTrace();
             throw new IOException("Error while saving the game state: " + e.getMessage(), e);
-            
         }
     }
 
     /**
-     * Carica uno stato di gioco da un file specifico, o l'ultimo salvataggio se fileName è null.
-     * @param fileName Nome del file da caricare, o null per caricare l'ultimo salvataggio.
-     * @return Oggetto GameState che rappresenta lo stato di gioco caricato.
-     * @throws IOException Se si verifica un errore durante il caricamento.
-     * @throws ClassNotFoundException Se la classe GameState non può essere trovata durante la deserializzazione.
+     * Loads a game state from a specific file, or the latest save if fileName is null.
+     * 
+     * @param fileName name of the file to load, or null to load the latest save
+     * @return GameSave object representing the loaded game state
+     * @throws IOException if an error occurs during loading
+     * @throws ClassNotFoundException if the GameState class cannot be found during deserialization
      */
     public GameSave loadGameState(String fileName) throws IOException, ClassNotFoundException 
     {
-        // Se fileName è null, carica l'ultimo salvataggio
+        // If fileName is null, load the latest save
         if (fileName == null) 
         {
             File latestSaveFile = getLatestSaveFile();
@@ -106,8 +117,9 @@ public class GameSaveManager
     }
 
     /**
-     * Verifica se esistono file di salvataggio nella cartella 'saves'.
-     * @return true se esistono file salvati, false altrimenti.
+     * Checks if save files exist in the 'saves' folder.
+     * 
+     * @return true if saved files exist, false otherwise
      */
     public boolean hasSaved() 
     {
@@ -123,9 +135,10 @@ public class GameSaveManager
     }
 
     /**
-     * Restituisce un array di File che rappresentano i file di salvataggio presenti,
-     * ordinati per data di modifica (più recente prima).
-     * @return Array di file di salvataggio, o array vuoto se non ce ne sono.
+     * Returns an array of Files representing the save files present,
+     * sorted by modification date (most recent first).
+     * 
+     * @return array of save files, or empty array if none exist
      */
     public File[] getSaveFiles() 
     {
@@ -143,16 +156,17 @@ public class GameSaveManager
             return new File[0];
         }
         
-        // Ordina per data di modifica (più recente prima)
+        // Sort by modification date (most recent first)
         Arrays.sort(files, (f1, f2) -> Long.compare(f2.lastModified(), f1.lastModified()));
         
         return files;
     }
     
     /**
-     * Elimina un file di salvataggio specifico.
-     * @param fileName Nome del file da eliminare.
-     * @return true se il file è stato eliminato con successo, false altrimenti.
+     * Deletes a specific save file.
+     * 
+     * @param fileName name of the file to delete
+     * @return true if the file was successfully deleted, false otherwise
      */
     public boolean deleteSaveFile(String fileName) 
     {
@@ -173,10 +187,11 @@ public class GameSaveManager
     }
 
     /**
-     * Carica l'ultimo stato di gioco salvato dalla cartella 'saves'.
-     * @return Oggetto GameState che rappresenta lo stato di gioco caricato.
-     * @throws IOException Se si verifica un errore durante il caricamento.
-     * @throws ClassNotFoundException Se la classe GameState non può essere trovata.
+     * Loads the latest saved game state from the 'saves' folder.
+     * 
+     * @return GameSave object representing the loaded game state
+     * @throws IOException if an error occurs during loading
+     * @throws ClassNotFoundException if the GameState class cannot be found
      */
     public GameSave loadLatestGameState() throws IOException, ClassNotFoundException 
     {
@@ -190,8 +205,9 @@ public class GameSaveManager
     }
     
     /**
-     * Restituisce il file di salvataggio più recente presente nella cartella 'saves'.
-     * @return Il file più recente, oppure null se non esistono file.
+     * Returns the most recent save file present in the 'saves' folder.
+     * 
+     * @return the most recent file, or null if no files exist
      */
     private File getLatestSaveFile() 
     {
@@ -214,125 +230,88 @@ public class GameSaveManager
     }
     
     /**
-     * Genera un nome file univoco per il salvataggio in base al livello e al timestamp corrente.
-     * @param level Il livello attuale del gioco.
-     * @return Il nome del file di salvataggio generato.
+     * Generates a unique filename for saving based on the current level and timestamp.
+     * 
+     * @param level the current game level
+     * @return the generated save filename
      */
     private String generateSaveFileName(int level) 
     {
-        // Crea timestamp con il formato desiderato
+        // Create timestamp with desired format
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH-mm_dd-MM-yyyy");
         String timestamp = now.format(formatter);
         
         return "Level" + (level+1) + "_" + timestamp + FILE_EXTENSION;
     }
-    
-    
+      
     /**
-     * Restituisce informazioni sui file di salvataggio disponibili.
-     * @return Stringa con informazioni sui salvataggi.
+     * Loads information from a specific file and keeps it cached.
+     * This method must be called before using the getter methods below.
+     * 
+     * @param saveFile the file from which to load data
+     * @throws IOException if an error occurs during loading
+     * @throws ClassNotFoundException if the GameState class cannot be found
      */
-    public String getSaveInfo()
+    public void loadFileInfo(File saveFile) throws IOException, ClassNotFoundException 
     {
-        File[] saveFiles = getSaveFiles();
-        if (saveFiles.length == 0) {
-            return "No save files found.";
-        }
-        
-        StringBuilder info = new StringBuilder("Available save files:\n");
-        for (int i = 0; i < saveFiles.length; i++) {
-            File file = saveFiles[i];
-            LocalDateTime modified = LocalDateTime.ofInstant(
-                java.time.Instant.ofEpochMilli(file.lastModified()),
-                java.time.ZoneId.systemDefault()
-            );
-            info.append(String.format("%d. %s (Modified: %s)\n", 
-                i + 1, 
-                file.getName(), 
-                modified.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))
-            ));
-        }
-        return info.toString();
-    }
-    
-    /**
-     * Carica le informazioni da un file specifico e le mantiene in cache.
-     * Questo metodo deve essere chiamato prima di usare i getter sottostanti.
-     * @param saveFile Il file da cui caricare i dati.
-     * @throws IOException Se si verifica un errore durante il caricamento.
-     * @throws ClassNotFoundException Se la classe GameState non può essere trovata.
-     */
-    public void loadFileInfo(File saveFile) throws IOException, ClassNotFoundException {
         this.currentLoadedGameState = loadGameState(saveFile.getName());
     }
 
     /**
-     * Metodo alternativo che carica le informazioni dal file più recente.
-     * @throws IOException Se si verifica un errore durante il caricamento.
-     * @throws ClassNotFoundException Se la classe GameState non può essere trovata.
+     * Returns the list of allies from the currently loaded GameState.
+     * NOTE: Call loadFileInfo() first.
+     * 
+     * @return list of allies
+     * @throws IllegalStateException if no file has been loaded
      */
-    public void getFileInfo() throws IOException, ClassNotFoundException {
-        this.currentLoadedGameState = loadLatestGameState();
-    }
-
-    /**
-     * Restituisce la lista degli alleati dal GameState attualmente caricato.
-     * NOTA: Chiamare prima loadFileInfo() o getFileInfo().
-     * @return Lista degli alleati.
-     * @throws IllegalStateException Se nessun file è stato caricato.
-     */
-    public List<Character> getLoadedAllies() {
-        if (currentLoadedGameState == null) {
-            throw new IllegalStateException("No game state loaded. Call loadFileInfo() or getFileInfo() first.");
+    public List<Character> getLoadedAllies() 
+    {
+        if (currentLoadedGameState == null) 
+        {
+            throw new IllegalStateException("No game state loaded. Call loadFileInfo() first.");
         }
         return currentLoadedGameState.getAllies();
     }
 
     /**
-     * Restituisce la lista dei nemici dal GameState attualmente caricato.
-     * NOTA: Chiamare prima loadFileInfo() o getFileInfo().
-     * @return Lista dei nemici.
-     * @throws IllegalStateException Se nessun file è stato caricato.
+     * Returns the list of enemies from the currently loaded GameState.
+     * NOTE: Call loadFileInfo() first.
+     * 
+     * @return list of enemies
+     * @throws IllegalStateException if no file has been loaded
      */
-    public List<Character> getLoadedEnemies() {
-        if (currentLoadedGameState == null) {
-            throw new IllegalStateException("No game state loaded. Call loadFileInfo() or getFileInfo() first.");
+    public List<Character> getLoadedEnemies() 
+    {
+        if (currentLoadedGameState == null) 
+        {
+            throw new IllegalStateException("No game state loaded. Call loadFileInfo() first.");
         }
         return currentLoadedGameState.getEnemies();
     }
 
     /**
-     * Restituisce il numero del livello dal GameState attualmente caricato.
-     * NOTA: Chiamare prima loadFileInfo() o getFileInfo().
-     * @return Il numero del livello.
-     * @throws IllegalStateException Se nessun file è stato caricato.
+     * Returns the level number from the currently loaded GameState.
+     * NOTE: Call loadFileInfo() first.
+     * 
+     * @return the level number
+     * @throws IllegalStateException if no file has been loaded
      */
-    public int getLoadedLevel() {
-        if (currentLoadedGameState == null) {
-            throw new IllegalStateException("No game state loaded. Call loadFileInfo() or getFileInfo() first.");
+    public int getLoadedLevel() 
+    {
+        if (currentLoadedGameState == null) 
+        {
+            throw new IllegalStateException("No game state loaded. Call loadFileInfo() first.");
         }
         return currentLoadedGameState.getLevel();
     }
-
+   
     /**
-     * Restituisce l'intero GameState attualmente caricato.
-     * NOTA: Chiamare prima loadFileInfo() o getFileInfo().
-     * @return Il GameState completo.
-     * @throws IllegalStateException Se nessun file è stato caricato.
+     * Clears the cache of the loaded GameState.
+     * Useful for freeing memory after using the data.
      */
-    public GameSave getCurrentLoadedGameState() {
-        if (currentLoadedGameState == null) {
-            throw new IllegalStateException("No game state loaded. Call loadFileInfo() or getFileInfo() first.");
-        }
-        return currentLoadedGameState;
-    }
-
-    /**
-     * Pulisce la cache del GameState caricato.
-     * Utile per liberare memoria dopo aver utilizzato i dati.
-     */
-    public void clearLoadedGameState() {
+    public void clearLoadedGameState() 
+    {
         this.currentLoadedGameState = null;
     }
 }

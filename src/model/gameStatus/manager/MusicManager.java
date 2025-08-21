@@ -1,4 +1,4 @@
-package model.gameStatus;
+package model.gameStatus.manager;
 
 import javax.sound.sampled.*;
 import java.io.File;

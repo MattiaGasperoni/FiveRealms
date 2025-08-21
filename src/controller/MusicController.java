@@ -1,6 +1,6 @@
 package controller;
 
-import model.gameStatus.MusicManager;
+import model.gameStatus.manager.MusicManager;
 
 /**
  * Manages all music-related operations in the game.

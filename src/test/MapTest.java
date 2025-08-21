@@ -14,14 +14,11 @@ import model.gameStatus.Game;
 import model.gameStatus.saveSystem.GameSaveManager;
 import model.point.Point;
 import view.map.AbstractMap;
-import view.map.GridPanel;
 import view.map.LevelMap;
 
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.JLayeredPane;
 
 public class MapTest 
 {
