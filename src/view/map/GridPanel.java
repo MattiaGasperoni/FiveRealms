@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JLayeredPane;
-//import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import model.point.Point;
 

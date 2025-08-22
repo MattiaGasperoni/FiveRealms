@@ -1,9 +1,7 @@
 package view.map;
 
 import java.util.List;
-
 import javax.swing.JButton;
-
 import model.characters.Character;
 import model.point.Point;
 import view.View;
