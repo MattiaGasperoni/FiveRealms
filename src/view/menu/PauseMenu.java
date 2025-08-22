@@ -335,7 +335,17 @@ public class PauseMenu implements Menu
         this.menuIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 
-
+	/**
+	 * Enables or disables the pause button in the menu controller.
+	 * 
+	 * @param b true to enable the button, false to disable it
+	 */
+	public void setPauseButtonEnabled(boolean b) 
+	{
+		this.menuIcon.setEnabled(b);
+		this.menuIcon.setVisible(b);
+		
+	}
 
 
 }

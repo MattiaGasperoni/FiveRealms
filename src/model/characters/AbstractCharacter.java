@@ -1,5 +1,7 @@
 package model.characters;
+import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
@@ -524,9 +526,21 @@ public abstract class AbstractCharacter implements Character, Serializable
 	  * @param image the path to the new image file
 	  */
 	 protected void setImagePath(String image) {
-		 this.imagePath = image;
-		 ImageIcon icon = new ImageIcon(this.imagePath);
-		 this.image = icon.getImage().getScaledInstance(75, 45, Image.SCALE_AREA_AVERAGING);
+		    this.imagePath = image;
+		    ImageIcon icon = new ImageIcon(this.imagePath);
+		    
+		    // Get screen dimensions
+		    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		    
+		    // Calculate dimensions as percentage of screen size
+		    int newWidth = (int)(screenSize.width * 0.04 );  // 4% of screen width
+		    int newHeight = (int)(screenSize.height * 0.04); // 4% of screen height
+		    
+		    // Optional: Set minimum/maximum bounds
+		    newWidth = Math.max(50, Math.min(newWidth, 150));
+		    newHeight = Math.max(30, Math.min(newHeight, 90));
+		    
+		    this.image = icon.getImage().getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
 	 }
 
 	 /**

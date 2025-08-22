@@ -253,4 +253,18 @@ public class GameController
         this.game = newGame;
         this.menuController.setGame(newGame);
     }
+
+	/**
+	 * Disables the pause button in the menu controller.
+	 */
+	public void disablePauseButton() 
+	{
+		this.menuController.disablePauseButton(false);
+		
+	}
+    
+    
+    
+    
+    
 }

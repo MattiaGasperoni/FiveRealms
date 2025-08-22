@@ -410,5 +410,13 @@ public class MenuController
     {
         System.exit(0);
     }
+
+    /**
+     * Disables the pause button in the pause menu.
+     */
+	public void disablePauseButton(boolean b) 
+	{
+		this.pauseMenu.setPauseButtonEnabled(false);
+	}
     
 }

@@ -138,45 +138,50 @@ public abstract class AbstractMap implements view.map.Map {
 	 * Sets up the window properties, size, and all UI components.
 	 */
 	private void initializeFrame() {
-		if (this.numLevel != 0) {
-			this.frame = new JFrame("Five Realms - Level " + this.numLevel); 
-		} else {
-			this.frame = new JFrame("Five Realms - Tutorial "); 
-		}
+	    if (this.numLevel != 0) {
+	        this.frame = new JFrame("Five Realms - Level " + this.numLevel);
+	    } else {
+	        this.frame = new JFrame("Five Realms - Tutorial ");
+	    }
 
-		// When the window is closed, the program terminates
-		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.frame.setResizable(false);
+	    // When the window is closed, the program terminates
+	    this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    this.frame.setResizable(false);
 
-		// Set window dimensions based on screen resolution
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		int width = (int) (screenSize.getWidth() * 0.6);  // 60% of screen width
-		int height = (int) (width * 3.0 / 4.0);           // 4:3 aspect ratio
-		this.frame.setSize(width, height);
+	    int width = 1050;  
+	    int height = 680;  
+	    
+	    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	    if (width > screenSize.width) {
+	        width = (int)(screenSize.width * 0.95); 
+	    }
+	    if (height > screenSize.height - 50) { 
+	        height = (int)(screenSize.height * 0.9); 
+	    }
+	    
+	    this.frame.setSize(width, height);
 
-		// Center the window on screen when the game starts
-		this.frame.setLocationRelativeTo(null);
+	    // Center the window on screen when the game starts
+	    this.frame.setLocationRelativeTo(null);
 
-		this.frame.setLayout(new BorderLayout());
+	    this.frame.setLayout(new BorderLayout());
 
-		// Create the JLayeredPane that manages various layers
-		this.layeredPanel = new JLayeredPane();
-		this.frame.setContentPane(this.layeredPanel);
+	    this.layeredPanel = new JLayeredPane();
+	    this.frame.setContentPane(this.layeredPanel);
 
-		// Set JLayeredPane dimensions
-		this.layeredPanel.setSize(width - 13, height - 35);         
+	    this.layeredPanel.setSize(width - 16, height - 39);
 
-		// Layer 0: Background image
-		this.initializeBackgroundMap();
+	    // Layer 0: Background image
+	    this.initializeBackgroundMap();
 
-		// Layer 1: Button grid
-		this.initializeButtonGrid();
+	    // Layer 1: Button grid
+	    this.initializeButtonGrid();
 
-		// Layer 2: Game banner
-		this.initializeBanner();
+	    // Layer 2: Game banner
+	    this.initializeBanner();
 
-		// Layer 3: Game information labels
-		this.addGameInfoLabels();
+	    // Layer 3: Game information labels
+	    this.addGameInfoLabels();
 	}
 
 	/**

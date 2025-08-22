@@ -351,6 +351,7 @@ public class GameLevel implements Level
 			this.levelCompleted = true;
 			// Check that we haven't completed all levels
 			if ((this.controller.getLevelIndex() + 1) < Game.TOTAL_LEVEL) {
+				this.controller.disablePauseButton();
 				this.levelMap.removeAllEvent();
 				this.levelMap.updateBannerMessage("You have defeated all enemies. Level Completed", true);
 				// Keep the banner open for 7 seconds
