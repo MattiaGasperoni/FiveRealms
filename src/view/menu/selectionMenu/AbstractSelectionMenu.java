@@ -1,9 +1,7 @@
 package view.menu.selectionMenu;
 
 import javax.swing.*;
-
 import view.menu.Menu;
-
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;

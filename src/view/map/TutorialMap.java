@@ -1,9 +1,7 @@
 package view.map;
 
 import javax.swing.*;
-
 import controller.GameController;
-
 import java.awt.*;
 import java.util.List;
 import model.characters.Character;
