@@ -252,7 +252,7 @@ public abstract class AbstractCharacter implements Character, Serializable
 
 		 if (!attackedCharacter.isAlive()) {
 			 deadCharacter = attackedCharacter;
-			 this.gainExperience(AbstractCharacter.EXP_LEVELUP_THRESHOLD/3);
+			 this.gainExperience(AbstractCharacter.EXP_LEVELUP_THRESHOLD/2);
 			 //50% chance of getting a potion, if so get one of the four randomly
 			 switch(rand.nextInt(0,9)) {
 			 case 5:
