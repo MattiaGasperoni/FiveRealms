@@ -4,8 +4,10 @@ import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -74,14 +76,30 @@ public class BattlePhaseView
         // Prevent multiple clicks
         AtomicBoolean movementDone = new AtomicBoolean(false);
         
+        // Get occupied positions by allies and enemies
+        Set<Point> occupied = new HashSet<>();
+        for (Character ally : this.levelMap.getAlliesList()) 
+        {
+            occupied.add(ally.getPosition());
+        }
+        for (Character enemy : this.levelMap.getEnemiesList()) 
+        {
+            occupied.add(enemy.getPosition());
+        }
+        
         // PHASE 1: identify positions we can move to and color them gray
         for (int row = 0; row < buttonGrid.length; row++) 
         {
             for (int col = 0; col < buttonGrid[row].length; col++)
             {
                 Point point = new Point(row, col);
-                
-                if (character.getDistanceInSquares(point) <= character.getSpeed() / AbstractCharacter.SPEED_TO_MOVEMENT)
+                boolean withinRange = character.getDistanceInSquares(point)
+                    <= character.getSpeed() / AbstractCharacter.SPEED_TO_MOVEMENT;
+
+                // A cell is free if it's the character's current position or not occupied by any other character
+                boolean cellFree = point.equals(character.getPosition()) || !occupied.contains(point);
+
+                if (withinRange && cellFree) 
                 {
                     availableMoves.add(point);
                 }
