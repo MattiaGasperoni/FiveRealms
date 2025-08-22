@@ -191,7 +191,7 @@ public class LevelManager
      */
     public boolean areAllLevelsCompleted() 
     {
-        return this.currentLevelIndex >= Game.TOTAL_LEVEL;
+        return (this.currentLevelIndex+1) >= Game.TOTAL_LEVEL;
     }
     
     /**

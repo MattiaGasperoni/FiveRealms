@@ -1,8 +1,0 @@
-Type,Class,X,Y,Health,Power,Defence,Speed,Weapon
-Level,1
-Ally,Barbarian  Pos:( 9,11) | HP:  34 | Pow: 108 | Def:  34 | Spd:  46 | Wpn: LongSword      
-Ally,Knight     Pos:(10, 6) | HP:  84 | Pow: 101 | Def:  76 | Spd:  49 | Wpn: LongSword      
-Ally,Juggernaut Pos:(11, 9) | HP: 128 | Pow: 100 | Def: 120 | Spd:  41 | Wpn: Axe            
-Enemy,KnightBoss Pos:( 9,10) | HP:   9 | Pow: 106 | Def:  74 | Spd:  50 | Wpn: LongSword      
-Enemy,Knight     Pos:(10, 5) | HP: -40 | Pow:  82 | Def:  60 | Spd:  37 | Wpn: LongSword      
-Enemy,Barbarian  Pos:( 4,10) | HP: 123 | Pow:  92 | Def:  30 | Spd:  26 | Wpn: LongSword      

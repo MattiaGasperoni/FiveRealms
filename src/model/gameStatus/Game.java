@@ -213,8 +213,7 @@ public class Game
 
         this.levelManager.updateCurrentLevel();
 
-        if (this.levelManager.isCurrentLevelCompleted() && 
-            !this.gameStateManager.isWaitingForCharacterReplacement())
+        if (this.levelManager.isCurrentLevelCompleted() && !this.gameStateManager.isWaitingForCharacterReplacement())
         {
             this.handleLevelCompleted();
         }
