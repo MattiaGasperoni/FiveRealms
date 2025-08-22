@@ -229,12 +229,10 @@ public class Game
     private void handleLevelCompleted() 
     {
         int currentLevel = this.levelManager.getCurrentLevelIndex();
-        System.out.println("Level " + (currentLevel + 1) + " completed.");
         this.controller.stopLevelMusic();
 
         if (this.levelManager.areAllLevelsCompleted())
         {
-            System.out.println("All levels completed!");
             this.handleGameWin();
         }
         else
@@ -287,7 +285,6 @@ public class Game
     private void handleLevelFailed() 
     {
         int currentLevel = this.levelManager.getCurrentLevelIndex();
-        System.out.println("Level " + (currentLevel + 1) + " failed. Game over.");
         this.handleGameLoss();
     }
 

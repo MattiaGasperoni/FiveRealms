@@ -58,7 +58,6 @@ public class GameSaveManager
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(saveFile)))
         {
             oos.writeObject(gameSave);
-            System.out.println("=== Game state saved successfully to " + fileName + " ===");
         } 
         catch (IOException e) 
         {
@@ -103,7 +102,6 @@ public class GameSaveManager
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(saveFile))) 
         {
             GameSave gameState = (GameSave) ois.readObject();
-            System.out.println("=== Game state loaded successfully from " + fileName + " ===");
             return gameState;
         } 
         catch (IOException e) 
@@ -179,7 +177,6 @@ public class GameSaveManager
         
         if (saveFile.exists() && saveFile.delete()) 
         {
-            System.out.println("Save file deleted: " + fileName);
             return true;
         }
         

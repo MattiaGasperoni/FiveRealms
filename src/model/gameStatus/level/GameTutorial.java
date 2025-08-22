@@ -96,7 +96,6 @@ public class GameTutorial implements Level
     private void completeTutorial() 
     {
     	this.tutorialCompleted = true;
-        System.out.println("Tutorial completed!");
         this.tutorialMap.close();
         this.controller.onTutorialPopupsCompleted();
     }

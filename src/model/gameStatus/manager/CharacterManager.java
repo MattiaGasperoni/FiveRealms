@@ -193,17 +193,14 @@ public class CharacterManager
         
         if (character.getPosition() == null) 
         {
-            System.out.println("Character has null position: " + character.getClass().getSimpleName());
             return false;
         }
         
         if (character.getCurrentHealth() <= 0) 
         {
-            System.out.println("Character is dead: " + character.getClass().getSimpleName());
             return false;
         }
         
-        System.out.println("Character is valid: " + character.getClass().getSimpleName());
         return true;
     }
     

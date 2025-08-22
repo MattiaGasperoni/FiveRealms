@@ -66,7 +66,7 @@ public abstract class AbstractSelectionMenu implements Menu
     private void initializeFrame() {
     	this.frame = new JFrame("FiveRealms - " + getMenuType() + " Menu");
     	this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    	this.frame.setSize(800, 800);
+    	this.frame.setSize(1080, 720);
     	this.frame.setLocationRelativeTo(null);
     	this.frame.setResizable(false);
     }
@@ -78,7 +78,7 @@ public abstract class AbstractSelectionMenu implements Menu
     {
         // Random background
         String bgPath    = "images/background/background" + (int)(Math.random() * 6) + ".jpg";
-        ImageIcon bgIcon = new ImageIcon(new ImageIcon(bgPath).getImage().getScaledInstance(800, 800, Image.SCALE_SMOOTH));
+        ImageIcon bgIcon = new ImageIcon(new ImageIcon(bgPath).getImage().getScaledInstance(1080, 720, Image.SCALE_SMOOTH));
         JLabel bgLabel   = new JLabel(bgIcon);
         
         bgLabel.setLayout(new GridBagLayout());
@@ -146,7 +146,7 @@ public abstract class AbstractSelectionMenu implements Menu
     	this.nextButton = createFantasyButton("NEXT");
     	this.nextButton.setEnabled(false);
         gbc.gridx = 1;
-        gbc.gridy = 4;
+        gbc.gridy = 3;
         bgLabel.add(this.nextButton, gbc);
     }
     

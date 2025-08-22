@@ -67,9 +67,7 @@ public class GameStateManager
     {
         GamePhase previousPhase = this.currentPhase;
         this.currentPhase = phase;
-        
-        System.out.println("Game phase changed from " + previousPhase + " to " + phase);
-        
+                
         // Update related flags based on the new phase
         updateStateBasedOnPhase(phase);
     }
@@ -223,7 +221,6 @@ public class GameStateManager
         this.isPaused = false;
         this.gameEnded = false;
         this.playerWon = false;
-        System.out.println("Game state reset to initial values");
     }
     
     /**

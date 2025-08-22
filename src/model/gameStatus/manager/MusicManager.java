@@ -34,7 +34,6 @@ public class MusicManager
         
         if (path == null) 
         {
-            System.out.println("Traccia non trovata: " + trackName);
             return;
         }
         

@@ -109,7 +109,6 @@ public class BattlePhaseView
         // No positions found -> phase finished
         if (availableMoves.isEmpty()) 
         {
-            System.out.print(" No available positions for " + character.getClass().getSimpleName());
             if (onMovementCompleted != null) onMovementCompleted.run();
             return;
         }
@@ -169,15 +168,11 @@ public class BattlePhaseView
      */
     public void chooseTarget(List<Character> enemiesList, Character attacker, Runnable onAttackCompleted) 
     {
-        System.out.println("\n" + attacker.getClass().getSimpleName() + " (HP: " + attacker.getCurrentHealth() + ", DMG: " + attacker.getPower() + 
-                ") select who you want to attack -> ");
-		
         // Get enemies we can attack
 		List<Character> reachableEnemies = getEnemiesInRange(attacker, enemiesList);
 		
 		if (reachableEnemies.isEmpty()) 
 		{
-			 System.out.println(" No enemies in attack range. Attack phase cancelled.");
 			 if (onAttackCompleted != null) onAttackCompleted.run();
 			 return;
 		}
@@ -221,17 +216,9 @@ public class BattlePhaseView
 
                 ActionListener attackListener = click -> 
                 {
-                	/* for debug
-                    System.out.println(" has targeted  " + enemy.getClass().getSimpleName() +
-                                       " (HP: " + enemy.getCurrentHealth() + ", DEF: " + enemy.getDefence() + ")");
-                                       */
-                    
+
                     this.controller.fight(attacker, enemy, levelMap.getAlliesList(), enemiesList, levelMap);
 
-                    /* for debug
-                    System.out.println("\nPost attack " + enemy.getClass().getSimpleName() +
-                                       " has " + enemy.getCurrentHealth() + " hp");*/
-                    
                     this.clearActionListenersAtPositions(enemyPositions, this.attackListeners);
 
                     // Unblock the execution flow

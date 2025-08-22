@@ -62,7 +62,6 @@ public class GameLoopManager
         
         if (this.isRunning) 
         {
-            System.out.println("Game loop is already running");
             return;
         }
         
@@ -85,7 +84,6 @@ public class GameLoopManager
             }
         }, 0, intervalMs, TimeUnit.MILLISECONDS);
         
-        System.out.println("Game loop started with interval: " + intervalMs + "ms");
     }
     
     /**
@@ -103,7 +101,6 @@ public class GameLoopManager
         
         if (this.isRunning) 
         {
-            System.out.println("Game loop is already running");
             return;
         }
         
@@ -130,7 +127,6 @@ public class GameLoopManager
             }
         }, 0, intervalMs, TimeUnit.MILLISECONDS);
         
-        System.out.println("Game loop started for loaded game with interval: " + intervalMs + "ms");
     }
     
     /**
@@ -141,7 +137,6 @@ public class GameLoopManager
         if (this.gameExecutor != null && !this.gameExecutor.isShutdown()) 
         {
             this.gameExecutor.shutdownNow();
-            System.out.println("Game loop stopped");
         }
         this.isRunning = false;
     }
@@ -164,7 +159,6 @@ public class GameLoopManager
     public void pauseGameLoop() 
     {
         this.isRunning = false;
-        System.out.println("Game loop paused");
     }
     
     /**
@@ -175,7 +169,6 @@ public class GameLoopManager
         if (this.gameExecutor != null && !this.gameExecutor.isShutdown()) 
         {
             this.isRunning = true;
-            System.out.println("Game loop resumed");
         } 
         else 
         {

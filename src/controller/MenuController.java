@@ -179,7 +179,6 @@ public class MenuController
     {
         this.mainMenu.addStartListener(e -> 
         {
-            this.log("Starting a new game...");
             this.mainMenu.close();
             try 
             {
@@ -193,7 +192,6 @@ public class MenuController
 
         this.mainMenu.addLoadListener(e -> 
         {
-            this.log("Loading game menu...");
             this.mainMenu.close();
             this.musicController.stopMusic();
             this.loadGameMenu.show();
@@ -238,7 +236,6 @@ public class MenuController
 
         this.loadGameMenu.addSaveFileClickListener(file -> 
         {
-            this.log("Loading game from: " + file.getAbsolutePath());
             try 
             {
                 this.loadGameMenu.close();
@@ -355,8 +352,8 @@ public class MenuController
             } 
             catch (IOException ex) 
             {
-                this.log("Error saving game: " + ex.getMessage());
-            } 
+				ex.printStackTrace();
+			}
             finally 
             {
                 this.pauseMenu.close();
@@ -402,7 +399,6 @@ public class MenuController
      */
     private void restartGameFromMenu() 
     {
-        this.log("Returning to main menu...");
         this.game = new Game();
         this.game.start();
     }
@@ -412,15 +408,7 @@ public class MenuController
      */
     private void exitGame() 
     {
-        this.log("Exiting game...");
         System.exit(0);
     }
     
-    /**
-     * Logs a message to the console.
-     */
-    private void log(String message) 
-    {
-        System.out.println(message);
-    }
 }

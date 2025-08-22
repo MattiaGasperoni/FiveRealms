@@ -54,9 +54,7 @@ public class EndGameMenu extends AbstractMenu
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.insets = new Insets(0, 20, 10, 20);
-        
-        System.out.print(this.result);
-        
+                
         if(this.result)
         {
         	this.mainPanel.add(super.createTitleLabel("Game Completed!"), gbc);

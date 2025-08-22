@@ -175,13 +175,11 @@ public class GameLevel implements Level
 	 * This method is called only when starting a new round of movement/attack.
 	 */
 	private void initializeBattleRound() {
-		System.out.println("\n\n=== STARTING A NEW ROUND ===");
 		this.levelMap.resetGridColors();
 		// Generate the movement/attack order for characters in this round
 		this.currentTurnOrder = this.getTurnOrder(this.alliesList, this.enemiesList);
 
 		if (this.currentTurnOrder.isEmpty()) {
-			System.out.println("Turn queue empty, Round completed!");
 			this.currentTurnState = RoundState.TURN_COMPLETED;
 			return;
 		}
@@ -198,7 +196,6 @@ public class GameLevel implements Level
 		this.levelMap.resetGridColors();
 
 		if (this.currentTurnOrder.isEmpty()) {
-			System.out.println("All characters have played, Round completed!");
 			this.currentTurnState = RoundState.TURN_COMPLETED;
 			return;
 		}
@@ -212,22 +209,17 @@ public class GameLevel implements Level
 			if (candidate.isAlive()) {
 				nextAttacker = candidate;
 				break;
-			} else {
-				System.out.println("Character " + candidate.getClass().getSimpleName() + " is not alive, skipping to next.");
 			}
 		}
 
 		// If no living characters remain, end the round
 		if (nextAttacker == null) {
-			System.out.println("No living characters remaining, end of round");
 			this.currentTurnState = RoundState.TURN_COMPLETED;
 			return;
 		}
 
 		// If there are living characters, set the new attacker and start the turn
 		this.currentAttacker = nextAttacker;
-		System.out.println("\n=== TURN OF: " + this.currentAttacker.getClass().getSimpleName() + " ===");
-
 		this.levelMap.colourCharacterPosition(this.currentAttacker);
 
 		if (this.currentAttacker.isAllied()) {
@@ -244,8 +236,6 @@ public class GameLevel implements Level
 	 */
 	private void startPlayerTurn() {
 		this.currentTurnState = RoundState.WAITING_FOR_MOVEMENT;
-		System.out.print("Waiting for movement of " + currentAttacker.getClass().getSimpleName() + " -> ");
-
 		this.levelMap.updateBannerMessage("Waiting for movement of: " + currentAttacker.getClass().getSimpleName(), false);
 
 		// Configure movement with callback
@@ -284,7 +274,6 @@ public class GameLevel implements Level
 			e.printStackTrace();
 		}
 
-		System.out.println("AI Turn");
 		Character victim = alliesList.stream()
 				.min(Comparator.comparing(charac -> charac.getDistanceInSquares(currentAttacker.getPosition())))
 				.orElse(null);
@@ -315,7 +304,6 @@ public class GameLevel implements Level
 			this.controller.fight(currentAttacker, victim, alliesList, enemiesList, levelMap);
 		} catch (IllegalArgumentException e) {
 			// Handle the case where even the closest enemy is still out of attack range after movement
-			System.out.print(" No enemy in attack range. Attack phase cancelled.");
 		}
 
 		this.currentTurnState = RoundState.TURN_COMPLETED;
@@ -329,8 +317,6 @@ public class GameLevel implements Level
 	 * - Continue with the next character's turn
 	 */
 	private void checkEndTurn() {
-		System.out.print("\n\n=== END OF CHARACTER TURN CHECK -> ");
-
 		if (this.alliesList.isEmpty() || this.enemiesList.isEmpty()) {
 			// If one of the two teams is gone, proceed to level end checks
 			this.currentLevelPhase = LevelPhase.CHECK_END_LEVEL;
@@ -341,7 +327,6 @@ public class GameLevel implements Level
 			this.currentTurnState = RoundState.INITIALIZING_TURN;
 		} else {
 			// Enemies and allies still alive and there are still characters that need to play, continue
-			System.out.print("All good, continuing with next character\n");
 			this.startNextTurn();
 		}
 	}
@@ -356,18 +341,14 @@ public class GameLevel implements Level
 	 * For completed levels, displays victory message and handles transition timing.
 	 */
 	private void checkEndLevel() {
-		System.out.println("\n=== END OF ROUND CHECK ===");
 
 		if (this.alliesList.isEmpty()) {
 			this.levelFailed = true;
-			System.out.println("All your characters are dead. Game Over.\n");
 			this.currentLevelPhase = LevelPhase.DONE;
 			this.levelMap.close();
 			return;
 		} else if (this.enemiesList.isEmpty()) {
 			this.levelCompleted = true;
-			System.out.println("You have defeated all enemies. Level completed!\n");
-
 			// Check that we haven't completed all levels
 			if ((this.controller.getLevelIndex() + 1) < Game.TOTAL_LEVEL) {
 				this.levelMap.removeAllEvent();
@@ -385,7 +366,6 @@ public class GameLevel implements Level
 		}
 
 		// Enemies and allies still alive, continue
-		System.out.println("Level still in progress, starting a new round...\n");
 		currentLevelPhase = LevelPhase.BATTLE_PHASE;
 		currentTurnState = RoundState.INITIALIZING_TURN;
 	}

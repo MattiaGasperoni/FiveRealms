@@ -376,7 +376,6 @@ public abstract class AbstractCharacter implements Character, Serializable
 	 public void setPotion(Potion potion) {
 		 if(!this.hasPotion()) {
 			 this.potion = potion;
-			 System.out.println( this.getClass().getSimpleName() + " got a " + potion.getClass().getSimpleName() + " potion!");
 		 }
 	 }
 

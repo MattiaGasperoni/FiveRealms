@@ -553,7 +553,6 @@ public abstract class AbstractMap implements view.map.Map {
 		}	    
 
 		if (character.getPosition().equals(target)) {
-			System.out.println("The character is already at the target position: " + target);
 			return;
 		}
 
@@ -572,7 +571,6 @@ public abstract class AbstractMap implements view.map.Map {
 
 		this.updateToolTip();	    
 
-		System.out.print(character.getClass().getSimpleName() + " successfully moved from " + character.getPosition() + " to " + target);	    
 	}
 
 	/**
@@ -587,9 +585,6 @@ public abstract class AbstractMap implements view.map.Map {
 		if (character == null || target == null) {
 			throw new IllegalArgumentException("Character and/or target point must not be null");
 		}
-
-		System.out.println("\nAttempting to remove character: " + character.getClass().getSimpleName() +
-				" from position " + target + ", it has health: " + character.getCurrentHealth());
 
 		if (!this.characterMap.containsKey(character)) {
 			System.err.println("Character not found in the map: " + character.getClass().getSimpleName());
@@ -606,9 +601,6 @@ public abstract class AbstractMap implements view.map.Map {
 		this.tooltipManager.removeCharacterTooltip(targetButton);   
 
 		this.updateToolTip();	    
-
-		System.out.println("Character " + character.getClass().getSimpleName() + 
-				" successfully removed from position " + target);
 
 		this.updateInfoLabels();
 	}
