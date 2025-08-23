@@ -42,6 +42,4 @@ public class CharacterSelectionMenu extends AbstractSelectionMenu
         return true; // CharacterSelectionMenu has the special background styling
     }
 
-    
-
 }

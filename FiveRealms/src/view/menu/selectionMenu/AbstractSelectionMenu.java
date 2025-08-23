@@ -233,62 +233,63 @@ public abstract class AbstractSelectionMenu implements Menu
      * @param y The grid y position for layout placement
      * @param gbc The GridBagConstraints object for layout configuration
      */
-    protected void addCharacter(JLabel bgLabel, String name, String desc, String imgPath, int x, int y, GridBagConstraints gbc) 
-    {
-		JPanel panel = new JPanel(new BorderLayout());
-		panel.setOpaque(true);
-		panel.setBackground(new Color(20, 20, 20, 220));
-		panel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
-		
-		JLabel imgLabel = new JLabel(new ImageIcon(new ImageIcon(imgPath).getImage()
-		.getScaledInstance(120, 120, Image.SCALE_SMOOTH)), SwingConstants.CENTER);
-		
-		// Testo del personaggio con stile fantasy
-		JLabel lbl = new JLabel("<html><center>" + name + "<br>" + desc + "</center></html>", 
-		             SwingConstants.CENTER);
-		lbl.setFont(new Font("Serif", Font.BOLD, 14));
-		lbl.setForeground(new Color(245, 222, 179)); // Beige/oro chiaro
-		
-		panel.add(imgLabel, BorderLayout.NORTH);
-		panel.add(lbl, BorderLayout.SOUTH);
-		
-		// Character selection logic
-		panel.addMouseListener(new MouseAdapter() 
-		{
-			public void mouseClicked(MouseEvent e) 
-			{		
-				if (selectedPanels.contains(panel)) 
-				{
-				  selectedPanels.remove(panel);
-				  selectedCharacters.remove(name);
-				  panel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
-				} 
-				else if (selectedPanels.size() < maxSelectableCharacters) 
-				{
-				  selectedPanels.add(panel);
-				  selectedCharacters.add(name);
-				  panel.setBorder(BorderFactory.createLineBorder(Color.ORANGE, 3)); // glow selezione
-				}
-				nextButton.setEnabled(selectedPanels.size() == maxSelectableCharacters);
-			}
-		
-		public void mouseEntered(MouseEvent e) {
-		if (!selectedPanels.contains(panel)) {
-		  panel.setBorder(BorderFactory.createLineBorder(Color.YELLOW, 2));
-		}
-		}
-		
-		public void mouseExited(MouseEvent e) {
-		if (!selectedPanels.contains(panel)) {
-		  panel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
-		}
-		}
-		});
-		
-		gbc.gridx = x;
-		gbc.gridy = y;
-		bgLabel.add(panel, gbc);
-	}
+    protected void addCharacter(JLabel bgLabel, String name, String desc, String imgPath, int x, int y, GridBagConstraints gbc) {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setOpaque(true);
+        panel.setBackground(new Color(20, 20, 20, 220));
+        panel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
+        
+        // Fixed size for consistency
+        panel.setPreferredSize(new Dimension(250, 180));
+        panel.setMinimumSize(new Dimension(250, 180));
+        panel.setMaximumSize(new Dimension(250, 180));
+        
+        // Image and text
+        JLabel imgLabel = new JLabel(new ImageIcon(
+            new ImageIcon(imgPath).getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH)
+        ), SwingConstants.CENTER);
+
+        JLabel lbl = new JLabel("<html><center>" + name + "<br>" + desc + "</center></html>", SwingConstants.CENTER);
+        lbl.setFont(new Font("Serif", Font.BOLD, 14));
+        lbl.setForeground(new Color(245, 222, 179));
+
+        // Layout
+        panel.add(imgLabel, BorderLayout.CENTER);
+        panel.add(lbl, BorderLayout.SOUTH);
+
+        panel.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (selectedPanels.contains(panel)) {
+                    selectedPanels.remove(panel);
+                    selectedCharacters.remove(name);
+                    panel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
+                } else if (selectedPanels.size() < maxSelectableCharacters) {
+                    selectedPanels.add(panel);
+                    selectedCharacters.add(name);
+                    panel.setBorder(BorderFactory.createLineBorder(Color.ORANGE, 3));
+                }
+                nextButton.setEnabled(selectedPanels.size() == maxSelectableCharacters);
+            }
+
+            public void mouseEntered(MouseEvent e) {
+                if (!selectedPanels.contains(panel)) {
+                    panel.setBorder(BorderFactory.createLineBorder(Color.YELLOW, 2));
+                }
+            }
+
+            public void mouseExited(MouseEvent e) {
+                if (!selectedPanels.contains(panel)) {
+                    panel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
+                }
+            }
+        });
+
+        gbc.gridx = x;
+        gbc.gridy = y;
+        bgLabel.add(panel, gbc);
+    }
+
+
 
     /**
      * Adds an ActionListener to the next button for handling click events.
