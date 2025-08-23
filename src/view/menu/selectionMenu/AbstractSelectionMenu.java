@@ -233,8 +233,7 @@ public abstract class AbstractSelectionMenu implements Menu
      * @param y The grid y position for layout placement
      * @param gbc The GridBagConstraints object for layout configuration
      */
-    protected void addCharacter(JLabel bgLabel, String name, String desc, String imgPath, 
-            int x, int y, GridBagConstraints gbc) 
+    protected void addCharacter(JLabel bgLabel, String name, String desc, String imgPath, int x, int y, GridBagConstraints gbc) 
     {
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.setOpaque(true);
@@ -310,7 +309,6 @@ public abstract class AbstractSelectionMenu implements Menu
     {
         return new ArrayList<>(this.selectedCharacters);
     }
-
 
     
     // Abstract methods that subclasses must implement

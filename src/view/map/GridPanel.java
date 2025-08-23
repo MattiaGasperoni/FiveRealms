@@ -69,6 +69,10 @@ public class GridPanel extends JPanel
     }
 
 
+    /**
+     * Gets a map of buttons that have images (icons) set, along with their grid positions.    
+     * @return
+    */
 	public Map<JButton, Point>  getImageButtonList() 
 	{
 		Map<JButton, Point> buttonsWithImage = new HashMap<>();

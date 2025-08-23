@@ -27,13 +27,14 @@ public class EndGameMenu extends AbstractMenu
     	super("FiveRealms - End Game Menu");
     }
     
+    /**=== SETUP METHODS ===*/
     @Override
     protected void initializeComponents()
     {
         this.mainMenuButton = super.createStyledButton("Back to Main Menu");
         this.exitButton     = super.createStyledButton("Exit");
     }
-    
+    /**	=== LAYOUT METHODS ===*/
     @Override
     protected void setupLayout() 
     {
@@ -109,7 +110,11 @@ public class EndGameMenu extends AbstractMenu
     }
     
     // === GENERAL METHODS ===
-    
+	/**
+	 * Sets the game result and updates the display accordingly
+	 * 
+	 * @param result true if the game was won, false if lost
+	 */
     public void setGameResult(boolean result)
     {
     	this.result = result;
@@ -118,7 +123,7 @@ public class EndGameMenu extends AbstractMenu
     
 
 	/**
-	 * Aggiorna il titolo e sottotitolo in base al risultato del gioco
+	 * * Updates the display to reflect the current game result
 	 */
 	private void updateDisplay() 
 	{
