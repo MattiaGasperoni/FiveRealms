@@ -6,7 +6,7 @@ import java.util.List;
 import model.characters.Character;
 import model.gameStatus.manager.CharacterManager;
 import model.gameStatus.manager.GameLoopManager;
-import model.gameStatus.manager.GameStateManager;
+import model.gameStatus.manager.StateManager;
 import model.gameStatus.manager.LevelManager;
 import model.gameStatus.manager.TutorialManager;
 import model.gameStatus.saveSystem.GameSaveManager;
@@ -40,7 +40,7 @@ public class Game
     private GameLoopManager gameLoopManager;
     
     /** Manager for game state and phases */
-    private GameStateManager gameStateManager;
+    private StateManager gameStateManager;
     
     /** Manager for game save and load operations */
     private GameSaveManager gameSaveManager;
@@ -64,7 +64,7 @@ public class Game
     private void initializeCore() 
     {
         this.characterManager = new CharacterManager();
-        this.gameStateManager = new GameStateManager();
+        this.gameStateManager = new StateManager();
         this.gameLoopManager  = new GameLoopManager();
         this.gameSaveManager  = new GameSaveManager();
     }
@@ -172,7 +172,7 @@ public class Game
      */
     public void startSelectionCharacter() 
     {
-        this.gameStateManager.setCurrentPhase(GameStateManager.GamePhase.CHARACTER_SELECTION);
+        this.gameStateManager.setCurrentGamePhase(StateManager.GamePhase.CHARACTER_SELECTION);
         this.controller.startSelectionCharacter();
     }
 
@@ -491,7 +491,7 @@ public class Game
      * 
      * @return the game state manager
      */
-    public GameStateManager getGameStateManager() 
+    public StateManager getGameStateManager() 
     {
         return this.gameStateManager;
     }

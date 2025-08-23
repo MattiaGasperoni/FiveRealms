@@ -11,6 +11,7 @@ import controller.*;
 import model.characters.AbstractCharacter;
 import model.characters.Character;
 import model.gameStatus.Game;
+import model.gameStatus.manager.StateManager;
 import model.point.Point;
 import view.*;
 import view.map.AbstractMap;
@@ -20,42 +21,16 @@ import view.map.LevelMap;
  * Represents a game level that manages the battle phases, turn order, and win/lose conditions.
  * This class handles the complete lifecycle of a level, including initialization, battle phases,
  * character turns (both player and AI), and level completion checks.
+ * 
+ * Now integrated with StateManager for unified state management.
  */
 public class GameLevel implements Level 
 {
-	/**
-	 * Enumeration representing the different phases of a level.
-	 */
-	private enum LevelPhase {
-		/** Active battle phase where characters take turns */
-		BATTLE_PHASE,
-		/** End-of-round check for victory/defeat conditions */
-		CHECK_END_LEVEL,
-		/** Level has ended (victory or defeat) */
-		DONE
-	}
-
-	/**
-	 * Enumeration representing the different states within a battle phase.
-	 */
-	private enum RoundState {
-		/** Preparing to start a new round */
-		INITIALIZING_TURN,
-		/** Waiting for user to move their character */
-		WAITING_FOR_MOVEMENT,
-		/** Waiting for user to select a target */
-		WAITING_FOR_TARGET,
-		/** Current turn has been completed */
-		TURN_COMPLETED
-	}
-
-	private LevelPhase currentLevelPhase;
-	private RoundState currentTurnState;
+	/** The unified state manager for this level */
+	private final StateManager stateManager;
+	
 	private List<Character> enemiesList;
 	private List<Character> alliesList;
-	private boolean levelCompleted;
-	private boolean levelFailed;
-	private boolean levelPause;
 	private PriorityQueue<Character> currentTurnOrder;
 
 	/** Character currently taking their turn */
@@ -79,33 +54,45 @@ public class GameLevel implements Level
 	 * 
 	 * @param map The LevelMap that provides the visual representation and character lists
 	 * @param controller The GameController managing the overall game flow
+	 * @param stateManager The StateManager for unified state management
 	 */
-	public GameLevel(LevelMap map, GameController controller) {
-		this.levelMap = map;
-		this.controller = controller;
+	public GameLevel(LevelMap map, GameController controller, StateManager stateManager) 
+	{
+		this.levelMap     = map;
+		this.controller   = controller;
+		this.stateManager = stateManager;
 		this.movementPhaseManager = new BattlePhaseView(this.levelMap, this.controller);
 
 		this.enemiesList = this.levelMap.getEnemiesList();
-		this.alliesList = this.levelMap.getAlliesList();
+		this.alliesList  = this.levelMap.getAlliesList();
 
-		this.levelCompleted = false;
-		this.levelFailed = false;
-		this.levelPause = false;
+		// Set character lists in state manager
+		this.stateManager.setEnemiesList(this.enemiesList);
+		this.stateManager.setAlliesList(this.alliesList);
 
 		// Initialize available positions for AI turn calculations
 		this.availablePositions = new ArrayList<>();
-		for (int i = 0; i < AbstractMap.GRID_SIZE_WIDTH; i++) {
-			for (int j = 0; j < AbstractMap.GRID_SIZE_HEIGHT; j++) {
+		for (int i = 0; i < AbstractMap.GRID_SIZE_WIDTH; i++) 
+		{
+			for (int j = 0; j < AbstractMap.GRID_SIZE_HEIGHT; j++) 
+			{
 				availablePositions.add(new Point(i, j));
 			}
 		}
 	}
 
 	/**
+	 * Alternative constructor for backward compatibility
+	 */
+	public GameLevel(LevelMap map, GameController controller) {
+		this(map, controller, new StateManager());
+	}
+
+	/**
 	 * Starts the level by showing the map, spawning characters, and initializing the battle phase.
 	 * This method sets up the initial state of the level and prepares it for player interaction.
-	 * @return 
 	 * 
+	 * @return true if level is completed, false otherwise
 	 * @throws IOException If there's an error during level initialization or map display
 	 */
 	public boolean play() throws IOException {
@@ -114,10 +101,14 @@ public class GameLevel implements Level
 		this.levelMap.spawnCharacter(this.enemiesList);
 		this.levelMap.spawnCharacter(this.alliesList);
 
-		this.currentLevelPhase = LevelPhase.BATTLE_PHASE;
-		this.currentTurnState = RoundState.INITIALIZING_TURN;
+		// Ensure we're in the playing level game phase
+		this.stateManager.startPlayingLevel();
 		
-		return this.levelCompleted;
+		// Initialize level state through StateManager
+		this.stateManager.setCurrentLevelPhase(StateManager.LevelPhase.BATTLE_PHASE);
+		this.stateManager.setCurrentBattleState(StateManager.BattleState.INITIALIZING_TURN);
+				
+		return this.stateManager.isCompleted();
 	}
 
 	/**
@@ -125,48 +116,79 @@ public class GameLevel implements Level
 	 * This method should be called continuously in the game loop to progress the level.
 	 */
 	public void update() {
-		if (this.currentLevelPhase == null)
+		StateManager.LevelPhase levelPhase = this.stateManager.getCurrentLevelPhase();	
+		
+		// Only update if we can according to state manager
+		if (!this.stateManager.canUpdate()) {
 			return;
+		}
 
-		switch (this.currentLevelPhase) {
-		case BATTLE_PHASE:
-			this.handleBattlePhase();
-			break;
+		if (levelPhase == null) {
+			return;
+		}
 
-		case CHECK_END_LEVEL:
-			this.checkEndLevel();
-			break;
+		switch (levelPhase) {
+			case BATTLE_PHASE:
+				this.handleBattlePhase();
+				break;
 
-		case DONE:   
-			break;
+			case CHECK_END_LEVEL:
+				this.checkEndLevel();
+				break;
 
-		default:
-			throw new IllegalStateException("Unknown Phase: " + this.currentLevelPhase);
+			case LEVEL_COMPLETED:
+			case TRANSITIONING:
+				// Level is done, no further updates needed
+				break;
+
+			case INITIALIZING:
+				// Should not happen during update, but handle gracefully
+				this.stateManager.startBattlePhase();
+				break;
+
+			default:
+				throw new IllegalStateException("Unknown Level Phase: " + levelPhase);
 		}
 	}
 
 	/**
-	 * Handles the battle phase logic based on the current turn state.
+	 * Handles the battle phase logic based on the current battle state.
 	 * Manages the flow between different battle states while respecting pause conditions
 	 * and user input requirements.
 	 */
 	private void handleBattlePhase() {
-		if (this.levelPause || this.currentTurnState == RoundState.WAITING_FOR_MOVEMENT || this.currentTurnState == RoundState.WAITING_FOR_TARGET) {
-			// Waiting for user input
+		StateManager.BattleState currentState = this.stateManager.getCurrentBattleState();
+		
+		// Check if we should wait for user input
+		if (this.stateManager.canAcceptUserInput()) {
+			// Waiting for user input - don't auto-progress
 			return; 
 		}
+		
+		// Check if we should auto-progress
+		if (!this.stateManager.shouldAutoProgress()) {
+			return;
+		}
 
-		switch (this.currentTurnState) {
-		case INITIALIZING_TURN:
-			this.initializeBattleRound();
-			break;
+		switch (currentState) {
+			case INITIALIZING_TURN:
+				this.initializeBattleRound();
+				break;
 
-		case TURN_COMPLETED:
-			this.checkEndTurn();
-			break;
+			case TURN_COMPLETED:
+				this.checkEndTurn();
+				break;
 
-		default:
-			throw new IllegalStateException("Unknown battle state: " + this.currentTurnState);
+			case ROUND_COMPLETED:
+				this.stateManager.startNewRound();
+				break;
+
+			case AI_TURN_IN_PROGRESS:
+				// AI turn should be handled elsewhere, but ensure it completes
+				break;
+
+			default:
+				throw new IllegalStateException("Unknown battle state: " + currentState);
 		}
 	}
 
@@ -174,13 +196,14 @@ public class GameLevel implements Level
 	 * Initializes a new battle round by resetting the grid colors and generating turn order.
 	 * This method is called only when starting a new round of movement/attack.
 	 */
-	private void initializeBattleRound() {
+	private void initializeBattleRound() {		
 		this.levelMap.resetGridColors();
 		// Generate the movement/attack order for characters in this round
 		this.currentTurnOrder = this.getTurnOrder(this.alliesList, this.enemiesList);
 
+
 		if (this.currentTurnOrder.isEmpty()) {
-			this.currentTurnState = RoundState.TURN_COMPLETED;
+			this.stateManager.setCurrentBattleState(StateManager.BattleState.TURN_COMPLETED);
 			return;
 		}
 
@@ -193,10 +216,11 @@ public class GameLevel implements Level
 	 * handling both player and AI characters appropriately.
 	 */
 	private void startNextTurn() {
+		
 		this.levelMap.resetGridColors();
 
 		if (this.currentTurnOrder.isEmpty()) {
-			this.currentTurnState = RoundState.TURN_COMPLETED;
+			this.stateManager.setCurrentBattleState(StateManager.BattleState.TURN_COMPLETED);
 			return;
 		}
 
@@ -214,13 +238,15 @@ public class GameLevel implements Level
 
 		// If no living characters remain, end the round
 		if (nextAttacker == null) {
-			this.currentTurnState = RoundState.TURN_COMPLETED;
+			this.stateManager.setCurrentBattleState(StateManager.BattleState.TURN_COMPLETED);
 			return;
 		}
 
 		// If there are living characters, set the new attacker and start the turn
 		this.currentAttacker = nextAttacker;
+		this.stateManager.setCurrentCharacterTurn(nextAttacker.getClass().getSimpleName());
 		this.levelMap.colourCharacterPosition(this.currentAttacker);
+
 
 		if (this.currentAttacker.isAllied()) {
 			this.startPlayerTurn();
@@ -235,7 +261,7 @@ public class GameLevel implements Level
 	 * with appropriate callbacks for turn completion.
 	 */
 	private void startPlayerTurn() {
-		this.currentTurnState = RoundState.WAITING_FOR_MOVEMENT;
+		this.stateManager.setCurrentBattleState(StateManager.BattleState.WAITING_FOR_MOVEMENT);
 		this.levelMap.updateBannerMessage("Waiting for movement of: " + currentAttacker.getClass().getSimpleName(), false);
 
 		// Configure movement with callback
@@ -250,10 +276,10 @@ public class GameLevel implements Level
 	 * for turn completion.
 	 */
 	private void onMovementCompleted() {
-		this.currentTurnState = RoundState.WAITING_FOR_TARGET;
+		this.stateManager.setCurrentBattleState(StateManager.BattleState.WAITING_FOR_TARGET);
 
 		this.movementPhaseManager.chooseTarget(this.enemiesList, this.currentAttacker, () -> {
-			this.currentTurnState = RoundState.TURN_COMPLETED;
+			this.stateManager.setCurrentBattleState(StateManager.BattleState.TURN_COMPLETED);
 		});
 	}
 
@@ -268,6 +294,8 @@ public class GameLevel implements Level
 	 * chase behavior if no attack positions are available.
 	 */
 	private void startAITurn() {
+		this.stateManager.setCurrentBattleState(StateManager.BattleState.AI_TURN_IN_PROGRESS);
+		
 		try {
 			Thread.sleep(1500);
 		} catch (InterruptedException e) {
@@ -279,7 +307,7 @@ public class GameLevel implements Level
 				.orElse(null);
 
 		if (victim == null) {
-			this.currentTurnState = RoundState.TURN_COMPLETED;
+			this.stateManager.setCurrentBattleState(StateManager.BattleState.TURN_COMPLETED);
 			return;
 		}
 
@@ -306,7 +334,7 @@ public class GameLevel implements Level
 			// Handle the case where even the closest enemy is still out of attack range after movement
 		}
 
-		this.currentTurnState = RoundState.TURN_COMPLETED;
+		this.stateManager.setCurrentBattleState(StateManager.BattleState.TURN_COMPLETED);
 	}
 
 	/**
@@ -317,14 +345,21 @@ public class GameLevel implements Level
 	 * - Continue with the next character's turn
 	 */
 	private void checkEndTurn() {
+		// Update character lists in case any died during the turn
+		this.alliesList.removeIf(character -> !character.isAlive());
+		this.enemiesList.removeIf(character -> !character.isAlive());
+		
+		// Update state manager with current lists
+		this.stateManager.setAlliesList(this.alliesList);
+		this.stateManager.setEnemiesList(this.enemiesList);
+
 		if (this.alliesList.isEmpty() || this.enemiesList.isEmpty()) {
 			// If one of the two teams is gone, proceed to level end checks
-			this.currentLevelPhase = LevelPhase.CHECK_END_LEVEL;
+			this.stateManager.transitionToEndLevelCheck();
 			return;
 		} else if (this.currentTurnOrder.isEmpty()) {
-			// If no one else needs to play after us, start a new turn
-			this.currentLevelPhase = LevelPhase.BATTLE_PHASE;
-			this.currentTurnState = RoundState.INITIALIZING_TURN;
+			// If no one else needs to play after us, start a new round
+			this.stateManager.setCurrentBattleState(StateManager.BattleState.ROUND_COMPLETED);
 		} else {
 			// Enemies and allies still alive and there are still characters that need to play, continue
 			this.startNextTurn();
@@ -341,14 +376,15 @@ public class GameLevel implements Level
 	 * For completed levels, displays victory message and handles transition timing.
 	 */
 	private void checkEndLevel() {
-
 		if (this.alliesList.isEmpty()) {
-			this.levelFailed = true;
-			this.currentLevelPhase = LevelPhase.DONE;
+			// Level failed
+			this.stateManager.completeLevelWithResult(false);
 			this.levelMap.close();
 			return;
 		} else if (this.enemiesList.isEmpty()) {
-			this.levelCompleted = true;
+			// Level completed successfully
+			this.stateManager.completeLevelWithResult(true);
+			
 			// Check that we haven't completed all levels
 			if ((this.controller.getLevelIndex() + 1) < Game.TOTAL_LEVEL) {
 				this.controller.disablePauseButton();
@@ -361,14 +397,12 @@ public class GameLevel implements Level
 					e.printStackTrace();
 				}
 			}
-			this.currentLevelPhase = LevelPhase.DONE;
 			this.levelMap.close();
 			return;
 		}
 
 		// Enemies and allies still alive, continue
-		currentLevelPhase = LevelPhase.BATTLE_PHASE;
-		currentTurnState = RoundState.INITIALIZING_TURN;
+		this.stateManager.startBattlePhase();
 	}
 
 	/**
@@ -385,6 +419,19 @@ public class GameLevel implements Level
 		queue.addAll(allies.stream().filter(Character::isAlive).toList());
 		queue.addAll(enemies.stream().filter(Character::isAlive).toList());
 		return queue;
+	}
+
+	// ===========================================
+	// PUBLIC ACCESSORS AND STATE QUERIES
+	// ===========================================
+
+	/**
+	 * Gets the state manager for this level.
+	 * 
+	 * @return The StateManager instance
+	 */
+	public StateManager getStateManager() {
+		return this.stateManager;
 	}
 
 	/**
@@ -420,7 +467,7 @@ public class GameLevel implements Level
 	 * @return true if level is completed (all enemies defeated), false otherwise
 	 */
 	public boolean isCompleted() { 
-		return this.levelCompleted; 
+		return this.stateManager.isCompleted();
 	}
 
 	/**
@@ -429,38 +476,102 @@ public class GameLevel implements Level
 	 * @return true if level is failed (all allies defeated), false otherwise
 	 */
 	public boolean isFailed() { 
-		return this.levelFailed; 
+		return this.stateManager.isFailed();
 	}
 
 	/**
-	 * Sets the paused state of the level.
+	 * Sets the paused state of the level through the state manager.
 	 * When paused, the level will not process turn updates until unpaused.
 	 * 
 	 * @param paused true to pause the level, false to unpause
 	 */
 	public void setLevelPaused(boolean paused) {
-		this.levelPause = paused;
+		if (paused) {
+			this.stateManager.pauseGame();
+		} else {
+			this.stateManager.resumeGame();
+		}
 	}
 
 	/**
 	 * Sets the list of enemy characters for this level.
-	 * Also updates the level map with the new enemy list.
+	 * Also updates the level map and state manager with the new enemy list.
 	 * 
 	 * @param enemiesList New list of enemy characters
 	 */
 	public void setEnemiesList(List<Character> enemiesList) {
 		this.enemiesList = enemiesList;
 		this.levelMap.setEnemiesList(this.enemiesList);
+		this.stateManager.setEnemiesList(this.enemiesList);
 	}
 
 	/**
 	 * Sets the list of allied characters for this level.
-	 * Also updates the level map with the new ally list.
+	 * Also updates the level map and state manager with the new ally list.
 	 * 
 	 * @param alliesList New list of allied characters
 	 */
 	public void setAlliesList(List<Character> alliesList) {
 		this.alliesList = alliesList;
 		this.levelMap.setAlliesList(this.alliesList);
+		this.stateManager.setAlliesList(this.alliesList);
+	}
+
+	// ===========================================
+	// CONVENIENCE METHODS FOR EXTERNAL CONTROL
+	// ===========================================
+
+	/**
+	 * Checks if the level can accept user input based on current state.
+	 * 
+	 * @return true if user input is expected, false otherwise
+	 */
+	public boolean canAcceptUserInput() {
+		return this.stateManager.canAcceptUserInput();
+	}
+
+	/**
+	 * Gets the current character taking their turn.
+	 * 
+	 * @return Character currently taking their turn, or null if none
+	 */
+	public Character getCurrentAttacker() {
+		return this.currentAttacker;
+	}
+
+	/**
+	 * Gets the current turn character name from state manager.
+	 * 
+	 * @return Name of character currently taking their turn
+	 */
+	public String getCurrentCharacterTurn() {
+		return this.stateManager.getCurrentCharacterTurn();
+	}
+
+	/**
+	 * Gets the current round number.
+	 * 
+	 * @return Current round number
+	 */
+	public int getCurrentRoundNumber() {
+		return this.stateManager.getCurrentRoundNumber();
+	}
+
+	/**
+	 * Gets a summary of the current gameplay state.
+	 * 
+	 * @return String describing current level state
+	 */
+	public String getGameplaySummary() {
+		return this.stateManager.getGameplaySummary();
+	}
+
+	/**
+	 * Gets detailed debug information about the current state.
+	 * 
+	 * @return Detailed state information for debugging
+	 */
+	public String getDetailedStateDump() {
+		return this.stateManager.getDetailedStateDump();
 	}
 }

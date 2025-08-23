@@ -44,7 +44,7 @@ public class GameLoopManager
      */
     public void startGameLoop() 
     {
-        startGameLoop(100);
+        this.startGameLoop(100);
     }
     
     /**
