@@ -21,18 +21,21 @@ public class CharacterSelectionMenu extends AbstractSelectionMenu
         super.show();
     }
     
+    /** Menu type and title text specific to character selection */
     @Override
     protected String getMenuType() 
     {
         return "Characters Selection";
     }
     
+    /** Title text indicating the number of characters to select */
     @Override
     protected String getTitleText() 
     {
         return "SELECT "+Game.MAX_ALLIES_PER_ROUND+" CHARACTERS";
     }
     
+    /** Character selection menu requires special title styling */
     @Override
     protected boolean requiresSpecialTitleStyling() 
     {

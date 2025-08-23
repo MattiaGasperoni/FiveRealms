@@ -30,6 +30,7 @@ public class LoadGameMenu extends AbstractMenu
         this.saveButtons = new ArrayList<>();
     }
     
+    /**=== SETUP METHODS ===*/
     @Override
     protected void initializeComponents() 
     {
@@ -39,6 +40,7 @@ public class LoadGameMenu extends AbstractMenu
         this.mainMenuButton     = super.createStyledButton("Back to Main Menu");
     }
     
+    /**=== LAYOUT METHODS ===*/
     @Override
     protected void setupLayout() 
     {
@@ -422,6 +424,12 @@ public class LoadGameMenu extends AbstractMenu
         deleteDialog.setVisible(true);
     }
     
+	/**
+	 * Shows a custom message dialog with specified title and message.
+	 * 
+	 * @param title   The dialog title
+	 * @param message The message to display
+	 */
     private void showCustomMessageDialog(String title, String message) 
     {
         JDialog messageDialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), title, true);

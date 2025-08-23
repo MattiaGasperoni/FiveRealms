@@ -5,7 +5,9 @@ import java.awt.event.ActionListener;
 
 public class MainMenu extends AbstractMenu
 {
-    private JButton startButton;
+
+	private static final long serialVersionUID = 1L;
+	private JButton startButton;
     private JButton loadButton;
     private JButton exitButton;
     
@@ -18,6 +20,7 @@ public class MainMenu extends AbstractMenu
         super("FiveRealms - Main Menu");
     }
     
+    /**=== SETUP METHODS ===*/
     @Override
     protected void initializeComponents()
     {
@@ -26,6 +29,7 @@ public class MainMenu extends AbstractMenu
         this.exitButton  = super.createStyledButton("Exit");
     }
     
+    /** === LAYOUT METHODS ===*/
     @Override
     protected void setupLayout()
     {

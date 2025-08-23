@@ -5,15 +5,21 @@ import java.awt.event.*;
 
 public class TutorialMenu extends AbstractMenu
 {    
-    private JButton yesButton;
+    private static final long serialVersionUID = 1L;
+	private JButton yesButton;
     private JButton noButton;
     private JButton mainMenuButton;
     
+	/**
+	 * Constructor that initializes the tutorial menu frame and all its components
+	 * Sets up the window properties, creates buttons, and configures the layout
+	 */
     public TutorialMenu()
     {
         super("FiveRealms - Tutorial Menu");
     }
     
+    /** === SETUP METHODS ===*/
     @Override
     protected void initializeComponents()
     {
@@ -22,6 +28,7 @@ public class TutorialMenu extends AbstractMenu
         this.mainMenuButton = super.createStyledButton("Back to Main Menu");
     }
     
+    /** === LAYOUT METHODS ===*/
     @Override
     protected void setupLayout()
     {

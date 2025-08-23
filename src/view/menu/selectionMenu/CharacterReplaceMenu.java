@@ -22,18 +22,21 @@ public class CharacterReplaceMenu extends AbstractSelectionMenu
         super.show();
     }
     
+    /** Menu type and title text specific to character replacement */
     @Override
     protected String getMenuType() 
     {
         return "Characters Replace";
     }
     
+    /** Title text indicating the number of characters to replace */
     @Override
     protected String getTitleText() 
     {
         return "REPLACE " + this.alliesToChange + " CHARACTERS";
     }
     
+    /** Character replacement menu does not require special title styling */
     @Override
     protected boolean requiresSpecialTitleStyling() 
     {
