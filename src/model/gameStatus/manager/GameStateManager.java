@@ -43,7 +43,7 @@ public class GameStateManager
     {
         this.currentPhase = GamePhase.MAIN_MENU;
         this.waitingForCharacterReplacement = false;
-        this.isPaused = false;
+        this.isPaused  = false;
         this.gameEnded = false;
         this.playerWon = false;
     }
@@ -65,11 +65,10 @@ public class GameStateManager
      */
     public void setCurrentPhase(GamePhase phase) 
     {
-        GamePhase previousPhase = this.currentPhase;
         this.currentPhase = phase;
                 
         // Update related flags based on the new phase
-        updateStateBasedOnPhase(phase);
+        this.updateStateBasedOnPhase(phase);
     }
     
     /**

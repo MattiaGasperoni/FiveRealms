@@ -1,11 +1,11 @@
 package model.characters.bosses;
-import java.util.List;
 
 import model.characters.Archer;
 import model.characters.Character;
-import model.point.Point;
 
 public class ArcherBoss extends Archer{
+
+	private static final long serialVersionUID = 1L;
 
 	public ArcherBoss() {
 		super(); //Random

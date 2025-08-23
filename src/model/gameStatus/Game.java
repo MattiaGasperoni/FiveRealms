@@ -228,7 +228,6 @@ public class Game
      */
     private void handleLevelCompleted() 
     {
-        int currentLevel = this.levelManager.getCurrentLevelIndex();
         this.controller.stopLevelMusic();
 
         if (this.levelManager.areAllLevelsCompleted())
@@ -284,7 +283,6 @@ public class Game
      */
     private void handleLevelFailed() 
     {
-        int currentLevel = this.levelManager.getCurrentLevelIndex();
         this.handleGameLoss();
     }
 

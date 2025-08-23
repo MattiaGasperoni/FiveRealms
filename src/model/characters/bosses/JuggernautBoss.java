@@ -1,8 +1,9 @@
 package model.characters.bosses;
 import model.characters.Juggernaut;
-import model.point.Point;
 
 public class JuggernautBoss extends Juggernaut{
+
+	private static final long serialVersionUID = 1L;
 
 	public JuggernautBoss() {
 		super(); //Random

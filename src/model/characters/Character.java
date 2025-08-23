@@ -1,10 +1,6 @@
 package model.characters;
 
 import java.awt.Image;
-import java.util.List;
-
-import javax.swing.ImageIcon;
-
 import model.equipment.potions.Potion;
 import model.equipment.weapons.Weapon;
 import model.point.Point;

@@ -1,8 +1,8 @@
 package model.characters.bosses;
 import model.characters.Barbarian;
-import model.point.Point;
 
 public class BarbarianBoss extends Barbarian{
+	private static final long serialVersionUID = 1L;
 	private final double STAT_INCREASE_PERCENTAGE = 0.2;
 
 	public BarbarianBoss() {

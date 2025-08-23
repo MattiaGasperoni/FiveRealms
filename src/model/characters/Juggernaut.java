@@ -5,6 +5,8 @@ import model.equipment.weapons.ShortSword;
 
 public class Juggernaut extends AbstractCharacter{
 
+	private static final long serialVersionUID = 1L;
+
 	public Juggernaut() {
 		super(rand.nextInt(160,180), rand.nextInt(40,60), rand.nextInt(135,155), rand.nextInt(110,130)); //Random
 		this.availableWeapons.add(new ShortSword());

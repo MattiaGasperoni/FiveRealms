@@ -1,11 +1,11 @@
 package model.characters.bosses;
-import java.util.List;
 
 import model.characters.Character;
 import model.characters.Knight;
 import model.point.Point;
 
 public class KnightBoss extends Knight{
+	private static final long serialVersionUID = 1L;
 	private final double HEALING_PERCENTAGE = 0.05;
 
 	public KnightBoss() {

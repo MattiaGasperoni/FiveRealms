@@ -5,6 +5,8 @@ import model.equipment.weapons.Staff;
 
 public class Wizard extends AbstractCharacter{
 
+	private static final long serialVersionUID = 1L;
+
 	public Wizard() {
 		super(rand.nextInt(80,100), rand.nextInt(50,70), rand.nextInt(145,165), rand.nextInt(30,50)); //Random
 		this.availableWeapons.add(new Wand());

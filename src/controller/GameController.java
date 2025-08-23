@@ -12,9 +12,9 @@ import view.menu.PauseMenu;
 
 /**
  * Main controller that coordinates between specialized controllers.
- * <p>
  * This refactored controller delegates specific responsibilities to 
  * specialized controllers while maintaining the main coordination logic.
+ * @author Mattia
  */
 public class GameController 
 {

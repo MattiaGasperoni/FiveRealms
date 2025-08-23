@@ -1,8 +1,9 @@
 package model.characters.bosses;
 import model.characters.Wizard;
-import model.point.Point;
 
 public class WizardBoss extends Wizard{
+
+	private static final long serialVersionUID = 1L;
 
 	public WizardBoss() {
 		super();

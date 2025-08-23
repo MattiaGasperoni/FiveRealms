@@ -28,7 +28,6 @@ public abstract class AbstractCharacter implements Character, Serializable
 	private Point position; 
 	private String imagePath; //filepath
 	private transient Image image;
-	private transient ImageIcon icon;
 	private boolean isAllied;
 	protected ArrayList<Weapon> availableWeapons;
 	protected static final Random rand = new Random();
@@ -386,7 +385,7 @@ public abstract class AbstractCharacter implements Character, Serializable
 	  * Randomly selects from 3 available image variants.
 	  */
 	 private void generateDefaultImage() {
-		 this.setImagePath("images/characters/" + this.getClass().getSimpleName().toLowerCase() + "/" + this.getClass().getSimpleName().toLowerCase() + this.rand.nextInt(1,4) + ".png");
+		 this.setImagePath("images/characters/" + this.getClass().getSimpleName().toLowerCase() + "/" + this.getClass().getSimpleName().toLowerCase() + AbstractCharacter.rand.nextInt(1,4) + ".png");
 	 }
 
 	 /**
