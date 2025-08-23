@@ -532,8 +532,8 @@ public abstract class AbstractCharacter implements Character, Serializable
 		    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		    
 		    // Calculate dimensions as percentage of screen size
-		    int newWidth = (int)(screenSize.width * 0.04 );  // 4% of screen width
-		    int newHeight = (int)(screenSize.height * 0.04); // 4% of screen height
+		    int newWidth = (int)(screenSize.width * 0.035);  // 4% of screen width
+		    int newHeight = (int)(screenSize.height * 0.035); // 4% of screen height
 		    
 		    // Optional: Set minimum/maximum bounds
 		    newWidth = Math.max(50, Math.min(newWidth, 150));
