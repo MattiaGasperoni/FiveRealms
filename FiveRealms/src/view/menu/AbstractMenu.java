@@ -177,12 +177,6 @@ public abstract class AbstractMenu extends JPanel implements Menu
      * @param size The preferred size for the button
      * @return Styled JButton
      */
-    /**
-     * Creates a styled button with custom size.
-     * @param text The text to display on the button
-     * @param size The preferred size for the button
-     * @return Styled JButton
-     */
     protected JButton createStyledButton(String text, Dimension size) 
     {
         JButton button = new JButton(text); 

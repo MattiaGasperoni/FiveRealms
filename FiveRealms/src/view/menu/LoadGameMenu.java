@@ -106,7 +106,6 @@ public class LoadGameMenu extends AbstractMenu
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         
-        // Personalizza la scrollbar in stile medievale
         scrollPane.getVerticalScrollBar().setUI(new javax.swing.plaf.basic.BasicScrollBarUI() {
             @Override
             protected void configureScrollBarColors() {
@@ -116,8 +115,7 @@ public class LoadGameMenu extends AbstractMenu
                 this.thumbLightShadowColor = new Color(101, 67, 33);  // Ombra del thumb
                 this.thumbDarkShadowColor = new Color(61, 43, 31);    // Ombra scura
             }
-            // Override per i pulsanti di incremento e decremento
-            // Questi pulsanti sono le frecce della scrollbar
+
             @Override
             protected JButton createDecreaseButton(int orientation) {
                 JButton button = super.createDecreaseButton(orientation);
@@ -135,7 +133,6 @@ public class LoadGameMenu extends AbstractMenu
             }
         });
         
-        // Imposta la larghezza della scrollbar
         scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(16, 0));
         
         return scrollPane;
@@ -179,14 +176,13 @@ public class LoadGameMenu extends AbstractMenu
      */
     private JButton createOptionsButton(File saveFile) 
     {
-        // Carica l'immagine dal percorso (assicurati che sia accessibile)
+        // Background image
         ImageIcon icon = new ImageIcon("images/vertical_ellipsis.png");
 
-        // Ridimensiona se necessario
         Image scaledImage = icon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
         icon = new ImageIcon(scaledImage);
 
-        // Crea il pulsante con l'immagine
+        // Button styling
         JButton optionsButton = new JButton(icon);
         optionsButton.setPreferredSize(new Dimension(50, 40));
         optionsButton.setMaximumSize(new Dimension(50, 40));
@@ -210,7 +206,7 @@ public class LoadGameMenu extends AbstractMenu
             }
         });
 
-        // Mostra il menu opzioni al click
+        // Show options menu on click
         optionsButton.addActionListener(e -> showOptionsMenu(optionsButton, saveFile));
 
         return optionsButton;
@@ -255,10 +251,10 @@ public class LoadGameMenu extends AbstractMenu
         popup.addSeparator();
         popup.add(deleteItem);
 
-        // Opzionalmente forza dimensioni minime del popup
+        // Set preferred size to ensure consistent width
         popup.setPreferredSize(new Dimension(100, 100));
 
-        // Mostra popup sotto il pulsante
+        // Show the popup below the options button
         popup.show(sourceButton, 0, sourceButton.getHeight());
     }
 
